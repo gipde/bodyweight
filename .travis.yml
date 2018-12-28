@@ -1,0 +1,17 @@
+language: go
+
+# override default build command
+script: go build -o bodyweight.bin bodyweight.go
+
+deploy:
+  - provider: lambda
+    function_name: "bodyweight"
+    region: "eu-west-1"
+    role: "arn:aws:iam::854014537498:role/lambda_basic_execution"
+    runtime: "go1.x"
+
+    # workaround, for handler_name (concated via .)
+    module_name: "bodyweight"
+    handler_name: "bin"
+
+#    on: master
