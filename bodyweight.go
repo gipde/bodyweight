@@ -13,8 +13,7 @@ type MyEvent struct {
 }
 
 func HandleRequest(ctx context.Context, name MyEvent) (string, error) {
-	log.Print("Hello from Lambda")
-	log.Printf("Context: %v\nEvent: %v\n", ctx, name)
+	log.Printf("Context: %v\n\nEvent: %v\n", ctx, name)
 	return fmt.Sprintf("Hello Dear %s!", name.Name), nil
 }
 
