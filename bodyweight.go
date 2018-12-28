@@ -33,21 +33,14 @@ var result = []byte(`{
 	}
  }`)
 
-type MyEvent struct {
-	Name string `json:"name"`
-}
-
-func HandleRequest(ctx context.Context, name MyEvent) (interface{}, error) {
-	log.Printf("Context: %v\n\nEvent: %v\n", ctx, name)
+func HandleRequest(ctx context.Context, event interface{}) (interface{}, error) {
+	log.Printf("Context: %v\n", ctx)
+	log.Printf("Event:   %v\n", event)
 	var f interface{}
 	err := json.Unmarshal(result, &f)
 	return f, err
 }
 
 func main() {
-	// log.Printf("starting...")
-	// var f interface{}
-	// json.Unmarshal(result, &f)
-	// log.Printf("%v", f)
 	lambda.Start(HandleRequest)
 }
