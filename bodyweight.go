@@ -39,6 +39,8 @@ var result = []byte(`{
  }`)
 
 func HandleRequest(ctx context.Context, event interface{}) (interface{}, error) {
+	readDynamoDB()
+
 	log.Printf("Context: %v\n", ctx)
 	log.Printf("Event:   %v\n", event)
 	var f interface{}
@@ -52,13 +54,16 @@ type Item struct {
 }
 
 func readDynamoDB() {
+	log.Println("Queery DB")
 	sess, err := session.NewSession(&aws.Config{
 		Region: aws.String("eu-west-1")},
 	)
-
+	
+	log.Println("Create Session")
 	// Create DynamoDB client
 	svc := dynamodb.New(sess)
-
+	
+	log.Println("do Query")
 	result, err := svc.GetItem(&dynamodb.GetItemInput{
 		TableName: aws.String("bodyweight"),
 		Key: map[string]*dynamodb.AttributeValue{
@@ -81,13 +86,12 @@ func readDynamoDB() {
 		panic(fmt.Sprintf("Failed to unmarshal Record, %v", err))
 	}
 
-	fmt.Println("Found item:")
-	fmt.Println("id:  ", item.ID)
-	fmt.Println("State: ", item.State)
+	log.Println("Found item:")
+	log.Println("id:  ", item.ID)
+	log.Println("State: ", item.State)
 
 }
 
 func main() {
-	readDynamoDB()
 	lambda.Start(HandleRequest)
 }
