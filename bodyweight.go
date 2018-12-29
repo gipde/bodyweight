@@ -55,14 +55,15 @@ type Item struct {
 
 func readDynamoDB() {
 	log.Println("Queery DB")
+	log.Println("Create Session")
 	sess, err := session.NewSession(&aws.Config{
 		Region: aws.String("eu-west-1")},
 	)
 	log.Printf("sess: %v\n",sess)
 	log.Printf("err: %v\n",err)
 	
-	log.Println("Create Session")
 	// Create DynamoDB client
+	log.Println("Create SVC")
 	svc := dynamodb.New(sess)
 	log.Printf("svc: %v",svc)
 	
@@ -72,7 +73,7 @@ func readDynamoDB() {
 		TableName: aws.String("bodyweight"),
 		Key: map[string]*dynamodb.AttributeValue{
 			"id": {
-				N: aws.String("state"),
+				S: aws.String("state"),
 			},
 		},
 	})
