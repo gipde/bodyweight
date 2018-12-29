@@ -58,10 +58,14 @@ func readDynamoDB() {
 	sess, err := session.NewSession(&aws.Config{
 		Region: aws.String("eu-west-1")},
 	)
+	log.Printf("sess: %v\n",sess)
+	log.Printf("err: %v\n",err)
 	
 	log.Println("Create Session")
 	// Create DynamoDB client
 	svc := dynamodb.New(sess)
+	log.Printf("svc: %v",svc)
+	
 	
 	log.Println("do Query")
 	result, err := svc.GetItem(&dynamodb.GetItemInput{
@@ -72,14 +76,17 @@ func readDynamoDB() {
 			},
 		},
 	})
+	log.Printf("Result %v\n",result)
+	log.Printf("Error %v\n",err)
 
 	if err != nil {
-		fmt.Println(err.Error())
+		log.Println(err.Error())
 		return
 	}
-
+	
 	item := Item{}
-
+	
+	log.Println("Unmarshal Map")
 	err = dynamodbattribute.UnmarshalMap(result.Item, &item)
 
 	if err != nil {
