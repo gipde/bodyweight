@@ -39,7 +39,8 @@ var result = []byte(`{
  }`)
 
 func HandleRequest(ctx context.Context, event interface{}) (interface{}, error) {
-	readDynamoDB()
+	readDynamoDB("ff")
+	readDynamoDB("state")
 
 	log.Printf("Context: %v\n", ctx)
 	log.Printf("Event:   %v\n", event)
@@ -53,41 +54,27 @@ type Item struct {
 	State int    `json:"state"`
 }
 
-func readDynamoDB() {
-	log.Println("Queery DB")
-	log.Println("Create Session")
+func readDynamoDB(id string) {
 	sess, err := session.NewSession(&aws.Config{
 		Region: aws.String("eu-west-1")},
 	)
-	log.Printf("sess: %v\n",sess)
-	log.Printf("err: %v\n",err)
-	
 	// Create DynamoDB client
-	log.Println("Create SVC")
 	svc := dynamodb.New(sess)
-	log.Printf("svc: %v",svc)
-	
-	
-	log.Println("do Query")
 	result, err := svc.GetItem(&dynamodb.GetItemInput{
 		TableName: aws.String("bodyweight"),
 		Key: map[string]*dynamodb.AttributeValue{
 			"id": {
-				S: aws.String("state"),
+				S: aws.String(id),
 			},
 		},
 	})
-	log.Printf("Result %v\n",result)
-	log.Printf("Error %v\n",err)
 
 	if err != nil {
 		log.Println(err.Error())
 		return
 	}
 	
-	item := Item{}
-	
-	log.Println("Unmarshal Map")
+	item := Item{}	
 	err = dynamodbattribute.UnmarshalMap(result.Item, &item)
 
 	if err != nil {
