@@ -1,7 +1,7 @@
 language: go
 
 # override default build command
-script: go build -o bodyweight.bin bodyweight.go
+script: go build -o bodyweight.bin src/*.go
 
 deploy:
   - provider: lambda
