@@ -8,7 +8,7 @@ import (
 )
 
 func HandleRequest(ctx context.Context, event Request) (Response, error) {
-	log.Printf("Request: %v\n", event)
+	log.Printf("Request: %+v\n", event)
 
 	switch event.RequestBody.Type {
 	case LAUNCH_REQUEST:

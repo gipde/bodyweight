@@ -1,5 +1,7 @@
 package main
 
+import "log"
+
 const LAUNCH_REQUEST = "LaunchRequest"
 const INTENT_REQUEST = "IntentRequest"
 const STOP_INTENT = "AMAZON.StopIntent"
@@ -17,8 +19,8 @@ type Request struct {
 }
 
 type RequestBody struct {
-	Type string `json:"type"`
-	X map[string]interface{} `json:-`
+	Type string                 `json:"type"`
+	X    map[string]interface{} `json:-`
 }
 
 // type Session struct {
@@ -71,7 +73,8 @@ type ResponseBody struct {
 }
 
 func BuildTextResponse(text string) Response {
-	return Response{
+	log.Printf("We build a Textresponse with: %s\n", text)
+	r := Response{
 		Version: "1.0",
 		ResponseBody: ResponseBody{
 			OutputSpeech: OutputSpeech{
@@ -80,6 +83,8 @@ func BuildTextResponse(text string) Response {
 			},
 		},
 	}
+	log.Printf("R: %+v", r)
+	return r
 }
 
 func BuildRequest(requestType string) Request {
