@@ -11,6 +11,7 @@ func HandleRequest(ctx context.Context, event Request) (Response, error) {
 	log.Printf("Request: %+v\n", event)
 
 	if isDelegate() {
+		log.Println("we delegate")
 		return delegateRemote(event)
 	}
 

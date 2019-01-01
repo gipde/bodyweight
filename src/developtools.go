@@ -81,11 +81,14 @@ func delegateRemote(req Request) (Response, error) {
 	client, err := rpc.Dial("tcp", "yrnrwxodb39dwkmr.myfritz.net:1234")
 	defer client.Close()
 	if err != nil {
-		log.Println("Error: ", err)
+		log.Println("Error callin Remote: ", err)
 	}
 
 	// marshall for remoting
-	payload, _ := json.Marshal(req)
+	payload, err2 := json.Marshal(req)
+	if err2 != nil {
+		log.Println("Error Marshalling: ", err2)
+	}
 	iResp := new(messages.InvokeResponse)
 	iReq := messages.InvokeRequest{
 		Payload: []byte(payload),
