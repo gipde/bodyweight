@@ -12,7 +12,10 @@ func HandleRequest(ctx context.Context, event Request) (Response, error) {
 
 	if isDelegate() {
 		log.Println("we delegate")
-		return delegateRemote(event)
+		result, err := delegateRemote(event)
+		log.Println("and got result: ", result)
+		return result, err
+
 	}
 
 	switch event.RequestBody.Type {
@@ -26,7 +29,6 @@ func HandleRequest(ctx context.Context, event Request) (Response, error) {
 	}
 	return BuildTextResponse("das war wohl nix"), nil
 }
-
 
 func main() {
 	if isClient() {
