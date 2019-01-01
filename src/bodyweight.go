@@ -10,6 +10,10 @@ import (
 func HandleRequest(ctx context.Context, event Request) (Response, error) {
 	log.Printf("Request: %+v\n", event)
 
+	if isDelegate() {
+		return delegateRemote(event)
+	}
+
 	switch event.RequestBody.Type {
 	case LAUNCH_REQUEST:
 		return BuildTextResponse("Hallo Miriam"), nil
@@ -22,7 +26,12 @@ func HandleRequest(ctx context.Context, event Request) (Response, error) {
 	return BuildTextResponse("das war wohl nix"), nil
 }
 
+
 func main() {
+	if isClient() {
+		connectToServer()
+	}
+
 	log.Println("Starting FN")
 	lambda.Start(HandleRequest)
 }
