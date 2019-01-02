@@ -7,7 +7,31 @@ import (
 	"github.com/aws/aws-lambda-go/lambda"
 )
 
-func HandleRequest(ctx context.Context, event Request) (Response, error) {
+func AnswerLaunch(text string) Response {
+	return Response{
+		Version: "1.0",
+		ResponseBody: &ResponseBody{
+			OutputSpeech: &OutputSpeech{
+				Type: "PlainText",
+				Text: text,
+			},
+			Card: &Card{
+				Type:  "Simple",
+				Title: "Bodyweight Training",
+				Text:  "SimpleCard",
+			},
+			Reprompt: &Reprompt{
+				OutputSpeech: &OutputSpeech{
+					Type: "PlainText",
+					Text: text,
+				},
+			},
+			ShouldEndSession: false,
+		},
+	}
+}
+
+func HandleRequest(ctx context.Context, event interface{}) (interface{}, error) {
 	log.Printf("Request: %+v\n", event)
 
 	if isDelegate() {
@@ -18,16 +42,16 @@ func HandleRequest(ctx context.Context, event Request) (Response, error) {
 
 	}
 
-	switch event.RequestBody.Type {
+	switch event.(Request).RequestBody.Type {
 	case LAUNCH_REQUEST:
-		return BuildTextResponse("Hallo Miriam"), nil
+		return AnswerLaunch("Willkommen beim Bodyweight Training"), nil
 	case INTENT_REQUEST:
-		name := event.RequestBody.X["intent"].(map[string]interface{})["name"]
+		name := event.(Request).RequestBody.X["intent"].(map[string]interface{})["name"]
 		if name == STOP_INTENT {
-			return BuildTextResponse("ah ein Intent"), nil
+			return AnswerLaunch("ah ein Intent"), nil
 		}
 	}
-	return BuildTextResponse("das war wohl nix"), nil
+	return AnswerLaunch("das war wohl nix"), nil
 }
 
 func main() {

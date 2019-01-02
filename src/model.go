@@ -1,7 +1,5 @@
 package main
 
-import "log"
-
 const LAUNCH_REQUEST = "LaunchRequest"
 const INTENT_REQUEST = "IntentRequest"
 const STOP_INTENT = "AMAZON.StopIntent"
@@ -50,7 +48,7 @@ type OutputSpeech struct {
 type Card struct {
 	Type    string `json:"type"`
 	Title   string `json:"title"`
-	Content string `json:"content"`
+	Content string `json:"content,omitempty"`
 	Text    string `json:"text,omitempty"`
 	Image   []byte `json:"image,omitempty"`
 }
@@ -58,42 +56,22 @@ type Card struct {
 type Response struct {
 	Version           string            `json:"version"`
 	SessionAttributes map[string]string `json:"sessionAttributes,omitempty"`
-	ResponseBody      ResponseBody      `json:"response"`
+	ResponseBody      *ResponseBody     `json:"response"`
 }
 
 type Reprompt struct {
-	OutputSpeech OutputSpeech `json:"outputSpeech"`
+	OutputSpeech *OutputSpeech `json:"outputSpeech,omitempty"`
 }
 
 type ResponseBody struct {
-	OutputSpeech     OutputSpeech `json:"outputSpeech,omitempty"`
-	Card             Card         `json:"card,omitempty"`
-	Reprompt         Reprompt     `json:"reprompt,omitempty"`
-	ShouldEndSession bool         `json:"shouldEndSession,omitempty"`
+	OutputSpeech     *OutputSpeech `json:"outputSpeech,omitempty"`
+	Card             *Card         `json:"card,omitempty"`
+	Reprompt         *Reprompt     `json:"reprompt,omitempty"`
+	ShouldEndSession bool          `json:"shouldEndSession"`
 }
 
-func BuildTextResponse(text string) Response {
-	log.Printf("We build a Textresponse with: %s\n", text)
-	r := Response{
-		Version: "1.0",
-		ResponseBody: ResponseBody{
-			OutputSpeech: OutputSpeech{
-				Type: "PlainText",
-				Text: text,
-			},
-		},
-	}
-	log.Printf("R: %+v", r)
-	return r
-}
 
-func BuildRequest(requestType string) Request {
-	return Request{
-		RequestBody: RequestBody{
-			Type: requestType,
-		},
-	}
-}
+
 
 type DBItem struct {
 	ID    string `json:"id"`

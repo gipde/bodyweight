@@ -60,7 +60,7 @@ func isClient() bool {
 Connect as Client
 */
 func connectToServer() {
-	client, err := rpc.Dial("tcp", "localhost:1235")
+	client, err := rpc.Dial("tcp", "192.168.178.30:1234")
 	resp := new(messages.InvokeResponse)
 	req := messages.InvokeRequest{
 		Payload: []byte(launchRequest),
@@ -77,7 +77,7 @@ func connectToServer() {
 	os.Exit(0)
 }
 
-func delegateRemote(req Request) (Response, error) {
+func delegateRemote(req interface{}) (interface{}, error) {
 	client, err := rpc.Dial("tcp", "yrnrwxodb39dwkmr.myfritz.net:1234")
 	defer client.Close()
 	if err != nil {
