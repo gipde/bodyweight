@@ -73,8 +73,7 @@ func HandleRequest(ctx context.Context, event Request) (interface{}, error) {
 	if isDelegate() {
 		log.Println("we delegate")
 		result, err := delegateRemote(event)
-		json.
-		log.Println("and got result: ", )
+		log.Println("and got result: ")
 		return result, err
 	}
 
