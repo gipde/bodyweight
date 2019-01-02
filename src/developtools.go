@@ -73,7 +73,8 @@ func connectToServer() {
 	if err != nil {
 		log.Println("Error: ", err)
 	}
-	log.Printf("Response %+v", string(resp.Payload))
+	log.Printf("Response.Payload %+v", string(resp.Payload))
+	log.Printf("Response.Error %+v", resp.Error)
 	os.Exit(0)
 }
 
@@ -96,6 +97,8 @@ func delegateRemote(req interface{}) (interface{}, error) {
 	err = client.Call("Function.Invoke", iReq, iResp)
 	if err != nil {
 		log.Println("Error: ", err)
+	} else {
+		log.Println("result: ", string(iResp.Payload))
 	}
 
 	// unmarshal to response object

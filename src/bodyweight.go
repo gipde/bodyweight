@@ -7,13 +7,13 @@ import (
 	"github.com/aws/aws-lambda-go/lambda"
 )
 
-func AnswerLaunch(text string) Response {
+func getBaseResponse() Response {
 	return Response{
 		Version: "1.0",
-		ResponseBody: &ResponseBody{
+		ResponseBody: ResponseBody{
 			OutputSpeech: &OutputSpeech{
 				Type: "PlainText",
-				Text: text,
+				Text: "",
 			},
 			Card: &Card{
 				Type:  "Simple",
@@ -23,7 +23,7 @@ func AnswerLaunch(text string) Response {
 			Reprompt: &Reprompt{
 				OutputSpeech: &OutputSpeech{
 					Type: "PlainText",
-					Text: text,
+					Text: "",
 				},
 			},
 			ShouldEndSession: false,
@@ -31,27 +31,69 @@ func AnswerLaunch(text string) Response {
 	}
 }
 
-func HandleRequest(ctx context.Context, event interface{}) (interface{}, error) {
-	log.Printf("Request: %+v\n", event)
+func EndSession(text string) Response {
+	r := AnswerText(text)
+	r.ResponseBody.ShouldEndSession = true
+	return r
+}
+
+func AnswerText(text string) Response {
+	r := getBaseResponse()
+	r.ResponseBody.OutputSpeech.Text = text
+	r.ResponseBody.Reprompt.OutputSpeech.Text = text
+	return r
+}
+
+func (r Response) delegate() Response {
+	m := make(map[string]Slot)
+	m["user"] = Slot{
+		Name: "user",
+		//		Value:              "Vera",
+		ConfirmationStatus: "NONE",
+	}
+	r.ResponseBody.Directives = []Directive{
+		Directive{
+			Type: "Dialog.Delegate",
+			UpdatedIntent: Intent{
+				Name:               "StartTraining",
+				ConfirmationStatus: "NONE",
+				Slots:              m,
+			},
+		}}
+	return r
+}
+
+func HandleRequest(ctx context.Context, event Request) (interface{}, error) {
+	if event.RequestBody.Type == "IntentRequest" {
+		log.Printf("Intent: %+v\n", event.RequestBody.Intent.Name)
+	} else {
+		log.Printf("Request: %+v\n", event.RequestBody.Type)
+	}
 
 	if isDelegate() {
 		log.Println("we delegate")
 		result, err := delegateRemote(event)
-		log.Println("and got result: ", result)
+		json.
+		log.Println("and got result: ", )
 		return result, err
-
 	}
 
-	switch event.(Request).RequestBody.Type {
+	switch event.RequestBody.Type {
 	case LAUNCH_REQUEST:
-		return AnswerLaunch("Willkommen beim Bodyweight Training"), nil
+		log.Println("a launch Request")
+		return AnswerText("Willkommen beim Bodyweight Training").delegate(), nil
 	case INTENT_REQUEST:
-		name := event.(Request).RequestBody.X["intent"].(map[string]interface{})["name"]
-		if name == STOP_INTENT {
-			return AnswerLaunch("ah ein Intent"), nil
+		switch event.RequestBody.Intent.Name {
+		case STOP_INTENT:
+			return EndSession("Auf Wiedersehen und bis bald"), nil
+		case HELP_INTENT:
+			return AnswerText("ach du brauchst Hilfe?"), nil
+		case START_TRAINING:
+			log.Println("Starte als User: ", event.RequestBody.Intent.Slots["user"].Value)
+			return AnswerText("ich freue mich").delegate(), nil
 		}
 	}
-	return AnswerLaunch("das war wohl nix"), nil
+	return AnswerText("das war wohl nix"), nil
 }
 
 func main() {
