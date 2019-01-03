@@ -78,7 +78,7 @@ func connectToServer() {
 	os.Exit(0)
 }
 
-func delegateRemote(req interface{}) (interface{}, error) {
+func delegateRemote(req interface{}) (Response, error) {
 	client, err := rpc.Dial("tcp", "yrnrwxodb39dwkmr.myfritz.net:1234")
 	defer client.Close()
 	if err != nil {
@@ -97,12 +97,11 @@ func delegateRemote(req interface{}) (interface{}, error) {
 	err = client.Call("Function.Invoke", iReq, iResp)
 	if err != nil {
 		log.Println("Error: ", err)
-	} else {
-		log.Println("result: ", string(iResp.Payload))
 	}
 
 	// unmarshal to response object
 	var r = Response{}
 	json.Unmarshal(iResp.Payload, &r)
+
 	return r, err
 }

@@ -5,6 +5,8 @@ const INTENT_REQUEST = "IntentRequest"
 const STOP_INTENT = "AMAZON.StopIntent"
 const HELP_INTENT = "AMAZON.HelpIntent"
 const START_TRAINING = "StartTraining"
+const AUDIO_TEST = "AudioTest"
+const SESSION_END = "SessionEndedRequest"
 
 type Request struct {
 	Version     string      `json:"version"`
@@ -31,14 +33,14 @@ type Error struct {
 
 type Intent struct {
 	Name               string          `json:"name"`
-	ConfirmationStatus string          `json:"confirmationStatus"`
+	ConfirmationStatus string          `json:"confirmationStatus,omitempty"`
 	Slots              map[string]Slot `json:"slots",omitEmpty`
 }
 
 type Slot struct {
 	Name               string      `json:"name"`
 	Value              string      `json:"value,omitempty"`
-	ConfirmationStatus string      `json:"confirmationStatus"`
+	ConfirmationStatus string      `json:"confirmationStatus,omitempty"`
 	Resolutions        interface{} `json:"resolutions,omitempty"`
 }
 
@@ -78,10 +80,10 @@ type Application struct {
 }
 
 type OutputSpeech struct {
-	Type          string `json:"type"`
-	Text          string `json:"text"`
-	SSML          string `json:"ssml,omitempty"`
-	playBehaviour string `json:"playBehaviour,omitempty"`
+	Type         string `json:"type"`
+	Text         string `json:"text"`
+	SSML         string `json:"ssml,omitempty"`
+	PlayBehavior string `json:"playBehavior,omitempty"`
 }
 
 type Image struct {
@@ -93,7 +95,7 @@ type Card struct {
 	Title   string `json:"title"`
 	Content string `json:"content,omitempty"`
 	Text    string `json:"text,omitempty"`
-	Image   Image  `json:"image,omitempty"`
+	Image   *Image `json:"image,omitempty"`
 }
 
 type Response struct {
@@ -114,11 +116,23 @@ type ResponseBody struct {
 	ShouldEndSession bool          `json:"shouldEndSession"`
 }
 
+type Stream struct {
+	URL                   string `json:"url"`
+	Token                 string `json:"token"`
+	ExpectedPreviousToken string `json:"expectedPreviousToken,omitempty"`
+	OffsetInMilliseconds  int    `json:"offsetInMilliseconds"`
+}
+type AudioItem struct {
+	Stream *Stream `json:"stream,omitempty"`
+}
+
 type Directive struct {
-	Type          string `json:"type"`
-	SlotToElicit  string `json:"slotToElicit,omitempty"`
-	SlotToConfirm string `json:"slotToConfirm,omitempty"`
-	UpdatedIntent Intent `json:"updatedIntent"`
+	Type          string     `json:"type"`
+	PlayBehavior  string     `json:"playBehavior,omitempty"`
+	SlotToElicit  string     `json:"slotToElicit,omitempty"`
+	SlotToConfirm string     `json:"slotToConfirm,omitempty"`
+	UpdatedIntent *Intent    `json:"updatedIntent,omitempty"`
+	AudioItem     *AudioItem `json:"audioItem,omitempt"`
 }
 
 type DBItem struct {
