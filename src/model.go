@@ -4,9 +4,14 @@ const LAUNCH_REQUEST = "LaunchRequest"
 const INTENT_REQUEST = "IntentRequest"
 const STOP_INTENT = "AMAZON.StopIntent"
 const HELP_INTENT = "AMAZON.HelpIntent"
+const FALLBACK_INTENT = "AMAZON.FallbackIntent"
 const START_TRAINING = "StartTraining"
+const START_EXERCISE = "StartExercise"
 const AUDIO_TEST = "AudioTest"
 const SESSION_END = "SessionEndedRequest"
+const AUDIOPLAYER_STARTED = "AudioPlayer.PlaybackStarted"
+const AUDIOPLAYER_NEARLYFINISHED = "AudioPlayer.PlaybackNearlyFinished"
+const AUDIOPLAYER_FINISHED = "AudioPlayer.PlaybackFinished"
 
 type Request struct {
 	Version     string      `json:"version"`
@@ -34,14 +39,33 @@ type Error struct {
 type Intent struct {
 	Name               string          `json:"name"`
 	ConfirmationStatus string          `json:"confirmationStatus,omitempty"`
-	Slots              map[string]Slot `json:"slots",omitEmpty`
+	Slots              map[string]Slot `json:"slots,omitEmpty"`
 }
 
 type Slot struct {
 	Name               string      `json:"name"`
 	Value              string      `json:"value,omitempty"`
 	ConfirmationStatus string      `json:"confirmationStatus,omitempty"`
-	Resolutions        interface{} `json:"resolutions,omitempty"`
+	Resolutions        Resolutions `json:"resolutions,omitempty"`
+}
+
+type Resolutions struct {
+	ResolutionsPerAuthority []ResolutionsPerAuthority `json:"resolutionsPerAuthority"`
+}
+
+type ResolutionsPerAuthority struct {
+	Authority string        `json:"authority"`
+	Status    Status        `json:"status"`
+	Values    []map[string]Value `json:"values"`
+}
+
+type Status struct {
+	Code string `json:"code"`
+}
+
+type Value struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
 }
 
 type Context struct {
@@ -99,9 +123,9 @@ type Card struct {
 }
 
 type Response struct {
-	Version           string            `json:"version"`
-	SessionAttributes map[string]string `json:"sessionAttributes,omitempty"`
-	ResponseBody      ResponseBody      `json:"response"`
+	Version           string                 `json:"version"`
+	SessionAttributes map[string]interface{} `json:"sessionAttributes,omitempty"`
+	ResponseBody      ResponseBody           `json:"response"`
 }
 
 type Reprompt struct {
