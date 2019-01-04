@@ -42,15 +42,8 @@ func (r *Response) withSimpleCard() *Response {
 	return r
 }
 
-func (r *Response) speak(text string) *Response {
-	r.ResponseBody.OutputSpeech = &OutputSpeech{
-		Type: "PlainText",
-		Text: text,
-	}
-	return r
-}
 
-func (r *Response) ssml(payload string) *Response {
+func (r *Response) speak(payload string) *Response {
 	r.ResponseBody.OutputSpeech = &OutputSpeech{
 		Type: "SSML",
 		SSML: "<speak>" + payload + "</speak>",
@@ -73,10 +66,11 @@ func (r *Response) setSessionAttribute(key string, value interface{}) *Response 
 
 // provide prompt speech to the user if no response for 8 seconds
 func (r *Response) reprompt(text string) *Response {
+
 	r.ResponseBody.Reprompt = &Reprompt{
 		OutputSpeech: &OutputSpeech{
-			Type: "PlainText",
-			Text: text,
+			Type: "SSML",
+			SSML: "<speak>"+text+"</speak>",
 		},
 	}
 	return r

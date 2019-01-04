@@ -146,3 +146,19 @@ func TestUnmarshal(t *testing.T) {
 	log.Printf("%+v\n\n", r)
 	log.Printf("%+v\n\n", r.RequestBody.Intent.Slots["ex_number"].Resolutions.ResolutionsPerAuthority[0].Values[0]["value"].ID)
 }
+
+func TestTrainings(t *testing.T) {
+	for tn, training := range Trainings[:1] {
+		for wn, week := range training.TrainingWeeks {
+			for dn, day := range week.TrainingDays {
+				for en, exercise := range day.Exercises {
+					log.Printf("%d %d %d %d - %s, %s, %s, %d %s - %s", tn, wn, dn, en,
+						week.Description, day.Method, day.Kind, exercise.Page, exercise.Name, exercise.Comment)
+				}
+				log.Println()
+			}
+
+		}
+
+	}
+}

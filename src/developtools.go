@@ -48,6 +48,7 @@ var launchRequest = `{
 	}
   }`
 
+
 func isDelegate() bool {
 	return os.Getenv("DELEGATE") != ""
 }
