@@ -148,17 +148,21 @@ func TestUnmarshal(t *testing.T) {
 }
 
 func TestTrainings(t *testing.T) {
-	for tn, training := range Trainings[:1] {
-		for wn, week := range training.TrainingWeeks {
-			for dn, day := range week.TrainingDays {
-				for en, exercise := range day.Exercises {
-					log.Printf("%d %d %d %d - %s, %s, %s, %d %s - %s", tn, wn, dn, en,
-						week.Description, day.Method, day.Kind, exercise.Page, exercise.Name, exercise.Comment)
+	var daycount, excount int
+	for wn, week := range Trainings {
+		for dn, day := range week.TrainingDays {
+			daycount++
+			for pn, program := range day.Exercises[1:2] { // nur Basisprogramm
+				for en, exercise := range program {
+					excount++
+					e := Exes[exercise.Exercise]
+					log.Printf("%d %d %d %d - %s, %s, %+v, %d %s - %s", wn, dn, pn, en,
+						week.Description, day.Method.name(), e.Type.name(), e.Page, e.Name, exercise.Note)
 				}
-				log.Println()
 			}
-
+			log.Println()
 		}
-
 	}
+	log.Println("Day Anzahl:", daycount)
+	log.Println("Ex Anzahl:", excount)
 }

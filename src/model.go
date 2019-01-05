@@ -164,25 +164,3 @@ type DBItem struct {
 	Value string `json:"value"`
 }
 
-type Exercise struct {
-	Name    string `json:"name"`
-	Page    int    `json:"page"`
-	Comment string `json:"comment"`
-}
-
-type TrainingDay struct {
-	Kind          string     `json:"kind"`
-	Method        string     `json:"method"`
-	Exercises     []Exercise `json:"exercies"`
-	MinutesNeeded int        `json:"minutesNeeded"`
-}
-
-type TrainingWeek struct {
-	TrainingDays []TrainingDay `json:"trainingDays"`
-	Description  string        `json:"description"`
-}
-
-type Training struct {
-	Title         string         `json:"title"`
-	TrainingWeeks []TrainingWeek `json:"trainingWeeks"`
-}
