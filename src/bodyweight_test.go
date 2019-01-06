@@ -152,7 +152,7 @@ func TestTrainings(t *testing.T) {
 	for wn, week := range Trainings {
 		for dn, day := range week.TrainingDays {
 			daycount++
-			for pn, program := range day.Exercises[1:2] { // nur Basisprogramm
+            for pn, program := range day.Exercises[0:4] { // nur Basisprogramm
 				for en, exercise := range program {
 					excount++
 					e := Exes[exercise.Exercise]
