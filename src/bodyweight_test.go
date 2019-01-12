@@ -168,23 +168,4 @@ func TestTrainings(t *testing.T) {
 	log.Println("Ex Anzahl:", excount)
 }
 
-func TestItems(t *testing.T) {
-	for i := 0; i < 10; i++ {
 
-		err := createEntry("uid", "name", STATE_ENTRY, BASISPROGRAM, i, 1, 1, "")
-		if err != nil {
-			log.Println(err)
-		}
-	}
-}
-
-func TestGetItems(t *testing.T) {
-
-    // entries:= getEntries("uid", STATE_ENTRY)
-    // for _,entry := range *entries {
-    //     log.Printf("%+v",entry)
-    // }
-
-    // entry:= getLastUsedEntry("uid")
-    // log.Printf("Latest: %+v",entry)
-}

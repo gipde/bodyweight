@@ -1,5 +1,9 @@
 package main
 
+import (
+	"fmt"
+)
+
 type Exercise struct {
 	Number     int          `json:"number"`
 	Name       string       `json:"name"`
@@ -27,9 +31,9 @@ type TrainingWeek struct {
 
 type TrainingState struct {
 	Level TrainingLevel `json:"level"`
-	Week int    `json:"week"`
-	Day  int    `json:"day"`
-	Unit int    `json:"unit"`
+	Week  int           `json:"week"`
+	Day   int           `json:"day"`
+	Unit  int           `json:"unit"`
 }
 
 type TrainingMethod int
@@ -43,11 +47,11 @@ const (
 )
 
 var trainingMethods = []string{
-	"Stufenintervall",
-	"Intervallsatz",
-	"Supersatz",
-	"Zirkelintervall",
-	"Hochintensitätssatz",
+	"Stufenintervalle",
+	"Intervallsätze",
+	"den Supersatz",
+	"Zirkelintervalle",
+	"Hochintensitätssätze",
 }
 
 func (t TrainingMethod) name() string {
@@ -188,15 +192,19 @@ const (
 	VORGEBEUGTES_SEITLICHES_SCHULTERHEBEN
 )
 
+func (n ExerciseEnum) Name() string {
+	return Exes[n].Name
+}
+
 var Exes []Exercise = []Exercise{
 	Exercise{
-		Name:       "Liegestütz mit eröhten Händen",
+		Name:       "Liegestütz mit erhöhten Händen",
 		Type:       DRUECKEN,
 		Page:       112,
 		Difficulty: 1,
 	},
 	Exercise{
-		Name:       "Türziehen",
+		Name:       "Tür ziehen",
 		Type:       ZIEHEN,
 		Page:       145,
 		Difficulty: 1,
@@ -696,9 +704,56 @@ var Exes []Exercise = []Exercise{
 	},
 }
 
+func getCurrentState(current *TrainingState) string {
+	return ""
+}
 
-func getNextTraining(last *TrainingState) *TrainingState {
+func checkState(state *TrainingState) error {
+	return nil
+}
 
+func announceDailyTraining(current *TrainingState) string {
+	if checkState(current) != nil {
+		return "Dein Trainingszustand enthält einen Fehler. Wende dich bitte an den Administrator"
+	}
+	week := Trainings[current.Week]
+	day := Trainings[current.Week].TrainingDays[current.Day]
+	exes := day.Exercises[current.Level]
+
+	text := fmt.Sprintf("Du bist derzeit in der %d. Trainingswoche und beim %d. Übungstag angelangt. ",current.Week+1,current.Day+1)
+	
+	text += fmt.Sprintf(`Das Training steht in dieser Woche unter dem 
+	Motto "%s" und ist heute mit %s durchzuführen. `, week.Description, day.Method.name())
+
+	if day.Method==STUFENINTERVALL {
+		switch current.Level {
+			case BASISPROGRAM: 
+				text += fmt.Sprintf("Im %s dauern die Intervalle 4 Minuten und 30 Sekunden. ",current.Level.name())
+			case FIRSTCLASS: 
+				text += fmt.Sprintf(`In der <lang xml:lang="en-US">%s</lang> dauern die Intervalle 5 Minuten und 30 Sekunden. `,current.Level.name())
+			case MASTERCLASSC: 
+				text += fmt.Sprintf(`In der <lang xml:lang="en-US">%s</lang> dauern die Intervalle 6 Minuten und 30 Sekunden. `,current.Level.name())
+			case CHIEFCLASS: 
+				text += fmt.Sprintf(`In der <lang xml:lang="en-US">%s</lang> dauern die Intervalle 7 Minuten und 30 Sekunden. `,current.Level.name())
+		}
+	}
+
+	text += fmt.Sprintf("Insgesamt musst Du %d verschiedene Übungen durchführen. ", len(exes))
+
+	text += fmt.Sprintf("Die erste Übung ist: %s. ",exes[0].Exercise.Name())
+	text += fmt.Sprintf("Die zweite Übung ist: %s. ",exes[1].Exercise.Name())
+	text += fmt.Sprintf("Die dritte Übung ist: %s. ",exes[2].Exercise.Name())
+	text += fmt.Sprintf("Die vierte Übung ist: %s. ",exes[3].Exercise.Name())
+
+	text += "Wenn Du beginnen möchtest, sage: ich bin bereit."
+
+	return text
+
+}
+
+func switchToNextTraining(last *TrainingState) *TrainingState {
+	// inc values
+	// return getCurrent
 	return nil
 }
 

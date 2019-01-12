@@ -3,8 +3,6 @@ package main
 import (
 	"fmt"
 	"log"
-	"math/rand"
-	"strconv"
 	"time"
 
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
@@ -21,30 +19,17 @@ const (
 	tableName = "bodyweight"
 )
 
-type EntryType int
-
-func (t EntryType) Str() string {
-	return strconv.Itoa(int(t))
-}
-
-const (
-	LOG_ENTRY EntryType = iota
-	STATE_ENTRY
-	START_ENTRY
+var (
+	sess *dynamodb.DynamoDB
 )
 
 type Entry struct {
 	AlexaID       string        `json:"alexa_id"`
 	Date          time.Time     `json:"date"`
 	UserName      string        `json:"username"`
-	Type          EntryType     `json:"typ"`
 	TrainingState TrainingState `json:"training_state"`
 	Desc          string        `json:"desc"`
 }
-
-const (
-	letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-)
 
 func getSession() *dynamodb.DynamoDB {
 	sess, err := session.NewSession(&aws.Config{
@@ -61,8 +46,8 @@ func getSession() *dynamodb.DynamoDB {
 
 }
 
-func getLastUsedEntry(uid string) *Entry {
-	entries := getEntries(uid, STATE_ENTRY)
+func getLastUsedEntry(alexa_id string) *Entry {
+	entries := getEntries(alexa_id)
 	if entries == nil {
 		return nil
 	}
@@ -76,15 +61,15 @@ func getLastUsedEntry(uid string) *Entry {
 	return &latest
 }
 
-func getEntries(uid string, typ EntryType) *[]Entry {
+func getEntries(alexa_id string) *[]Entry {
+
 	result, err := sess.Scan(&dynamodb.ScanInput{
-		TableName:        aws.String("bodyweight"),
-		FilterExpression: aws.String("typ = :t AND uid = :u"),
+		TableName:        aws.String(tableName),
+		FilterExpression: aws.String("alexa_id = :u"),
 		ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
 			":u": {
-				S: aws.String(uid),
+				S: aws.String(alexa_id),
 			},
-			":t": {N: aws.String(typ.Str())},
 		},
 	})
 	// something found?
@@ -106,23 +91,51 @@ func getEntries(uid string, typ EntryType) *[]Entry {
 	return nil // no entries
 }
 
-func createEntry(uid string, name string, t EntryType, level TrainingLevel, week, day, unit int, desc string) error {
+func deleteItem(alexaID string, date time.Time) error {
+	delitem := &dynamodb.DeleteItemInput{
+		TableName: aws.String(tableName),
+		Key: map[string]*dynamodb.AttributeValue{
+			"alexa_id" : {
+				S:aws.String(alexaID),
+			},
+			"date" : {
+				S:aws.String(date.Format("2006-01-02T15:04:05.999999-07:00")),
+			},
+		},
+	}
+
+	_, err := sess.DeleteItem(delitem)
+	if err != nil {
+		log.Println("Error:", err)
+		return err
+	}
+	return nil
+}
+
+func deleteAllEntries(alexaID string) error {
+	entries:= getEntries(alexaID) 
+	if entries!=nil {
+		for _,entry:=range *entries{
+			err:=deleteItem(entry.AlexaID, entry.Date)
+			if err!=nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+func createEntry(alexa_id string, name string, training TrainingState, desc string) error {
 
 	entry := Entry{
-		AlexaID:  uid,
-		Date:     time.Now(),
-		UserName: name,
-		Type:     t,
-		TrainingState: TrainingState{
-			Level: level,
-			Week:  week,
-			Day:   day,
-			Unit:  unit,
-		},
-		Desc: desc,
+		AlexaID:       alexa_id,
+		Date:          time.Now(),
+		UserName:      name,
+		TrainingState: training,
+		Desc:          desc,
 	}
+
 	av, err := dynamodbattribute.MarshalMap(entry)
-	log.Printf("Entry: %+v",av)
 	if err != nil {
 		log.Println("Error Marshalling: ", err)
 		return err
@@ -130,7 +143,7 @@ func createEntry(uid string, name string, t EntryType, level TrainingLevel, week
 
 	input := &dynamodb.PutItemInput{
 		Item:      av,
-		TableName: aws.String("bodyweight"),
+		TableName: aws.String(tableName),
 	}
 
 	_, err = sess.PutItem(input)
@@ -143,16 +156,8 @@ func createEntry(uid string, name string, t EntryType, level TrainingLevel, week
 	return nil
 }
 
-func genRowId() string {
-	result := make([]byte, 3)
-	for i := 0; i < 3; i++ {
-		result[i] = letterBytes[rand.Intn(52)]
-	}
-	num := time.Now().Unix()<<12 + rand.Int63n(512)
-	return string(result) + strconv.FormatInt(num, 10)
-}
-
 func existsDB(name string) bool {
+
 	result, err := sess.ListTables(&dynamodb.ListTablesInput{})
 
 	if err != nil {
@@ -168,7 +173,6 @@ func existsDB(name string) bool {
 }
 
 func createDBIfNotExists() {
-
 	if !existsDB(tableName) {
 		log.Println("Creating DB-Table: ", tableName)
 
@@ -213,16 +217,7 @@ func createDBIfNotExists() {
 
 }
 
-var sess *dynamodb.DynamoDB
-
-func initDB() {
-	// get DB-Session
+func init() {
 	sess = getSession()
 	createDBIfNotExists()
-
-}
-
-func init() {
-	rand.Seed(time.Now().Unix())
-	initDB()
 }

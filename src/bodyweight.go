@@ -33,7 +33,7 @@ func handleStartTraining(ctx context.Context, event Request) (interface{}, error
 	if user.Value != "" {
 		log.Println("we got user from Alexa")
 		user.ConfirmationStatus = "CONFIRMED"
-		createEntry(event.Session.User.UserID, user.Value, STATE_ENTRY, BASISPROGRAM, 0, 0, 0, "Start")
+		createEntry(event.Session.User.UserID, user.Value, TrainingState{Level:BASISPROGRAM,Week:0,Day:0,Unit:0}, "Start")
 	}
 
 	entry := getLastUsedEntry(event.Session.User.UserID)
@@ -53,12 +53,12 @@ func handleStartTraining(ctx context.Context, event Request) (interface{}, error
 
 	// zeige zustand auf (tag + )
 
-	text := fmt.Sprintf("Herzlich Willkommen %s. Wir starten sofort mit der nächsten Übung. ", user.Value) + timeText(4*60+30)
-	return responseBuilder().speak(text).
-		reprompt("wenn du beginnen moechtest, sage starte die erste Übung"), nil
+	text := fmt.Sprintf("Herzlich Willkommen zurück %s. ", user.Value)
+	text += announceDailyTraining(&entry.TrainingState)
+	return responseBuilder().speak(text), nil
 
 	//erkläre Übung
-	// sind sie bereit?
+	// sind sie bereit? sage: ich bin bereit
 	// starte Übung
 	// spiele audio playback
 
@@ -67,7 +67,7 @@ func handleStartTraining(ctx context.Context, event Request) (interface{}, error
 func defineUser(ctx context.Context, event Request) (interface{}, error) {
 	user := event.RequestBody.Intent.Slots["user"]
 	log.Printf("Session User: %+v", user.Value)
-	createEntry(event.Session.User.UserID, user.Value, STATE_ENTRY, BASISPROGRAM, 0, 0, 0, "Start")
+	createEntry(event.Session.User.UserID, user.Value, TrainingState{Level:BASISPROGRAM,Week:0,Day:0,Unit:0}, "Start")
 	return responseBuilder().
 		speak(fmt.Sprintf("Hallo %s. Schön dass Du hier bist", user.Value)), nil
 
