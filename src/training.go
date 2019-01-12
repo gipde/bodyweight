@@ -6,7 +6,7 @@ type Exercise struct {
 	Type       TrainingType `json:"type"`
 	Page       int          `json:"page"`
 	Comment    string       `json:"comment"`
-	Difficulty int          `json:"difficulty`
+	Difficulty int          `json:"difficulty"`
 }
 
 type TExercise struct {
@@ -23,6 +23,13 @@ type TrainingDay struct {
 type TrainingWeek struct {
 	TrainingDays []TrainingDay `json:"trainingDays"`
 	Description  string        `json:"description"`
+}
+
+type TrainingState struct {
+	Level TrainingLevel `json:"level"`
+	Week int    `json:"week"`
+	Day  int    `json:"day"`
+	Unit int    `json:"unit"`
 }
 
 type TrainingMethod int
@@ -687,6 +694,12 @@ var Exes []Exercise = []Exercise{
 		Page:       156,
 		Difficulty: 1,
 	},
+}
+
+
+func getNextTraining(last *TrainingState) *TrainingState {
+
+	return nil
 }
 
 var Trainings = []TrainingWeek{

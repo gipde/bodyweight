@@ -11,45 +11,65 @@ import (
 
 const debug = true
 
+const SPEECH_DEFINE_USER = `Du benutzt das <lang xml:lang="en-US">Bodyweight Training</lang> zum ersten Mal. 
+	Du solltest zunächst deinen Namen festlegen. Sage hierzu bitte <break time="500ms"/>mein Name ist<break time="500ms"/> und deinen Vornamen. `
 const SPEECH_START_TRAINING = `
 	Du kannst die Trainings mit 
 	<break strength="x-strong"/>starte das training<break strength="x-strong"/>
-	starten.`
+	starten. `
 
-const SPEECH_UNKNOWN = "Ich kann dich leider nicht verstehen."
+const SPEECH_UNKNOWN = "Ich kann dich leider nicht verstehen. "
 
-const SPEECH_EXIT_IF_MUTE = "Wenn Du nichts mehr sagts, wird das Programm beendet."
+const SPEECH_EXIT_IF_MUTE = "Wenn Du nichts mehr sagts, wird das Programm beendet. "
 
-const SPEECH_ENDE = "Auf Wiedersehen und bis bald."
+const SPEECH_ENDE = "Auf Wiedersehen und bis bald. "
 
-const SPEECH_WELCOME = `"Willkommen beim <lang xml:lang="en-US">Bodyweight Training</lang>.`
+const SPEECH_WELCOME = `Willkommen beim <lang xml:lang="en-US">Bodyweight Training</lang>. `
+
+const SPEECH_PERSONAL = `%s, es ist schön, dass du wieder da bist. `
 
 func handleStartTraining(ctx context.Context, event Request) (interface{}, error) {
-
 	user := event.RequestBody.Intent.Slots["user"]
-	log.Printf("Session User: %+v", user.Value)
 	if user.Value != "" {
+		log.Println("we got user from Alexa")
+		user.ConfirmationStatus = "CONFIRMED"
+		createEntry(event.Session.User.UserID, user.Value, STATE_ENTRY, BASISPROGRAM, 0, 0, 0, "Start")
+	}
+
+	entry := getLastUsedEntry(event.Session.User.UserID)
+	if entry != nil {
+		log.Println("we got user from DB")
+		user.Value = entry.UserName
 		user.ConfirmationStatus = "CONFIRMED"
 	}
 
-	if event.RequestBody.DialogState != "COMPLETED" {
+	log.Printf("Session User: %+v", user.Value)
+	log.Printf("Complete State: %s", event.RequestBody.DialogState)
+
+	// noch kein User festgelegt
+	if user.Value == "" {
 		return responseBuilder().addDelegateDirective(&event.RequestBody.Intent, false), nil
 	}
-	training := event.RequestBody.Intent.Slots["ex_number"].Resolutions.ResolutionsPerAuthority[0].Values[0]["value"].ID
-	log.Printf("Training: %+v", training)
 
-	//get zustand aus db für den User
 	// zeige zustand auf (tag + )
 
-	text := fmt.Sprintf("Herzlich Willkommen %s. Wir starten mit der ersten Übung. ", user) + timeText(4*60+30)
+	text := fmt.Sprintf("Herzlich Willkommen %s. Wir starten sofort mit der nächsten Übung. ", user.Value) + timeText(4*60+30)
 	return responseBuilder().speak(text).
-		setSessionAttribute("user", user).
 		reprompt("wenn du beginnen moechtest, sage starte die erste Übung"), nil
 
 	//erkläre Übung
 	// sind sie bereit?
 	// starte Übung
 	// spiele audio playback
+
+}
+
+func defineUser(ctx context.Context, event Request) (interface{}, error) {
+	user := event.RequestBody.Intent.Slots["user"]
+	log.Printf("Session User: %+v", user.Value)
+	createEntry(event.Session.User.UserID, user.Value, STATE_ENTRY, BASISPROGRAM, 0, 0, 0, "Start")
+	return responseBuilder().
+		speak(fmt.Sprintf("Hallo %s. Schön dass Du hier bist", user.Value)), nil
 
 }
 
@@ -76,9 +96,20 @@ func HandleRequest(ctx context.Context, event Request) (interface{}, error) {
 	switch event.RequestBody.Type {
 
 	case LAUNCH_REQUEST:
+
+		entry := getLastUsedEntry(event.Session.User.UserID)
+		if entry == nil {
+			return responseBuilder().
+				speak(SPEECH_WELCOME + SPEECH_DEFINE_USER).
+				reprompt(SPEECH_START_TRAINING + SPEECH_EXIT_IF_MUTE), nil
+
+		}
+
 		return responseBuilder().
-			speak(SPEECH_WELCOME + SPEECH_START_TRAINING).
+			speak(SPEECH_WELCOME + fmt.Sprintf(SPEECH_PERSONAL, entry.UserName) + SPEECH_START_TRAINING).
 			reprompt(SPEECH_START_TRAINING + SPEECH_EXIT_IF_MUTE), nil
+
+		// return responseBuilder().speak(timeText(4*60 + 30)), nil
 
 	case SESSION_END:
 		log.Println("End-Reason: ", event.RequestBody.Reason)
@@ -102,6 +133,8 @@ func HandleRequest(ctx context.Context, event Request) (interface{}, error) {
 					"https://github.com/gipde/bodyweight/raw/master/contrib/alien-spaceship_daniel_simion.mp3"), nil
 		case START_TRAINING:
 			return handleStartTraining(ctx, event)
+		case DEFINE_USER:
+			return defineUser(ctx, event)
 		case FALLBACK_INTENT:
 			return handleUnknown(ctx, event)
 		default:

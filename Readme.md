@@ -19,3 +19,10 @@ running the function:
     this will connect to 0.0.0.0:1234 (where socat ist listen). the request will be forwarded to 127.0.0.1:1234
 
         TESTCLIENT=true go run .
+
+# Sprach Modell
+
+Willkommen ->       name   ja   -> persönliche begrüssung
+                    |
+                            nein   -> Name nachfragen -> Willkommen
+                    

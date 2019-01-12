@@ -68,7 +68,8 @@ func timeText(sec int) string {
 	res += count("start")
 	half := sec / 2
 	count("start")
-	if !debug {
+	// if !debug {
+	if debug {
 		intervall := 30
 		var breakTimeSub int
 		var breakTime int
