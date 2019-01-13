@@ -1,9 +1,11 @@
 # Bodyweight Alexa Handler
+[![Build Status](https://travis-ci.org/gipde/bodyweight.svg?branch=master)](https://travis-ci.org/gipde/bodyweight)
+[![Coverage Status](https://coveralls.io/repos/github/gipde/bodyweight/badge.svg?branch=master)](https://coveralls.io/github/gipde/bodyweight?branch=master)
 
 - individuelles bodyweight training
 
 
-# Commands
+## Commands
 proxy local from 0.0.0.0:1234 to localhost 1234
 
     socat -d -d -x TCP4-LISTEN:1234,fork,bind=192.168.178.30 TCP4:localhost:1234
@@ -20,7 +22,7 @@ running the function:
 
         TESTCLIENT=true go run .
 
-# Sprach Modell
+## Sprach Modell
 
 Willkommen ->       name   ja   -> persönliche begrüssung
                     |
