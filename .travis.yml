@@ -1,7 +1,10 @@
 language: go
 
 go:
-    - master
+  - master
+
+env:
+  - GO111MODULE=on
 
 before_install:
   - cd src 
