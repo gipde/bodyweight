@@ -6,7 +6,10 @@ import (
 	"io/ioutil"
 	"log"
 
+	"github.com/gipde/bodyweight/training"
+
 	"github.com/aws/aws-lambda-go/lambda"
+	"github.com/gipde/bodyweight/database"
 )
 
 const debug = true
@@ -33,10 +36,10 @@ func handleStartTraining(ctx context.Context, event Request) (interface{}, error
 	if user.Value != "" {
 		log.Println("we got user from Alexa")
 		user.ConfirmationStatus = "CONFIRMED"
-		createEntry(event.Session.User.UserID, user.Value, TrainingState{Level:BASISPROGRAM,Week:0,Day:0,Unit:0}, "Start")
+		db.CreateEntry(event.Session.User.UserID, user.Value, training.TrainingState{Level: training.BASISPROGRAM, Week: 0, Day: 0, Unit: 0}, "Start")
 	}
 
-	entry := getLastUsedEntry(event.Session.User.UserID)
+	entry, _ := db.GetLastUsedEntry(event.Session.User.UserID)
 	if entry != nil {
 		log.Println("we got user from DB")
 		user.Value = entry.UserName
@@ -54,7 +57,7 @@ func handleStartTraining(ctx context.Context, event Request) (interface{}, error
 	// zeige zustand auf (tag + )
 
 	text := fmt.Sprintf("Herzlich Willkommen zurück %s. ", user.Value)
-	text += announceDailyTraining(&entry.TrainingState)
+	text += training.AnnounceDailyTraining(&entry.TrainingState)
 	return responseBuilder().speak(text), nil
 
 	//erkläre Übung
@@ -67,7 +70,7 @@ func handleStartTraining(ctx context.Context, event Request) (interface{}, error
 func defineUser(ctx context.Context, event Request) (interface{}, error) {
 	user := event.RequestBody.Intent.Slots["user"]
 	log.Printf("Session User: %+v", user.Value)
-	createEntry(event.Session.User.UserID, user.Value, TrainingState{Level:BASISPROGRAM,Week:0,Day:0,Unit:0}, "Start")
+	db.CreateEntry(event.Session.User.UserID, user.Value, training.TrainingState{Level: training.BASISPROGRAM, Week: 0, Day: 0, Unit: 0}, "Start")
 	return responseBuilder().
 		speak(fmt.Sprintf("Hallo %s. Schön dass Du hier bist", user.Value)), nil
 
@@ -97,7 +100,7 @@ func HandleRequest(ctx context.Context, event Request) (interface{}, error) {
 
 	case LAUNCH_REQUEST:
 
-		entry := getLastUsedEntry(event.Session.User.UserID)
+		entry, _ := db.GetLastUsedEntry(event.Session.User.UserID)
 		if entry == nil {
 			return responseBuilder().
 				speak(SPEECH_WELCOME + SPEECH_DEFINE_USER).
@@ -144,10 +147,13 @@ func HandleRequest(ctx context.Context, event Request) (interface{}, error) {
 	return handleUnknown(ctx, event)
 }
 
+var db database.DB
+
 func init() {
 	if !debug {
 		log.SetOutput(ioutil.Discard)
 	}
+	db = database.NewDynamoDB("bodyweight")
 }
 
 func main() {

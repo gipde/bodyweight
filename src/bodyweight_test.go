@@ -125,21 +125,7 @@ func TestResponseJson(t *testing.T) {
 	log.Println("Json: ", string(json))
 }
 
-func TestTimeHandler(t *testing.T) {
-	tstr := timeText(7*60 + 30)
-	log.Printf("<speak>" + tstr + "</speak>")
-	tstr = timeText(6*60 + 30)
-	log.Printf("<speak>" + tstr + "</speak>")
-	tstr = timeText(5*60 + 30)
-	log.Printf("<speak>" + tstr + "</speak>")
-	tstr = timeText(4*60 + 30)
-	log.Printf("<speak>" + tstr + "</speak>")
-	tstr = timeText(4 * 60)
-	log.Printf("<speak>" + tstr + "</speak>")
-	tstr = timeText(3 * 60)
-	log.Printf("<speak>" + tstr + "</speak>")
 
-}
 
 func TestUnmarshal(t *testing.T) {
 	r := Request{}
@@ -147,25 +133,3 @@ func TestUnmarshal(t *testing.T) {
 	log.Printf("%+v\n\n", r)
 	log.Printf("%+v\n\n", r.RequestBody.Intent.Slots["ex_number"].Resolutions.ResolutionsPerAuthority[0].Values[0]["value"].ID)
 }
-
-func TestTrainings(t *testing.T) {
-	var daycount, excount int
-	for wn, week := range Trainings {
-		for dn, day := range week.TrainingDays {
-			daycount++
-			for pn, program := range day.Exercises[0:4] { // nur Basisprogramm
-				for en, exercise := range program {
-					excount++
-					e := Exes[exercise.Exercise]
-					log.Printf("%d %d %d %d - %s, %s, %+v, %d %s - %s", wn, dn, pn, en,
-						week.Description, day.Method.name(), e.Type.name(), e.Page, e.Name, exercise.Note)
-				}
-			}
-			log.Println()
-		}
-    }
-	log.Println("Day Anzahl:", daycount)
-	log.Println("Ex Anzahl:", excount)
-}
-
-

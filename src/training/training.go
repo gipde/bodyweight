@@ -1,4 +1,4 @@
-package main
+package training
 
 import (
 	"fmt"
@@ -712,7 +712,7 @@ func checkState(state *TrainingState) error {
 	return nil
 }
 
-func announceDailyTraining(current *TrainingState) string {
+func AnnounceDailyTraining(current *TrainingState) string {
 	if checkState(current) != nil {
 		return "Dein Trainingszustand enthält einen Fehler. Wende dich bitte an den Administrator"
 	}

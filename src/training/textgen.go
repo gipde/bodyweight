@@ -1,4 +1,4 @@
-package main
+package training
 
 import "fmt"
 
@@ -68,23 +68,20 @@ func timeText(sec int) string {
 	res += count("start")
 	half := sec / 2
 	count("start")
-	// if !debug {
-	if debug {
-		intervall := 30
-		var breakTimeSub int
-		var breakTime int
-		var line string
-		for sec > intervall {
-			sec--
-			breakTime += 1000
-			if sec%intervall == 0 || sec == half {
-				line, breakTimeSub = addTimeInfo(sec, half, breakTime, breakTimeSub)
-				res += line
-				breakTime = 0
-			}
+	intervall := 30
+	var breakTimeSub int
+	var breakTime int
+	var line string
+	for sec > intervall {
+		sec--
+		breakTime += 1000
+		if sec%intervall == 0 || sec == half {
+			line, breakTimeSub = addTimeInfo(sec, half, breakTime, breakTimeSub)
+			res += line
+			breakTime = 0
 		}
-		res += breakFor(intervall*1000 - 4000 - breakTimeSub)
 	}
+	res += breakFor(intervall*1000 - 4000 - breakTimeSub)
 	res += count("stop")
 	return res
 }
