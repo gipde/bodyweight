@@ -4,9 +4,9 @@ before_install:
   - cd src && go get github.com/mattn/goveralls
 # override default build command
 script:
-  - cd src &&  go test -v ./...
+  - cd src && go test -v -covermode=count -coverprofile=coverage.out ./... 
+  - cd src && $HOME/gopath/bin/goveralls -coverprofile=coverage.out -service=travis-ci
   - go build -o bodyweight.bin src/*.go
-  - cd src && $GOPATH/bin/goveralls -service=travis-ci
 
 deploy:
   - provider: lambda
