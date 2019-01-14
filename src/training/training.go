@@ -12,6 +12,7 @@ func checkState(state *TrainingState) error {
 	return nil
 }
 
+// AnnounceDailyTraining tells about Training Content
 func AnnounceDailyTraining(current *TrainingState) string {
 	if checkState(current) != nil {
 		return "Dein Trainingszustand enthält einen Fehler. Wende dich bitte an den Administrator"
@@ -61,8 +62,10 @@ func timeAsStr(sec int) string {
 	var res string
 	min := sec / 60
 	s := sec % 60
-	if min > 0 {
+	if min > 1 {
 		res += fmt.Sprintf("%d Minuten", min)
+	} else if min > 0 {
+		res += fmt.Sprintf("%d Minute", min)
 	}
 	if s > 0 {
 		if min > 0 {
@@ -70,14 +73,20 @@ func timeAsStr(sec int) string {
 		}
 		res += fmt.Sprintf("%d Sekunden", s)
 	}
-	return res
+	if sec == 0 {
+		res = "Ende"
+	}
+		return res
 }
 
 func count(word string) string {
 	var res string
 	br := "<break time=\"500ms\"/>"
-	for _, r := range []string{"drei", "zwei", "eins"} {
-		res += fmt.Sprintf("%s%s", br, r)
+	for i, r := range []string{"Drei", "Zwei", "Eins"} {
+		res += r
+		if i<2 {
+			res += br
+		}
 	}
 	return res + br + word
 }
@@ -119,7 +128,7 @@ func addTimeInfo(sec, half, breakTime, breakTimeSub int) (string, int) {
 }
 
 func timeText(sec int) string {
-	res := "Du musst die Übung " + timeAsStr(sec) + " durchhalten."
+	res := "Du musst die Übung " + timeAsStr(sec) + " durchhalten. Wir starten jetzt. "
 	res += count("start")
 	half := sec / 2
 	count("start")
