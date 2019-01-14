@@ -103,7 +103,7 @@ func BuildRequest(requestType string, intent string) Request {
 			Type: requestType,
 		},
 	}
-	if requestType == INTENT_REQUEST {
+	if requestType == alexaIntentRequest {
 		r.RequestBody.Intent = Intent{
 			Name: intent,
 		}
@@ -112,14 +112,14 @@ func BuildRequest(requestType string, intent string) Request {
 }
 
 func TestHandler(t *testing.T) {
-	r, _ := HandleRequest(nil, BuildRequest(LAUNCH_REQUEST, ""))
+	r, _ := HandleRequest(nil, BuildRequest(alexaLaunchRequest, ""))
 	log.Printf("Result:  %+v\n", r)
 	json, _ := json.MarshalIndent(r, "", "  ")
 	log.Println("Json: ", string(json))
 }
 
 func TestResponseJson(t *testing.T) {
-	r, _ := HandleRequest(nil, BuildRequest(INTENT_REQUEST, START_TRAINING))
+	r, _ := HandleRequest(nil, BuildRequest(alexaIntentRequest, alexaStartTrainingIntent))
 	log.Printf("Result:  %+v\n", r)
 	json, _ := json.MarshalIndent(r, "", "  ")
 	log.Println("Json: ", string(json))

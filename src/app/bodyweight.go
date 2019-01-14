@@ -14,29 +14,112 @@ import (
 
 const debug = true
 
-const SPEECH_DEFINE_USER = `Du benutzt das <lang xml:lang="en-US">Bodyweight Training</lang> zum ersten Mal. 
+const (
+	speechDefineUser = `Du benutzt das <lang xml:lang="en-US">Bodyweight Training</lang> zum ersten Mal. 
 	Du solltest zunächst deinen Namen festlegen. Sage hierzu bitte <break time="500ms"/>mein Name ist<break time="500ms"/> und deinen Vornamen. `
-const SPEECH_START_TRAINING = `
+	speechStartTraining = `
 	Du kannst die Trainings mit 
 	<break strength="x-strong"/>starte das training<break strength="x-strong"/>
 	starten. `
+	speechUnknown    = "Ich kann dich leider nicht verstehen. "
+	speechExitIfMute = "Wenn Du nichts mehr sagts, wird das Programm beendet. "
+	speechEnde       = "Auf Wiedersehen und bis bald. "
+	speechWelcome    = `Willkommen beim <lang xml:lang="en-US">Bodyweight Training</lang>. `
+	speechPersonal   = `%s, es ist schön, dass du wieder da bist. `
+)
 
-const SPEECH_UNKNOWN = "Ich kann dich leider nicht verstehen. "
+var db database.DB
 
-const SPEECH_EXIT_IF_MUTE = "Wenn Du nichts mehr sagts, wird das Programm beendet. "
+func init() {
+	if !debug {
+		log.SetOutput(ioutil.Discard)
+	}
+	db = database.NewDynamoDB("bodyweight")
+}
 
-const SPEECH_ENDE = "Auf Wiedersehen und bis bald. "
+// Start starts the Lambda Handler
+func Start() {
+	if isClient() {
+		connectToServer()
+	}
 
-const SPEECH_WELCOME = `Willkommen beim <lang xml:lang="en-US">Bodyweight Training</lang>. `
+	log.Println("Starting FN")
+	lambda.Start(HandleRequest)
+}
 
-const SPEECH_PERSONAL = `%s, es ist schön, dass du wieder da bist. `
+// HandleRequest handles every Request / Base-Entry FN
+func HandleRequest(ctx context.Context, event Request) (interface{}, error) {
+
+	if event.RequestBody.Type == "IntentRequest" {
+		log.Printf("Intent: %+v\n", event.RequestBody.Intent.Name)
+	} else {
+		log.Printf("Request: %+v\n", event.RequestBody.Type)
+	}
+
+	if isDelegate() {
+		log.Println("we delegate")
+		result, err := delegateRemote(event)
+		log.Println("and got result: ")
+		return result, err
+	}
+
+	switch event.RequestBody.Type {
+
+	case alexaLaunchRequest:
+
+		entry, _ := db.GetLastUsedEntry(event.Session.User.UserID)
+		if entry == nil {
+			return responseBuilder().
+				speak(speechWelcome + speechDefineUser).
+				reprompt(speechStartTraining + speechExitIfMute), nil
+
+		}
+
+		return responseBuilder().
+			speak(speechWelcome + fmt.Sprintf(speechPersonal, entry.UserName) + speechStartTraining).
+			reprompt(speechStartTraining + speechExitIfMute), nil
+
+		// return responseBuilder().speak(timeText(4*60 + 30)), nil
+
+	case alexaSessionEndRequest:
+		log.Println("End-Reason: ", event.RequestBody.Reason)
+		return nil, nil
+
+	case alexaAudioplayerStartedRequest, alexaAudioplayerNearlyFinishedRequest, alexaAudioplayerFinishedRequest:
+		log.Println("Audioplayer Request")
+		return nil, nil
+
+	case alexaIntentRequest:
+		switch event.RequestBody.Intent.Name {
+		case alexaStopIntent:
+			return responseBuilder().speak(speechEnde).withShouldEndSession(), nil
+		case alexaHelpIntent:
+			return responseBuilder().speak(speechStartTraining), nil
+		case alexaAudioTestIntent:
+			/* die Audioausgabe läuft parallel zum Dialog.
+			D.h. wenn im Dialog nix mehr passiert, wird der Skill beendet */
+			return responseBuilder().
+				addAudioPlayerPlayDirective(
+					"https://github.com/gipde/bodyweight/raw/master/contrib/alien-spaceship_daniel_simion.mp3"), nil
+		case alexaStartTrainingIntent:
+			return handleStartTraining(ctx, event)
+		case alexaDefineUserIntent:
+			return defineUser(ctx, event)
+		case alexaFallbackIntent:
+			return handleUnknown(ctx, event)
+		default:
+			return handleUnknown(ctx, event)
+		}
+	}
+	return handleUnknown(ctx, event)
+}
 
 func handleStartTraining(ctx context.Context, event Request) (interface{}, error) {
 	user := event.RequestBody.Intent.Slots["user"]
 	if user.Value != "" {
 		log.Println("we got user from Alexa")
 		user.ConfirmationStatus = "CONFIRMED"
-		db.CreateEntry(event.Session.User.UserID, user.Value, training.TrainingState{Level: training.BASISPROGRAM, Week: 0, Day: 0, Unit: 0}, "Start")
+		db.CreateEntry(event.Session.User.UserID, user.Value, training.GetBeginningTrainingState(), "Start")
 	}
 
 	entry, _ := db.GetLastUsedEntry(event.Session.User.UserID)
@@ -70,97 +153,13 @@ func handleStartTraining(ctx context.Context, event Request) (interface{}, error
 func defineUser(ctx context.Context, event Request) (interface{}, error) {
 	user := event.RequestBody.Intent.Slots["user"]
 	log.Printf("Session User: %+v", user.Value)
-	db.CreateEntry(event.Session.User.UserID, user.Value, training.TrainingState{Level: training.BASISPROGRAM, Week: 0, Day: 0, Unit: 0}, "Start")
+	db.CreateEntry(event.Session.User.UserID, user.Value, training.GetBeginningTrainingState(), "Start")
 	return responseBuilder().
 		speak(fmt.Sprintf("Hallo %s. Schön dass Du hier bist", user.Value)), nil
 
 }
 
 func handleUnknown(ctx context.Context, event Request) (interface{}, error) {
-	return responseBuilder().speak(SPEECH_UNKNOWN + " " + SPEECH_START_TRAINING).
-		reprompt(SPEECH_EXIT_IF_MUTE), nil
-}
-
-func HandleRequest(ctx context.Context, event Request) (interface{}, error) {
-
-	if event.RequestBody.Type == "IntentRequest" {
-		log.Printf("Intent: %+v\n", event.RequestBody.Intent.Name)
-	} else {
-		log.Printf("Request: %+v\n", event.RequestBody.Type)
-	}
-
-	if isDelegate() {
-		log.Println("we delegate")
-		result, err := delegateRemote(event)
-		log.Println("and got result: ")
-		return result, err
-	}
-
-	switch event.RequestBody.Type {
-
-	case LAUNCH_REQUEST:
-
-		entry, _ := db.GetLastUsedEntry(event.Session.User.UserID)
-		if entry == nil {
-			return responseBuilder().
-				speak(SPEECH_WELCOME + SPEECH_DEFINE_USER).
-				reprompt(SPEECH_START_TRAINING + SPEECH_EXIT_IF_MUTE), nil
-
-		}
-
-		return responseBuilder().
-			speak(SPEECH_WELCOME + fmt.Sprintf(SPEECH_PERSONAL, entry.UserName) + SPEECH_START_TRAINING).
-			reprompt(SPEECH_START_TRAINING + SPEECH_EXIT_IF_MUTE), nil
-
-		// return responseBuilder().speak(timeText(4*60 + 30)), nil
-
-	case SESSION_END:
-		log.Println("End-Reason: ", event.RequestBody.Reason)
-		return nil, nil
-
-	case AUDIOPLAYER_STARTED, AUDIOPLAYER_NEARLYFINISHED, AUDIOPLAYER_FINISHED:
-		log.Println("Audioplayer Request")
-		return nil, nil
-
-	case INTENT_REQUEST:
-		switch event.RequestBody.Intent.Name {
-		case STOP_INTENT:
-			return responseBuilder().speak(SPEECH_ENDE).withShouldEndSession(), nil
-		case HELP_INTENT:
-			return responseBuilder().speak(SPEECH_START_TRAINING), nil
-		case AUDIO_TEST:
-			/* die Audioausgabe läuft parallel zum Dialog.
-			D.h. wenn im Dialog nix mehr passiert, wird der Skill beendet */
-			return responseBuilder().
-				addAudioPlayerPlayDirective(
-					"https://github.com/gipde/bodyweight/raw/master/contrib/alien-spaceship_daniel_simion.mp3"), nil
-		case START_TRAINING:
-			return handleStartTraining(ctx, event)
-		case DEFINE_USER:
-			return defineUser(ctx, event)
-		case FALLBACK_INTENT:
-			return handleUnknown(ctx, event)
-		default:
-			return handleUnknown(ctx, event)
-		}
-	}
-	return handleUnknown(ctx, event)
-}
-
-var db database.DB
-
-func init() {
-	if !debug {
-		log.SetOutput(ioutil.Discard)
-	}
-	db = database.NewDynamoDB("bodyweight")
-}
-
-func Start() {
-	if isClient() {
-		connectToServer()
-	}
-
-	log.Println("Starting FN")
-	lambda.Start(HandleRequest)
+	return responseBuilder().speak(speechUnknown + " " + speechStartTraining).
+		reprompt(speechExitIfMute), nil
 }

@@ -1,50 +1,51 @@
 package training
 
-type Exercise struct {
+type exercise struct {
 	Number     int          `json:"number"`
 	Name       string       `json:"name"`
-	Type       TrainingType `json:"type"`
+	Type       trainingType `json:"type"`
 	Page       int          `json:"page"`
 	Comment    string       `json:"comment"`
 	Difficulty int          `json:"difficulty"`
 }
 
-type TExercise struct {
-	Exercise ExerciseEnum `json:"exercise"`
+type tExercise struct {
+	Exercise exerciseEnum `json:"exercise"`
 	Note     string       `json:"note"`
 }
 
-type TrainingDay struct {
-	Method        TrainingMethod `json:"method"`
-	Exercises     [][]TExercise  `json:"exercies"`
+type trainingDay struct {
+	Method        trainingMethod `json:"method"`
+	Exercises     [][]tExercise  `json:"exercies"`
 	MinutesNeeded int            `json:"minutesNeeded"`
 }
 
-type TrainingWeek struct {
-	TrainingDays []TrainingDay `json:"trainingDays"`
+type trainingWeek struct {
+	TrainingDays []trainingDay `json:"TrainingDays"`
 	Description  string        `json:"description"`
 }
 
+//TrainingState contains every State of the training
 type TrainingState struct {
-	Level TrainingLevel `json:"level"`
+	Level trainingLevel `json:"level"`
 	Week  int           `json:"week"`
 	Day   int           `json:"day"`
 	Unit  int           `json:"unit"`
 }
 
-func (t TrainingMethod) name() string {
+func (t trainingMethod) name() string {
 	return trainingMethods[t]
 }
 
 // gehört zur Übung
-type TrainingType int
+type trainingType int
 
 const (
-	DRUECKEN TrainingType = iota
-	ZIEHEN
-	BEINE_UND_GESAESS
-	CORE
-	GANZKOERPER
+	druecken trainingType = iota
+	ziehen
+	beineUndGesaess
+	core
+	ganzKoerper
 )
 
 var trainingTypes = []string{
@@ -55,17 +56,17 @@ var trainingTypes = []string{
 	"Ganzkörperlich",
 }
 
-func (t TrainingType) name() string {
+func (t trainingType) name() string {
 	return trainingTypes[t]
 }
 
-type TrainingLevel int
+type trainingLevel int
 
 const (
-	BASISPROGRAM TrainingLevel = iota
-	FIRSTCLASS
-	MASTERCLASSC
-	CHIEFCLASS
+	basisProgram trainingLevel = iota
+	firstClass
+	masterClass
+	chiefClass
 )
 
 var trainingLevels = []string{
@@ -75,18 +76,18 @@ var trainingLevels = []string{
 	"Chief Class",
 }
 
-func (t TrainingLevel) name() string {
+func (t trainingLevel) name() string {
 	return trainingLevels[t]
 }
 
-type TrainingMethod int
+type trainingMethod int
 
 const (
-	STUFENINTERVALL TrainingMethod = iota
-	INTERVALLSATZ
-	SUPERSATZ
-	ZIRKELINTERVALL
-	HOCHINTENSITAETSSATZ
+	stufenIntervall trainingMethod = iota
+	intervallSatz
+	superSatz
+	zirkelIntervall
+	hochIntensitaetsSatz
 )
 
 var trainingMethods = []string{
@@ -97,2080 +98,2073 @@ var trainingMethods = []string{
 	"Hochintensitätssätze",
 }
 
-type ExerciseEnum int
+type exerciseEnum int
 
 // Varianten werden als eigene Übung eingetragen
 const (
-	LIEGESTUETZ_MIT_ERHOEHTEN_HAENDEN ExerciseEnum = iota
-	TUERZIEHEN
-	SEESTERN
-	UMGEKEHRTES_BANKDRUECKEN
-	AUSFALLSCHRITT_NACH_HINTEN_IM_WECHSEL
-	RUMAENISCHES_KREUZHEBEN_AUF_EINEM_BEIN_IM_WECHSEL
-	ENGE_KNIEBEUGE
-	SCHWIMMER
-	SEITLICHER_AUSFALLSCHRITT
-	SCHRAEGER_CRUNCH
-	KLASSISCHER_LIEGESTUETZ
-	MILITARY_PRESS_MIT_ERHOEHTEN_HAENDEN
-	ENGER_LIEGESTUETZ_MIT_ERHOEHTEN_HAENDEN
-	KNIEBEUGE_IM_AUSFALLSCHRITT
-	CURL_MIT_HANDTUCH
-	BEINHEBER
-	KAEFER
-	RUSSISCHER_TWIST
-	CRUNCH
-	LIEGESTUETZ_MIT_ERHOEHTEN_FUESSEN
-	LIEGESTUETZ_MIT_ABSTOSSEN
-	MILITARY_PRESS
-	BAERENGANG
-	ENGER_LIEGESTUETZ
-	GESPRUNGENE_KNIEBEUGE
-	AUSFALLSCHRITT_NACH_VORNE_IM_WECHSEL
-	KLIMMZUG_MIT_UNTERSTUEZUNG
-	UMGEKEHRTES_BANKDRUECKEN_IM_UNTERGRIFF
-	TUERZIEHEN_IM_UNTERGRIFF
-	V_UP
-	KAEFER_IPSILATERAL
-	CRUNCH_IT_UP
-	HAENGENDES_BEINHEBEN
-	POGO_SPRUNG
-	HUEFTTWIST
-	KNIEHEBER_IM_STEHEN
-	BODYROCK
-	VIER_PHASEN_LIEGESTUETZ
-	GOOD_MORNING
-	KAEFER_KONTRALATERAL
-	SEITLICHES_HUEFTHEBEN
-	AUFSTEHEN_AUS_DEM_EINBINIGEN_KNIESTAND
-	AUSFALLSCHRITT
-	FAHRRADFAHREN
-	KREUZHEBEN
-	KAEFER_UNILATERAL
-	TRIZEPSDIP_MIT_UNTERSTUETZUNG
-	MILITARY_PRESS_MIT_ERHOEHTEN_FUESSEN
-	STURZFLUG
-	ENGER_LIEGESTUETZ_MIT_ERHOEHTEN_FUESSEN
-	TRIZEPSDIP
-	EINBINIGE_KNIEBEUGE_MIT_UNTERSTUETZUNG
-	KISTENSPRUNG
-	KLIMMZUG
-	BEINTWIST
-	TIEFE_KNIEBEUGE
-	IRON_MIKE
-	SEITSPRUNG
-	EINBEINIGER_HUEFTSTRECKER
-	BREITER_STURZFLUG
-	GESTRECKTER_BEINTWIST
-	EINARMIGER_LIEGESTUETZ_MIT_ERHOEHTEN_HAENDEN
-	HUEFTSTRECKER
-	NACKENTRAINER_IN_BAUCHLAGE
-	EINARMIGER_LIEGESTUETZ
-	FEDERNDER_LIEGESTUETZ
-	ERHOEHTER_TRIZEPSSTRECKER
-	PISTOLE
-	KNIENDER_BEINWECHSEL
-	EINARMIGES_TUERZIEHEN
-	SEITLICHES_KNIEOEFFNEN_IM_STAND
-	SCHRAEGER_V_UP
-	EINBEINIGE_KNIEBEUGE
-	KREUZSCHRITT
-	GESTRECKTES_HAENGENDES_BEINHEBEN
-	EINBEINIGE_KNIEBEUGE_MIT_UNTERSTUETZUNG
-	STORCH
-	HANDSTANDLIEGESTUETZ
-	KLAPPMESSER
-	EINARMIGER_LIEGESTUETZ_MIT_ERHOEHTEN_FUESSEN
-	BERGSTEIGER
-	GEKREUZTER_BERGSTEIGER
-	POINTER
-	VORGEBEUGTES_SEITLICHES_SCHULTERHEBEN
+	liegestuetzMitErhoehtenHaenden exerciseEnum = iota
+	tuerziehen
+	Seestern
+	umgekehrtesBankdruecken
+	ausfallschrittNachHintenImWechsel
+	rumaenischesKreuzhebenAufEinemBeinImWechsel
+	engeKniebeuge
+	schwimmer
+	seitlicherAusfallschritt
+	schraegerCrunch
+	klassischerLiegestuetz
+	militaryPressMitErhoehtenHaenden
+	engerLiegestuetzMitErhoehtenHaenden
+	kniebeugeImAusfallschritt
+	curlMitHandtuch
+	beinheber
+	kaefer
+	russischerTwist
+	crunch
+	liegestuetzMitErhoehtenFuessen
+	liegestuetzMitAbstossen
+	militaryPress
+	baerenGang
+	engerLiegestuetz
+	gesprungeneKniebeuge
+	ausfallschrittNachVorneImWechsel
+	klimmzugMitUnterstuetzung
+	umgekehrtesBankdrueckenImUntergriff
+	tuerziehenImUntergriff
+	vUp
+	kaeferIpsilateral
+	crunchItUp
+	haengendesBeinheben
+	pogoSprung
+	hueftTwist
+	knieheberImStehen
+	bodyRock
+	vierPhasenLiegestuetz
+	goodMorning
+	kaeferKontralateral
+	seitlichesHueftheben
+	aufstehenAusDemEinbeinigenKniestand
+	ausfallSchritt
+	fahrradfahren
+	kreuzheben
+	kaeferUnilateral
+	trizepsdipMitUnterstuetzung
+	militaryPressMitErhoehtenFuessen
+	sturzflug
+	engerLiegestuetzMitErhoehtenFuessen
+	trizepsdip
+	einbeinigeKniebeugeMitUnterstuetzung
+	kistenSprung
+	klimmzug
+	beinTwist
+	tiefeKniebeuge
+	ironMike
+	seitensprung
+	einbeinigerHueftstrecker
+	breiterSturzflug
+	gestreckterBeinTwist
+	einarmigerLiegestuetzMitErhoehtenHaenden
+	hueftStrecker
+	nackentrainerInBauchlage
+	einarmigerLiegestuetz
+	federnderLiegestuetz
+	erhoehterTrizepsstrecker
+	pistole
+	knieenderBeinwechsel
+	einarmigesTuerziehen
+	seitlichesKnieoeffnenImStand
+	schraegerVUp
+	einbeinigeKniebeuge
+	kreuzschritt
+	gestrecktesHaengendesBeinheben
+	storch
+	handstandLiegestuetz
+	klappmesser
+	einarmigerLiegestuetzMitErhoehtenFuessen
+	bergsteiger
+	gekreuzterBergsteiger
+	pointer
+	vorgebeugtesSeitlichesSchulterheben
 )
 
-func (n ExerciseEnum) Name() string {
-	return Exes[n].Name
+func (n exerciseEnum) Name() string {
+	return exes[n].Name
 }
 
-var Exes []Exercise = []Exercise{
-	Exercise{
+var exes = []exercise{
+	exercise{
 		Name:       "Liegestütz mit erhöhten Händen",
-		Type:       DRUECKEN,
+		Type:       druecken,
 		Page:       112,
 		Difficulty: 1,
 	},
-	Exercise{
+	exercise{
 		Name:       "Tür ziehen",
-		Type:       ZIEHEN,
+		Type:       ziehen,
 		Page:       145,
 		Difficulty: 1,
 	},
 
-	Exercise{
+	exercise{
 		Name:       "Seestern",
-		Type:       CORE,
+		Type:       core,
 		Page:       207,
 		Difficulty: 1,
 	},
-	Exercise{
+	exercise{
 		Name:       "Umgekehrtes Bankdrücken",
-		Type:       ZIEHEN,
+		Type:       ziehen,
 		Page:       147,
 		Difficulty: 2,
 	},
-	Exercise{
+	exercise{
 		Name:       "Ausfallschritt nach hinten im Wechsel",
-		Type:       BEINE_UND_GESAESS,
+		Type:       beineUndGesaess,
 		Page:       178,
 		Difficulty: 1,
 	},
-	Exercise{
+	exercise{
 		Name:       "Rumänisches Kruezheben auf einem Bein im Wechsel",
-		Type:       BEINE_UND_GESAESS,
+		Type:       beineUndGesaess,
 		Page:       176,
 		Difficulty: 2,
 	},
-	Exercise{
+	exercise{
 		Name:       "Enge Kniebeuge",
-		Type:       BEINE_UND_GESAESS,
+		Type:       beineUndGesaess,
 		Page:       183,
 		Difficulty: 1,
 	},
-	Exercise{
+	exercise{
 		Name:       "Schwimmer",
-		Type:       BEINE_UND_GESAESS,
+		Type:       beineUndGesaess,
 		Page:       174,
 		Difficulty: 2,
 	},
-	Exercise{
+	exercise{
 		Name:       "Seitlicher Ausfallschritt",
-		Type:       BEINE_UND_GESAESS,
+		Type:       beineUndGesaess,
 		Page:       179,
 		Difficulty: 2,
 	},
-	Exercise{
+	exercise{
 		Name:       "Schräger Crunch",
-		Type:       BEINE_UND_GESAESS,
+		Type:       beineUndGesaess,
 		Page:       215,
 		Difficulty: 1,
 	},
-	Exercise{
+	exercise{
 		Name:       "Klassischer Liegestütz",
-		Type:       DRUECKEN,
+		Type:       druecken,
 		Page:       112,
 		Difficulty: 2,
 	},
-	Exercise{
+	exercise{
 		Name:       "Military Press mit erhöhten Händen",
-		Type:       DRUECKEN,
+		Type:       druecken,
 		Page:       135,
 		Difficulty: 2,
 	},
-	Exercise{
+	exercise{
 		Name:       "Enger Liegestütz mit erhöhten Händen",
-		Type:       DRUECKEN,
+		Type:       druecken,
 		Page:       130,
 		Difficulty: 2,
 	},
-	Exercise{
+	exercise{
 		Name:       "Kniebeuge im Ausfallschritt",
-		Type:       BEINE_UND_GESAESS,
+		Type:       beineUndGesaess,
 		Page:       178,
 		Difficulty: 2,
 	},
-	Exercise{
+	exercise{
 		Name:       "Curl mit Handtuch",
-		Type:       ZIEHEN,
+		Type:       ziehen,
 		Page:       159,
 		Difficulty: 2,
 	},
-	Exercise{
+	exercise{
 		Name:       "Beinheber",
-		Type:       CORE,
+		Type:       core,
 		Page:       217,
 		Difficulty: 1,
 	},
-	Exercise{
+	exercise{
 		Name:       "Käfer",
-		Type:       CORE,
+		Type:       core,
 		Page:       204,
 		Difficulty: 2,
 	},
-	Exercise{
+	exercise{
 		Name:       "Russischer Twist",
-		Type:       CORE,
+		Type:       core,
 		Page:       213,
 		Difficulty: 1,
 	},
-	Exercise{
+	exercise{
 		Name:       "Crunch",
-		Type:       CORE,
+		Type:       core,
 		Page:       215,
 		Difficulty: 1,
 	},
-	Exercise{
+	exercise{
 		Name:       "Liegestütz mit erhöhten Füßen",
-		Type:       DRUECKEN,
+		Type:       druecken,
 		Page:       113,
 		Difficulty: 3,
 	},
-	Exercise{
+	exercise{
 		Name:       "Liegestütz mit Abstoßen",
-		Type:       DRUECKEN,
+		Type:       druecken,
 		Page:       117,
 		Difficulty: 3,
 	},
-	Exercise{
+	exercise{
 		Name:       "Military Press",
-		Type:       DRUECKEN,
+		Type:       druecken,
 		Page:       134,
 		Difficulty: 3,
 	},
-	Exercise{
+	exercise{
 		Name:       "Bärengang",
-		Type:       DRUECKEN,
+		Type:       druecken,
 		Page:       110,
 		Difficulty: 1,
 	},
-	Exercise{
+	exercise{
 		Name:       "Enger Liegestütz",
-		Type:       DRUECKEN,
+		Type:       druecken,
 		Page:       130,
 		Difficulty: 3,
 	},
-	Exercise{
+	exercise{
 		Name:       "Gesprungene Kniebeuge",
-		Type:       BEINE_UND_GESAESS,
+		Type:       beineUndGesaess,
 		Page:       191,
 		Difficulty: 1,
 	},
-	Exercise{
+	exercise{
 		Name:       "Ausfallschritt nach vorn im Wechsel",
-		Type:       BEINE_UND_GESAESS,
+		Type:       beineUndGesaess,
 		Page:       177,
 		Difficulty: 1,
 	},
-	Exercise{
+	exercise{
 		Name:       "Klimmzug mit Unterstützung",
-		Type:       ZIEHEN,
+		Type:       ziehen,
 		Page:       152,
 		Difficulty: 2,
 	},
-	Exercise{
+	exercise{
 		Name:       "Umgekehrtes Bankdrücken im Untergriff",
-		Type:       ZIEHEN,
+		Type:       ziehen,
 		Page:       148,
 		Difficulty: 3,
 	},
-	Exercise{
+	exercise{
 		Name:       "Türziehen",
-		Type:       ZIEHEN,
+		Type:       ziehen,
 		Page:       145,
 		Difficulty: 3,
 	},
-	Exercise{
+	exercise{
 		Name:       "V-Up",
-		Type:       CORE,
+		Type:       core,
 		Page:       219,
 		Difficulty: 2,
 	},
-	Exercise{
+	exercise{
 		Name:       "Käfer ipsilateral",
-		Type:       CORE,
+		Type:       core,
 		Page:       204,
 		Difficulty: 2,
 	},
-	Exercise{
+	exercise{
 		Name:       "Crunch It Up",
-		Type:       CORE,
+		Type:       core,
 		Page:       214,
 		Difficulty: 1,
 	},
-	Exercise{
+	exercise{
 		Name:       "Hängendes Beinheben",
-		Type:       CORE,
+		Type:       core,
 		Page:       223,
 		Difficulty: 3,
 	},
-	Exercise{
+	exercise{
 		Name:       "Pogo Sprung",
-		Type:       BEINE_UND_GESAESS,
+		Type:       beineUndGesaess,
 		Page:       199,
 		Difficulty: 2,
 	},
-	Exercise{
+	exercise{
 		Name:       "Hüfttwist",
-		Type:       CORE,
+		Type:       core,
 		Page:       206,
 		Difficulty: 1,
 	},
-	Exercise{
+	exercise{
 		Name:       "Knieheber im Stehen",
-		Type:       GANZKOERPER,
+		Type:       ganzKoerper,
 		Page:       228,
 		Difficulty: 1,
 	},
-	Exercise{
+	exercise{
 		Name:       "Bodyrock",
-		Type:       CORE,
+		Type:       core,
 		Page:       208,
 		Difficulty: 1,
 	},
-	Exercise{
+	exercise{
 		Name:       "4 Phasen Liegestütz",
-		Type:       GANZKOERPER,
+		Type:       ganzKoerper,
 		Page:       229,
 		Difficulty: 2,
 	},
-	Exercise{
+	exercise{
 		Name:       "Good Morning",
-		Type:       BEINE_UND_GESAESS,
+		Type:       beineUndGesaess,
 		Page:       164,
 		Difficulty: 2,
 	},
-	Exercise{
+	exercise{
 		Name:       "Käfer kontralateral",
-		Type:       CORE,
+		Type:       core,
 		Page:       204,
 		Difficulty: 2,
 	},
-	Exercise{
+	exercise{
 		Name:       "Seitliches Hüftheben",
-		Type:       CORE,
+		Type:       core,
 		Page:       204,
 		Difficulty: 3,
 	},
-	Exercise{
+	exercise{
 		Name:       "Aufstehen aus dem einbeinigen Kniestand",
-		Type:       BEINE_UND_GESAESS,
+		Type:       beineUndGesaess,
 		Page:       169,
 		Difficulty: 1,
 	},
-	Exercise{
+	exercise{
 		Name:       "Ausfallschritt",
-		Type:       BEINE_UND_GESAESS,
+		Type:       beineUndGesaess,
 		Page:       177,
 		Difficulty: 2,
 	},
-	Exercise{
+	exercise{
 		Name:       "Fahrradfahren",
-		Type:       CORE,
+		Type:       core,
 		Page:       218,
 		Difficulty: 2,
 	},
-	Exercise{
+	exercise{
 		Name:       "Kreuzheben",
-		Type:       ZIEHEN,
+		Type:       ziehen,
 		Page:       168,
 		Difficulty: 1,
 	},
-	Exercise{
+	exercise{
 		Name:       "Käfer unilateral",
-		Type:       CORE,
+		Type:       core,
 		Page:       204,
 		Difficulty: 2,
 	},
-	Exercise{
+	exercise{
 		Name:       "Trizepsdip mit Unterstützung",
-		Type:       DRUECKEN,
+		Type:       druecken,
 		Page:       132,
 		Difficulty: 2,
 	},
-	Exercise{
+	exercise{
 		Name:       "Military Press mit erhöhten Füßen",
-		Type:       DRUECKEN,
+		Type:       druecken,
 		Page:       135,
 		Difficulty: 3,
 	},
-	Exercise{
+	exercise{
 		Name:       "Sturzflug",
-		Type:       DRUECKEN,
+		Type:       druecken,
 		Page:       120,
 		Difficulty: 3,
 	},
-	Exercise{
+	exercise{
 		Name:       "Enger Liegestütz mit erhöhten Füßen",
-		Type:       DRUECKEN,
+		Type:       druecken,
 		Page:       130,
 		Difficulty: 2,
 	},
-	Exercise{
+	exercise{
 		Name:       "Trizepsdip",
-		Type:       DRUECKEN,
+		Type:       druecken,
 		Page:       130,
 		Difficulty: 4,
 	},
-	Exercise{
+	exercise{
 		Name:       "Einbeinige Kniebeuge mit Unterstützung im Wechsel",
-		Type:       BEINE_UND_GESAESS,
+		Type:       beineUndGesaess,
 		Page:       187,
 		Difficulty: 4,
 	},
-	Exercise{
+	exercise{
 		Name:       "Kistensprung",
-		Type:       BEINE_UND_GESAESS,
+		Type:       beineUndGesaess,
 		Page:       192,
 		Difficulty: 1,
 	},
-	Exercise{
+	exercise{
 		Name:       "Klimmzug",
-		Type:       ZIEHEN,
+		Type:       ziehen,
 		Page:       150,
 		Difficulty: 3,
 	},
-	Exercise{
+	exercise{
 		Name:       "Beintwist",
-		Type:       CORE,
+		Type:       core,
 		Page:       221,
 		Difficulty: 2,
 	},
-	Exercise{
+	exercise{
 		Name:       "Tiefe Kniebeuge",
-		Type:       BEINE_UND_GESAESS,
+		Type:       beineUndGesaess,
 		Page:       221,
 		Difficulty: 3,
 	},
-	Exercise{
+	exercise{
 		Name:       "Iron Mike",
-		Type:       BEINE_UND_GESAESS,
+		Type:       beineUndGesaess,
 		Page:       195,
 		Difficulty: 3,
 	},
-	Exercise{
+	exercise{
 		Name:       "Seitsprung",
-		Type:       BEINE_UND_GESAESS,
+		Type:       beineUndGesaess,
 		Page:       194,
 		Difficulty: 2,
 	},
-	Exercise{
+	exercise{
 		Name:       "Einbeiniger Hüftstrecker",
-		Type:       BEINE_UND_GESAESS,
+		Type:       beineUndGesaess,
 		Page:       194,
 		Difficulty: 2,
 	},
-	Exercise{
+	exercise{
 		Name:       "Breiter Sturzflug",
-		Type:       BEINE_UND_GESAESS,
+		Type:       beineUndGesaess,
 		Page:       121,
 		Difficulty: 3,
 	},
-	Exercise{
+	exercise{
 		Name:       "Gestreckter Beintwist",
-		Type:       CORE,
+		Type:       core,
 		Page:       221,
 		Difficulty: 3,
 	},
-	Exercise{
+	exercise{
 		Name:       "Einarmiger Liegestütz mit erhöhten Händen im Wechsel",
-		Type:       DRUECKEN,
+		Type:       druecken,
 		Page:       125,
 		Difficulty: 4,
 	},
-	Exercise{
+	exercise{
 		Name:       "Hüftstrecker",
-		Type:       BEINE_UND_GESAESS,
+		Type:       beineUndGesaess,
 		Page:       181,
 		Difficulty: 2,
 	},
-	Exercise{
+	exercise{
 		Name:       "Nackentrainer in Bauchlage",
-		Type:       CORE,
+		Type:       core,
 		Page:       227,
 		Difficulty: 2,
 	},
-	Exercise{
+	exercise{
 		Name:       "Einarmiger Liegestütz",
-		Type:       DRUECKEN,
+		Type:       druecken,
 		Page:       124,
 		Difficulty: 4,
 	},
-	Exercise{
+	exercise{
 		Name:       "Federnder Liegestütz",
-		Type:       DRUECKEN,
+		Type:       druecken,
 		Page:       117,
 		Difficulty: 3,
 	},
-	Exercise{
+	exercise{
 		Name:       "Erhöhter Trizepsstrecker",
-		Type:       DRUECKEN,
+		Type:       druecken,
 		Page:       131,
 		Difficulty: 4,
 	},
-	Exercise{
+	exercise{
 		Name:       "Pistole",
-		Type:       BEINE_UND_GESAESS,
+		Type:       beineUndGesaess,
 		Page:       188,
 		Difficulty: 4,
 	},
-	Exercise{
+	exercise{
 		Name:       "Kniender Beinwechsel",
-		Type:       BEINE_UND_GESAESS,
+		Type:       beineUndGesaess,
 		Page:       175,
 		Difficulty: 2,
 	},
-	Exercise{
+	exercise{
 		Name:       "Einarmiges Türziehen",
-		Type:       ZIEHEN,
+		Type:       ziehen,
 		Page:       146,
 		Difficulty: 2,
 	},
-	Exercise{
+	exercise{
 		Name:       "Seitliches Knieöffnen im Stand",
-		Type:       BEINE_UND_GESAESS,
+		Type:       beineUndGesaess,
 		Page:       166,
 		Difficulty: 1,
 	},
-	Exercise{
+	exercise{
 		Name:       "Schräger V-Up",
-		Type:       CORE,
+		Type:       core,
 		Page:       220,
 		Difficulty: 3,
 	},
-	Exercise{
+	exercise{
 		Name:       "Einbeinige Kniebeuge im Wechsel",
-		Type:       BEINE_UND_GESAESS,
+		Type:       beineUndGesaess,
 		Page:       188,
 		Difficulty: 4,
 	},
-	Exercise{
+	exercise{
 		Name:       "Kreuzschritt",
-		Type:       BEINE_UND_GESAESS,
+		Type:       beineUndGesaess,
 		Page:       167,
 		Difficulty: 1,
 	},
-	Exercise{
+	exercise{
 		Name:       "Gestrecktes hängendes Beinheben",
-		Type:       CORE,
+		Type:       core,
 		Page:       223,
 		Difficulty: 1,
 	},
-	Exercise{
-		Name:       "Einbeinige Kniebeuge mit Unterstützung im Wechsel",
-		Type:       BEINE_UND_GESAESS,
-		Page:       187,
-		Difficulty: 4,
-	},
-	Exercise{
+	exercise{
 		Name:       "Storch",
-		Type:       BEINE_UND_GESAESS,
+		Type:       beineUndGesaess,
 		Page:       165,
 		Difficulty: 1,
 	},
-	Exercise{
+	exercise{
 		Name:       "Handstandliegestütz",
-		Type:       BEINE_UND_GESAESS,
+		Type:       beineUndGesaess,
 		Page:       138,
 		Difficulty: 1,
 	},
-	Exercise{
+	exercise{
 		Name:       "Klappmesser",
-		Type:       CORE,
+		Type:       core,
 		Page:       222,
 		Difficulty: 3,
 	},
-	Exercise{
+	exercise{
 		Name:       "Einarmiger Liegestütz mit erhöhten Füßen",
-		Type:       DRUECKEN,
+		Type:       druecken,
 		Page:       126,
 		Difficulty: 4,
 	},
-	Exercise{
+	exercise{
 		Name:       "Bergsteiger",
-		Type:       CORE,
+		Type:       core,
 		Page:       202,
 		Difficulty: 2,
 	},
-	Exercise{
+	exercise{
 		Name:       "gekreuzter Bergsteiger",
-		Type:       CORE,
+		Type:       core,
 		Page:       203,
 		Difficulty: 2,
 	},
-	Exercise{
+	exercise{
 		Name:       "Pointer",
-		Type:       BEINE_UND_GESAESS,
+		Type:       beineUndGesaess,
 		Page:       174,
 		Difficulty: 2,
 	},
-	Exercise{
+	exercise{
 		Name:       "Vorgebeugtes seitliches Schulterheben",
-		Type:       BEINE_UND_GESAESS,
+		Type:       beineUndGesaess,
 		Page:       156,
 		Difficulty: 1,
 	},
 }
 
-var Trainings = []TrainingWeek{
-	TrainingWeek{
+var trainings = []trainingWeek{
+	trainingWeek{
 		Description: "Muskuläre Ausdauer",
-		TrainingDays: []TrainingDay{
-			TrainingDay{
-				Method: STUFENINTERVALL,
-				Exercises: [][]TExercise{
-					[]TExercise{
-						TExercise{Exercise: LIEGESTUETZ_MIT_ERHOEHTEN_HAENDEN},
-						TExercise{Exercise: TUERZIEHEN},
-						TExercise{Exercise: SEESTERN},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN},
+		TrainingDays: []trainingDay{
+			trainingDay{
+				Method: stufenIntervall,
+				Exercises: [][]tExercise{
+					[]tExercise{
+						tExercise{Exercise: liegestuetzMitErhoehtenHaenden},
+						tExercise{Exercise: tuerziehen},
+						tExercise{Exercise: Seestern},
+						tExercise{Exercise: umgekehrtesBankdruecken},
 					},
-					[]TExercise{
-						TExercise{Exercise: KLASSISCHER_LIEGESTUETZ},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN},
-						TExercise{Exercise: MILITARY_PRESS},
-						TExercise{Exercise: TUERZIEHEN},
+					[]tExercise{
+						tExercise{Exercise: klassischerLiegestuetz},
+						tExercise{Exercise: umgekehrtesBankdruecken},
+						tExercise{Exercise: militaryPress},
+						tExercise{Exercise: tuerziehen},
 					},
-					[]TExercise{
-						TExercise{Exercise: EINARMIGER_LIEGESTUETZ_MIT_ERHOEHTEN_HAENDEN},
-						TExercise{Exercise: KLIMMZUG_MIT_UNTERSTUEZUNG},
-						TExercise{Exercise: MILITARY_PRESS_MIT_ERHOEHTEN_FUESSEN},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN},
+					[]tExercise{
+						tExercise{Exercise: einarmigerLiegestuetzMitErhoehtenHaenden},
+						tExercise{Exercise: klimmzugMitUnterstuetzung},
+						tExercise{Exercise: militaryPressMitErhoehtenFuessen},
+						tExercise{Exercise: umgekehrtesBankdruecken},
 					},
-					[]TExercise{
-						TExercise{Exercise: EINARMIGER_LIEGESTUETZ_MIT_ERHOEHTEN_HAENDEN},
-						TExercise{Exercise: KLIMMZUG_MIT_UNTERSTUEZUNG},
-						TExercise{Exercise: STURZFLUG},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN, Note: "Füße erhöht"},
-					},
-				},
-			},
-			TrainingDay{
-				Method: STUFENINTERVALL,
-				Exercises: [][]TExercise{
-					[]TExercise{
-						TExercise{Exercise: AUSFALLSCHRITT_NACH_HINTEN_IM_WECHSEL},
-						TExercise{Exercise: RUMAENISCHES_KREUZHEBEN_AUF_EINEM_BEIN_IM_WECHSEL},
-						TExercise{Exercise: ENGE_KNIEBEUGE, Note: "Arme in Vorhalte"},
-						TExercise{Exercise: SCHWIMMER},
-					},
-					[]TExercise{
-						TExercise{Exercise: AUSFALLSCHRITT_NACH_HINTEN_IM_WECHSEL},
-						TExercise{Exercise: RUMAENISCHES_KREUZHEBEN_AUF_EINEM_BEIN_IM_WECHSEL},
-						TExercise{Exercise: GESPRUNGENE_KNIEBEUGE, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: KAEFER_UNILATERAL, Note: "Beine gestreckt"},
-					},
-					[]TExercise{
-						TExercise{Exercise: EINBINIGE_KNIEBEUGE_MIT_UNTERSTUETZUNG},
-						TExercise{Exercise: AUSFALLSCHRITT_NACH_HINTEN_IM_WECHSEL, Note: "mit 4-6 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: HUEFTSTRECKER},
-						TExercise{Exercise: KAEFER_UNILATERAL, Note: "Beine gebeugt"},
-					},
-					[]TExercise{
-						TExercise{Exercise: PISTOLE},
-						TExercise{Exercise: IRON_MIKE},
-						TExercise{Exercise: EINBEINIGER_HUEFTSTRECKER},
-						TExercise{Exercise: NACKENTRAINER_IN_BAUCHLAGE},
+					[]tExercise{
+						tExercise{Exercise: einarmigerLiegestuetzMitErhoehtenHaenden},
+						tExercise{Exercise: klimmzugMitUnterstuetzung},
+						tExercise{Exercise: sturzflug},
+						tExercise{Exercise: umgekehrtesBankdruecken, Note: "Füße erhöht"},
 					},
 				},
 			},
-			TrainingDay{
-				Method: STUFENINTERVALL,
-				Exercises: [][]TExercise{
-					[]TExercise{
-						TExercise{Exercise: LIEGESTUETZ_MIT_ERHOEHTEN_HAENDEN},
-						TExercise{Exercise: TUERZIEHEN},
-						TExercise{Exercise: SEESTERN},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN},
+			trainingDay{
+				Method: stufenIntervall,
+				Exercises: [][]tExercise{
+					[]tExercise{
+						tExercise{Exercise: ausfallschrittNachHintenImWechsel},
+						tExercise{Exercise: rumaenischesKreuzhebenAufEinemBeinImWechsel},
+						tExercise{Exercise: engeKniebeuge, Note: "Arme in Vorhalte"},
+						tExercise{Exercise: schwimmer},
 					},
-					[]TExercise{
-						TExercise{Exercise: KLASSISCHER_LIEGESTUETZ},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN},
-						TExercise{Exercise: MILITARY_PRESS},
-						TExercise{Exercise: TUERZIEHEN},
+					[]tExercise{
+						tExercise{Exercise: ausfallschrittNachHintenImWechsel},
+						tExercise{Exercise: rumaenischesKreuzhebenAufEinemBeinImWechsel},
+						tExercise{Exercise: gesprungeneKniebeuge, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
+						tExercise{Exercise: kaeferUnilateral, Note: "Beine gestreckt"},
 					},
-					[]TExercise{
-						TExercise{Exercise: EINARMIGER_LIEGESTUETZ_MIT_ERHOEHTEN_HAENDEN},
-						TExercise{Exercise: KLIMMZUG_MIT_UNTERSTUEZUNG,
+					[]tExercise{
+						tExercise{Exercise: einbeinigeKniebeugeMitUnterstuetzung},
+						tExercise{Exercise: ausfallschrittNachHintenImWechsel, Note: "mit 4-6 Sek. Haltezeit am tiefsten Punkt"},
+						tExercise{Exercise: hueftStrecker},
+						tExercise{Exercise: kaeferUnilateral, Note: "Beine gebeugt"},
+					},
+					[]tExercise{
+						tExercise{Exercise: pistole},
+						tExercise{Exercise: ironMike},
+						tExercise{Exercise: einbeinigerHueftstrecker},
+						tExercise{Exercise: nackentrainerInBauchlage},
+					},
+				},
+			},
+			trainingDay{
+				Method: stufenIntervall,
+				Exercises: [][]tExercise{
+					[]tExercise{
+						tExercise{Exercise: liegestuetzMitErhoehtenHaenden},
+						tExercise{Exercise: tuerziehen},
+						tExercise{Exercise: Seestern},
+						tExercise{Exercise: umgekehrtesBankdruecken},
+					},
+					[]tExercise{
+						tExercise{Exercise: klassischerLiegestuetz},
+						tExercise{Exercise: umgekehrtesBankdruecken},
+						tExercise{Exercise: militaryPress},
+						tExercise{Exercise: tuerziehen},
+					},
+					[]tExercise{
+						tExercise{Exercise: einarmigerLiegestuetzMitErhoehtenHaenden},
+						tExercise{Exercise: klimmzugMitUnterstuetzung,
 							Note: "ohne Unterstützung in der Negativphase"},
-						TExercise{Exercise: MILITARY_PRESS},
-						TExercise{Exercise: TUERZIEHEN},
+						tExercise{Exercise: militaryPress},
+						tExercise{Exercise: tuerziehen},
 					},
-					[]TExercise{
-						TExercise{Exercise: EINARMIGER_LIEGESTUETZ_MIT_ERHOEHTEN_HAENDEN},
-						TExercise{Exercise: KLIMMZUG},
-						TExercise{Exercise: MILITARY_PRESS_MIT_ERHOEHTEN_FUESSEN},
-						TExercise{Exercise: EINARMIGES_TUERZIEHEN},
+					[]tExercise{
+						tExercise{Exercise: einarmigerLiegestuetzMitErhoehtenHaenden},
+						tExercise{Exercise: klimmzug},
+						tExercise{Exercise: militaryPressMitErhoehtenFuessen},
+						tExercise{Exercise: einarmigesTuerziehen},
 					},
 				},
 			},
-			TrainingDay{
-				Method: STUFENINTERVALL,
-				Exercises: [][]TExercise{
-					[]TExercise{
-						TExercise{Exercise: SEITLICHER_AUSFALLSCHRITT},
-						TExercise{Exercise: RUMAENISCHES_KREUZHEBEN_AUF_EINEM_BEIN_IM_WECHSEL},
-						TExercise{Exercise: ENGE_KNIEBEUGE},
-						TExercise{Exercise: SCHRAEGER_CRUNCH},
+			trainingDay{
+				Method: stufenIntervall,
+				Exercises: [][]tExercise{
+					[]tExercise{
+						tExercise{Exercise: seitlicherAusfallschritt},
+						tExercise{Exercise: rumaenischesKreuzhebenAufEinemBeinImWechsel},
+						tExercise{Exercise: engeKniebeuge},
+						tExercise{Exercise: schraegerCrunch},
 					},
-					[]TExercise{
-						TExercise{Exercise: SEITLICHER_AUSFALLSCHRITT, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: RUMAENISCHES_KREUZHEBEN_AUF_EINEM_BEIN_IM_WECHSEL},
-						TExercise{Exercise: ENGE_KNIEBEUGE, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: RUSSISCHER_TWIST},
+					[]tExercise{
+						tExercise{Exercise: seitlicherAusfallschritt, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
+						tExercise{Exercise: rumaenischesKreuzhebenAufEinemBeinImWechsel},
+						tExercise{Exercise: engeKniebeuge, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
+						tExercise{Exercise: russischerTwist},
 					},
-					[]TExercise{
-						TExercise{Exercise: EINBINIGE_KNIEBEUGE_MIT_UNTERSTUETZUNG},
-						TExercise{Exercise: SEITLICHER_AUSFALLSCHRITT, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: RUMAENISCHES_KREUZHEBEN_AUF_EINEM_BEIN_IM_WECHSEL},
-						TExercise{Exercise: BEINTWIST},
+					[]tExercise{
+						tExercise{Exercise: einbeinigeKniebeugeMitUnterstuetzung},
+						tExercise{Exercise: seitlicherAusfallschritt, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
+						tExercise{Exercise: rumaenischesKreuzhebenAufEinemBeinImWechsel},
+						tExercise{Exercise: beinTwist},
 					},
-					[]TExercise{
-						TExercise{Exercise: KNIENDER_BEINWECHSEL},
-						TExercise{Exercise: KISTENSPRUNG},
-						TExercise{Exercise: STORCH},
-						TExercise{Exercise: BEINTWIST},
+					[]tExercise{
+						tExercise{Exercise: knieenderBeinwechsel},
+						tExercise{Exercise: kistenSprung},
+						tExercise{Exercise: storch},
+						tExercise{Exercise: beinTwist},
 					},
 				},
 			},
 		},
 	},
-	TrainingWeek{
+	trainingWeek{
 		Description: "Muskuläre Ausdauer",
-		TrainingDays: []TrainingDay{
-			TrainingDay{
-				Method: STUFENINTERVALL,
-				Exercises: [][]TExercise{
-					[]TExercise{
-						TExercise{Exercise: LIEGESTUETZ_MIT_ERHOEHTEN_HAENDEN},
-						TExercise{Exercise: TUERZIEHEN},
-						TExercise{Exercise: SEESTERN},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN},
+		TrainingDays: []trainingDay{
+			trainingDay{
+				Method: stufenIntervall,
+				Exercises: [][]tExercise{
+					[]tExercise{
+						tExercise{Exercise: liegestuetzMitErhoehtenHaenden},
+						tExercise{Exercise: tuerziehen},
+						tExercise{Exercise: Seestern},
+						tExercise{Exercise: umgekehrtesBankdruecken},
 					},
-					[]TExercise{
-						TExercise{Exercise: KLASSISCHER_LIEGESTUETZ},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN},
-						TExercise{Exercise: MILITARY_PRESS},
-						TExercise{Exercise: TUERZIEHEN},
+					[]tExercise{
+						tExercise{Exercise: klassischerLiegestuetz},
+						tExercise{Exercise: umgekehrtesBankdruecken},
+						tExercise{Exercise: militaryPress},
+						tExercise{Exercise: tuerziehen},
 					},
-					[]TExercise{
-						TExercise{Exercise: EINARMIGER_LIEGESTUETZ_MIT_ERHOEHTEN_HAENDEN},
-						TExercise{Exercise: KLIMMZUG_MIT_UNTERSTUEZUNG},
-						TExercise{Exercise: MILITARY_PRESS_MIT_ERHOEHTEN_FUESSEN},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN},
+					[]tExercise{
+						tExercise{Exercise: einarmigerLiegestuetzMitErhoehtenHaenden},
+						tExercise{Exercise: klimmzugMitUnterstuetzung},
+						tExercise{Exercise: militaryPressMitErhoehtenFuessen},
+						tExercise{Exercise: umgekehrtesBankdruecken},
 					},
-					[]TExercise{
-						TExercise{Exercise: EINARMIGER_LIEGESTUETZ_MIT_ERHOEHTEN_HAENDEN},
-						TExercise{Exercise: KLIMMZUG_MIT_UNTERSTUEZUNG},
-						TExercise{Exercise: STURZFLUG},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN, Note: "Füße erhöht"},
-					},
-				},
-			},
-			TrainingDay{
-				Method: STUFENINTERVALL,
-				Exercises: [][]TExercise{
-					[]TExercise{
-						TExercise{Exercise: AUSFALLSCHRITT_NACH_HINTEN_IM_WECHSEL},
-						TExercise{Exercise: RUMAENISCHES_KREUZHEBEN_AUF_EINEM_BEIN_IM_WECHSEL},
-						TExercise{Exercise: ENGE_KNIEBEUGE, Note: "Arme in Vorhalte"},
-						TExercise{Exercise: SCHWIMMER},
-					},
-					[]TExercise{
-						TExercise{Exercise: AUSFALLSCHRITT_NACH_HINTEN_IM_WECHSEL},
-						TExercise{Exercise: RUMAENISCHES_KREUZHEBEN_AUF_EINEM_BEIN_IM_WECHSEL},
-						TExercise{Exercise: GESPRUNGENE_KNIEBEUGE, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: KAEFER_UNILATERAL, Note: "Beine gestreckt"},
-					},
-					[]TExercise{
-						TExercise{Exercise: EINBINIGE_KNIEBEUGE_MIT_UNTERSTUETZUNG},
-						TExercise{Exercise: AUSFALLSCHRITT_NACH_HINTEN_IM_WECHSEL, Note: "mit 4-6 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: HUEFTSTRECKER},
-						TExercise{Exercise: KAEFER_UNILATERAL, Note: "Beine gebeugt"},
-					},
-					[]TExercise{
-						TExercise{Exercise: PISTOLE},
-						TExercise{Exercise: IRON_MIKE},
-						TExercise{Exercise: EINBEINIGER_HUEFTSTRECKER},
-						TExercise{Exercise: NACKENTRAINER_IN_BAUCHLAGE},
+					[]tExercise{
+						tExercise{Exercise: einarmigerLiegestuetzMitErhoehtenHaenden},
+						tExercise{Exercise: klimmzugMitUnterstuetzung},
+						tExercise{Exercise: sturzflug},
+						tExercise{Exercise: umgekehrtesBankdruecken, Note: "Füße erhöht"},
 					},
 				},
 			},
-			TrainingDay{
-				Method: STUFENINTERVALL,
-				Exercises: [][]TExercise{
-					[]TExercise{
-						TExercise{Exercise: LIEGESTUETZ_MIT_ERHOEHTEN_HAENDEN},
-						TExercise{Exercise: TUERZIEHEN},
-						TExercise{Exercise: SEESTERN},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN},
+			trainingDay{
+				Method: stufenIntervall,
+				Exercises: [][]tExercise{
+					[]tExercise{
+						tExercise{Exercise: ausfallschrittNachHintenImWechsel},
+						tExercise{Exercise: rumaenischesKreuzhebenAufEinemBeinImWechsel},
+						tExercise{Exercise: engeKniebeuge, Note: "Arme in Vorhalte"},
+						tExercise{Exercise: schwimmer},
 					},
-					[]TExercise{
-						TExercise{Exercise: KLASSISCHER_LIEGESTUETZ},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN},
-						TExercise{Exercise: MILITARY_PRESS},
-						TExercise{Exercise: TUERZIEHEN},
+					[]tExercise{
+						tExercise{Exercise: ausfallschrittNachHintenImWechsel},
+						tExercise{Exercise: rumaenischesKreuzhebenAufEinemBeinImWechsel},
+						tExercise{Exercise: gesprungeneKniebeuge, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
+						tExercise{Exercise: kaeferUnilateral, Note: "Beine gestreckt"},
 					},
-					[]TExercise{
-						TExercise{Exercise: EINARMIGER_LIEGESTUETZ_MIT_ERHOEHTEN_HAENDEN},
-						TExercise{Exercise: KLIMMZUG_MIT_UNTERSTUEZUNG,
+					[]tExercise{
+						tExercise{Exercise: einbeinigeKniebeugeMitUnterstuetzung},
+						tExercise{Exercise: ausfallschrittNachHintenImWechsel, Note: "mit 4-6 Sek. Haltezeit am tiefsten Punkt"},
+						tExercise{Exercise: hueftStrecker},
+						tExercise{Exercise: kaeferUnilateral, Note: "Beine gebeugt"},
+					},
+					[]tExercise{
+						tExercise{Exercise: pistole},
+						tExercise{Exercise: ironMike},
+						tExercise{Exercise: einbeinigerHueftstrecker},
+						tExercise{Exercise: nackentrainerInBauchlage},
+					},
+				},
+			},
+			trainingDay{
+				Method: stufenIntervall,
+				Exercises: [][]tExercise{
+					[]tExercise{
+						tExercise{Exercise: liegestuetzMitErhoehtenHaenden},
+						tExercise{Exercise: tuerziehen},
+						tExercise{Exercise: Seestern},
+						tExercise{Exercise: umgekehrtesBankdruecken},
+					},
+					[]tExercise{
+						tExercise{Exercise: klassischerLiegestuetz},
+						tExercise{Exercise: umgekehrtesBankdruecken},
+						tExercise{Exercise: militaryPress},
+						tExercise{Exercise: tuerziehen},
+					},
+					[]tExercise{
+						tExercise{Exercise: einarmigerLiegestuetzMitErhoehtenHaenden},
+						tExercise{Exercise: klimmzugMitUnterstuetzung,
 							Note: "ohne Unterstützung in der Negativphase"},
-						TExercise{Exercise: MILITARY_PRESS},
-						TExercise{Exercise: TUERZIEHEN},
+						tExercise{Exercise: militaryPress},
+						tExercise{Exercise: tuerziehen},
 					},
-					[]TExercise{
-						TExercise{Exercise: EINARMIGER_LIEGESTUETZ_MIT_ERHOEHTEN_HAENDEN},
-						TExercise{Exercise: KLIMMZUG},
-						TExercise{Exercise: MILITARY_PRESS_MIT_ERHOEHTEN_FUESSEN},
-						TExercise{Exercise: EINARMIGES_TUERZIEHEN},
+					[]tExercise{
+						tExercise{Exercise: einarmigerLiegestuetzMitErhoehtenHaenden},
+						tExercise{Exercise: klimmzug},
+						tExercise{Exercise: militaryPressMitErhoehtenFuessen},
+						tExercise{Exercise: einarmigesTuerziehen},
 					},
 				},
 			},
-			TrainingDay{
-				Method: STUFENINTERVALL,
-				Exercises: [][]TExercise{
-					[]TExercise{
-						TExercise{Exercise: SEITLICHER_AUSFALLSCHRITT},
-						TExercise{Exercise: RUMAENISCHES_KREUZHEBEN_AUF_EINEM_BEIN_IM_WECHSEL},
-						TExercise{Exercise: ENGE_KNIEBEUGE},
-						TExercise{Exercise: SCHRAEGER_CRUNCH},
+			trainingDay{
+				Method: stufenIntervall,
+				Exercises: [][]tExercise{
+					[]tExercise{
+						tExercise{Exercise: seitlicherAusfallschritt},
+						tExercise{Exercise: rumaenischesKreuzhebenAufEinemBeinImWechsel},
+						tExercise{Exercise: engeKniebeuge},
+						tExercise{Exercise: schraegerCrunch},
 					},
-					[]TExercise{
-						TExercise{Exercise: SEITLICHER_AUSFALLSCHRITT, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: RUMAENISCHES_KREUZHEBEN_AUF_EINEM_BEIN_IM_WECHSEL},
-						TExercise{Exercise: ENGE_KNIEBEUGE, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: RUSSISCHER_TWIST},
+					[]tExercise{
+						tExercise{Exercise: seitlicherAusfallschritt, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
+						tExercise{Exercise: rumaenischesKreuzhebenAufEinemBeinImWechsel},
+						tExercise{Exercise: engeKniebeuge, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
+						tExercise{Exercise: russischerTwist},
 					},
-					[]TExercise{
-						TExercise{Exercise: EINBINIGE_KNIEBEUGE_MIT_UNTERSTUETZUNG},
-						TExercise{Exercise: SEITLICHER_AUSFALLSCHRITT, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: RUMAENISCHES_KREUZHEBEN_AUF_EINEM_BEIN_IM_WECHSEL},
-						TExercise{Exercise: BEINTWIST},
+					[]tExercise{
+						tExercise{Exercise: einbeinigeKniebeugeMitUnterstuetzung},
+						tExercise{Exercise: seitlicherAusfallschritt, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
+						tExercise{Exercise: rumaenischesKreuzhebenAufEinemBeinImWechsel},
+						tExercise{Exercise: beinTwist},
 					},
-					[]TExercise{
-						TExercise{Exercise: KNIENDER_BEINWECHSEL},
-						TExercise{Exercise: KISTENSPRUNG},
-						TExercise{Exercise: STORCH},
-						TExercise{Exercise: BEINTWIST},
+					[]tExercise{
+						tExercise{Exercise: knieenderBeinwechsel},
+						tExercise{Exercise: kistenSprung},
+						tExercise{Exercise: storch},
+						tExercise{Exercise: beinTwist},
 					},
 				},
 			},
 		},
 	},
-	TrainingWeek{
+	trainingWeek{
 		Description: "Kraft",
-		TrainingDays: []TrainingDay{
-			TrainingDay{
-				Method: INTERVALLSATZ,
-				Exercises: [][]TExercise{
-					[]TExercise{
-						TExercise{Exercise: KLASSISCHER_LIEGESTUETZ},
-						TExercise{Exercise: MILITARY_PRESS_MIT_ERHOEHTEN_HAENDEN},
-						TExercise{Exercise: ENGER_LIEGESTUETZ_MIT_ERHOEHTEN_HAENDEN},
-						TExercise{Exercise: SEESTERN},
+		TrainingDays: []trainingDay{
+			trainingDay{
+				Method: intervallSatz,
+				Exercises: [][]tExercise{
+					[]tExercise{
+						tExercise{Exercise: klassischerLiegestuetz},
+						tExercise{Exercise: militaryPressMitErhoehtenHaenden},
+						tExercise{Exercise: engerLiegestuetzMitErhoehtenHaenden},
+						tExercise{Exercise: Seestern},
 					},
-					[]TExercise{
-						TExercise{Exercise: LIEGESTUETZ_MIT_ERHOEHTEN_FUESSEN},
-						TExercise{Exercise: MILITARY_PRESS},
-						TExercise{Exercise: ENGER_LIEGESTUETZ},
-						TExercise{Exercise: TRIZEPSDIP_MIT_UNTERSTUETZUNG, Note: "Beine nach hinten anwinklen und Fußspitzen auf einen Stuhl absetzen um das Hochdrücken zu erleichtern"},
+					[]tExercise{
+						tExercise{Exercise: liegestuetzMitErhoehtenFuessen},
+						tExercise{Exercise: militaryPress},
+						tExercise{Exercise: engerLiegestuetz},
+						tExercise{Exercise: trizepsdipMitUnterstuetzung, Note: "Beine nach hinten anwinklen und Fußspitzen auf einen Stuhl absetzen um das Hochdrücken zu erleichtern"},
 					},
-					[]TExercise{
-						TExercise{Exercise: EINARMIGER_LIEGESTUETZ_MIT_ERHOEHTEN_HAENDEN},
-						TExercise{Exercise: STURZFLUG},
-						TExercise{Exercise: MILITARY_PRESS_MIT_ERHOEHTEN_FUESSEN},
-						TExercise{Exercise: TRIZEPSDIP_MIT_UNTERSTUETZUNG},
+					[]tExercise{
+						tExercise{Exercise: einarmigerLiegestuetzMitErhoehtenHaenden},
+						tExercise{Exercise: sturzflug},
+						tExercise{Exercise: militaryPressMitErhoehtenFuessen},
+						tExercise{Exercise: trizepsdipMitUnterstuetzung},
 					},
-					[]TExercise{
-						TExercise{Exercise: EINARMIGER_LIEGESTUETZ},
-						TExercise{Exercise: HANDSTANDLIEGESTUETZ},
-						TExercise{Exercise: STURZFLUG},
-						TExercise{Exercise: ERHOEHTER_TRIZEPSSTRECKER, Note: "Hände etwa hüfthoch"},
+					[]tExercise{
+						tExercise{Exercise: einarmigerLiegestuetz},
+						tExercise{Exercise: handstandLiegestuetz},
+						tExercise{Exercise: sturzflug},
+						tExercise{Exercise: erhoehterTrizepsstrecker, Note: "Hände etwa hüfthoch"},
 					},
 				},
 			},
-			TrainingDay{
-				Method: INTERVALLSATZ,
-				Exercises: [][]TExercise{
-					[]TExercise{
-						TExercise{Exercise: KNIEBEUGE_IM_AUSFALLSCHRITT},
-						TExercise{Exercise: SEITLICHER_AUSFALLSCHRITT},
-						TExercise{Exercise: ENGE_KNIEBEUGE,
+			trainingDay{
+				Method: intervallSatz,
+				Exercises: [][]tExercise{
+					[]tExercise{
+						tExercise{Exercise: kniebeugeImAusfallschritt},
+						tExercise{Exercise: seitlicherAusfallschritt},
+						tExercise{Exercise: engeKniebeuge,
 							Note: "Arme in T-Halte mit 1-3 Sek. Haltezeit am tiefsten Punkt",
 						},
-						TExercise{Exercise: RUMAENISCHES_KREUZHEBEN_AUF_EINEM_BEIN_IM_WECHSEL,
+						tExercise{Exercise: rumaenischesKreuzhebenAufEinemBeinImWechsel,
 							Note: "auf einem Kissen"},
 					},
-					[]TExercise{
-						TExercise{Exercise: KNIEBEUGE_IM_AUSFALLSCHRITT,
+					[]tExercise{
+						tExercise{Exercise: kniebeugeImAusfallschritt,
 							Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: SEITLICHER_AUSFALLSCHRITT,
+						tExercise{Exercise: seitlicherAusfallschritt,
 							Note: "mit 4-6 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: GESPRUNGENE_KNIEBEUGE,
+						tExercise{Exercise: gesprungeneKniebeuge,
 							Note: "mit 4-6 Sek. Haltezeit am tiefsten Punkt",
 						},
-						TExercise{Exercise: RUMAENISCHES_KREUZHEBEN_AUF_EINEM_BEIN_IM_WECHSEL,
+						tExercise{Exercise: rumaenischesKreuzhebenAufEinemBeinImWechsel,
 							Note: "auf einem Kissen"},
 					},
-					[]TExercise{
-						TExercise{Exercise: EINBINIGE_KNIEBEUGE_MIT_UNTERSTUETZUNG},
-						TExercise{Exercise: KNIEBEUGE_IM_AUSFALLSCHRITT,
+					[]tExercise{
+						tExercise{Exercise: einbeinigeKniebeugeMitUnterstuetzung},
+						tExercise{Exercise: kniebeugeImAusfallschritt,
 							Note: "mit 4-6 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: SEITLICHER_AUSFALLSCHRITT,
+						tExercise{Exercise: seitlicherAusfallschritt,
 							Note: "mit 4-6 Sek. Haltezeit am tiefsten Punkt",
 						},
-						TExercise{Exercise: EINBEINIGER_HUEFTSTRECKER,
+						tExercise{Exercise: einbeinigerHueftstrecker,
 							Note: "auf einem Kissen"},
 					},
-					[]TExercise{
-						TExercise{Exercise: KNIENDER_BEINWECHSEL},
-						TExercise{Exercise: KNIEBEUGE_IM_AUSFALLSCHRITT,
+					[]tExercise{
+						tExercise{Exercise: knieenderBeinwechsel},
+						tExercise{Exercise: kniebeugeImAusfallschritt,
 							Note: "mit 4-6 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: RUMAENISCHES_KREUZHEBEN_AUF_EINEM_BEIN_IM_WECHSEL,
+						tExercise{Exercise: rumaenischesKreuzhebenAufEinemBeinImWechsel,
 							Note: "mit 1-3 Sek. Pause",
 						},
-						TExercise{Exercise: IRON_MIKE},
+						tExercise{Exercise: ironMike},
 					},
 				},
 			},
-			TrainingDay{
-				Method: INTERVALLSATZ,
-				Exercises: [][]TExercise{
-					[]TExercise{
-						TExercise{Exercise: TUERZIEHEN},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN},
-						TExercise{Exercise: TUERZIEHEN, Note: "Im Untergriff"},
-						TExercise{Exercise: CURL_MIT_HANDTUCH},
+			trainingDay{
+				Method: intervallSatz,
+				Exercises: [][]tExercise{
+					[]tExercise{
+						tExercise{Exercise: tuerziehen},
+						tExercise{Exercise: umgekehrtesBankdruecken},
+						tExercise{Exercise: tuerziehen, Note: "Im Untergriff"},
+						tExercise{Exercise: curlMitHandtuch},
 					},
-					[]TExercise{
-						TExercise{Exercise: KLIMMZUG_MIT_UNTERSTUEZUNG,
+					[]tExercise{
+						tExercise{Exercise: klimmzugMitUnterstuetzung,
 							Note: "ohne Unterstützung in der Negativphase"},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN},
-						TExercise{Exercise: TUERZIEHEN, Note: "Im Untergriff"},
-						TExercise{Exercise: CURL_MIT_HANDTUCH},
+						tExercise{Exercise: umgekehrtesBankdruecken},
+						tExercise{Exercise: tuerziehen, Note: "Im Untergriff"},
+						tExercise{Exercise: curlMitHandtuch},
 					},
-					[]TExercise{
-						TExercise{Exercise: KLIMMZUG},
-						TExercise{Exercise: TUERZIEHEN, Note: "mit 1-3 Sek. Haltezeit bei der Kontraktion am höchsten Punkt"},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN_IM_UNTERGRIFF},
+					[]tExercise{
+						tExercise{Exercise: klimmzug},
+						tExercise{Exercise: tuerziehen, Note: "mit 1-3 Sek. Haltezeit bei der Kontraktion am höchsten Punkt"},
+						tExercise{Exercise: umgekehrtesBankdruecken},
+						tExercise{Exercise: umgekehrtesBankdrueckenImUntergriff},
 					},
-					[]TExercise{
-						TExercise{Exercise: KLIMMZUG, Note: "mit 1-3 Sek. Haltezeit am höchsten Punkt"},
-						TExercise{Exercise: EINARMIGES_TUERZIEHEN},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN_IM_UNTERGRIFF, Note: "Füße erhöht"},
-						TExercise{Exercise: TUERZIEHEN, Note: "mit 4-6 Sek. Haltezeit bei der Kontraktion am höchsten Punkt"},
+					[]tExercise{
+						tExercise{Exercise: klimmzug, Note: "mit 1-3 Sek. Haltezeit am höchsten Punkt"},
+						tExercise{Exercise: einarmigesTuerziehen},
+						tExercise{Exercise: umgekehrtesBankdrueckenImUntergriff, Note: "Füße erhöht"},
+						tExercise{Exercise: tuerziehen, Note: "mit 4-6 Sek. Haltezeit bei der Kontraktion am höchsten Punkt"},
 					},
 				},
 			},
-			TrainingDay{
-				Method: INTERVALLSATZ,
-				Exercises: [][]TExercise{
-					[]TExercise{
-						TExercise{Exercise: BEINHEBER},
-						TExercise{Exercise: KAEFER_IPSILATERAL, Note: "Beine gebeugt"},
-						TExercise{Exercise: RUSSISCHER_TWIST},
-						TExercise{Exercise: CRUNCH},
+			trainingDay{
+				Method: intervallSatz,
+				Exercises: [][]tExercise{
+					[]tExercise{
+						tExercise{Exercise: beinheber},
+						tExercise{Exercise: kaeferIpsilateral, Note: "Beine gebeugt"},
+						tExercise{Exercise: russischerTwist},
+						tExercise{Exercise: crunch},
 					},
-					[]TExercise{
-						TExercise{Exercise: BEINHEBER, Note: "mit gekreuzten Armen auf der Brust"},
-						TExercise{Exercise: KAEFER_IPSILATERAL, Note: "iBeine gestreckt"},
-						TExercise{Exercise: FAHRRADFAHREN},
-						TExercise{Exercise: KAEFER_KONTRALATERAL},
+					[]tExercise{
+						tExercise{Exercise: beinheber, Note: "mit gekreuzten Armen auf der Brust"},
+						tExercise{Exercise: kaeferIpsilateral, Note: "iBeine gestreckt"},
+						tExercise{Exercise: fahrradfahren},
+						tExercise{Exercise: kaeferKontralateral},
 					},
-					[]TExercise{
-						TExercise{Exercise: HAENGENDES_BEINHEBEN, Note: "Beine gestreckt und parallel zum Boden"},
-						TExercise{Exercise: NACKENTRAINER_IN_BAUCHLAGE},
-						TExercise{Exercise: V_UP},
-						TExercise{Exercise: KAEFER_IPSILATERAL, Note: "Beine gestreckt"},
+					[]tExercise{
+						tExercise{Exercise: haengendesBeinheben, Note: "Beine gestreckt und parallel zum Boden"},
+						tExercise{Exercise: nackentrainerInBauchlage},
+						tExercise{Exercise: vUp},
+						tExercise{Exercise: kaeferIpsilateral, Note: "Beine gestreckt"},
 					},
-					[]TExercise{
-						TExercise{Exercise: HAENGENDES_BEINHEBEN, Note: "Beine gestreckt bis ganz nach oben"},
-						TExercise{Exercise: NACKENTRAINER_IN_BAUCHLAGE},
-						TExercise{Exercise: KLAPPMESSER},
-						TExercise{Exercise: KAEFER_KONTRALATERAL, Note: "Beine gestreckt"},
+					[]tExercise{
+						tExercise{Exercise: haengendesBeinheben, Note: "Beine gestreckt bis ganz nach oben"},
+						tExercise{Exercise: nackentrainerInBauchlage},
+						tExercise{Exercise: klappmesser},
+						tExercise{Exercise: kaeferKontralateral, Note: "Beine gestreckt"},
 					},
 				},
 			},
 		},
 	},
-	TrainingWeek{
+	trainingWeek{
 		Description: "Kraft",
-		TrainingDays: []TrainingDay{
-			TrainingDay{
-				Method: INTERVALLSATZ,
-				Exercises: [][]TExercise{
-					[]TExercise{
-						TExercise{Exercise: KLASSISCHER_LIEGESTUETZ},
-						TExercise{Exercise: MILITARY_PRESS_MIT_ERHOEHTEN_HAENDEN},
-						TExercise{Exercise: ENGER_LIEGESTUETZ_MIT_ERHOEHTEN_HAENDEN},
-						TExercise{Exercise: SEESTERN},
+		TrainingDays: []trainingDay{
+			trainingDay{
+				Method: intervallSatz,
+				Exercises: [][]tExercise{
+					[]tExercise{
+						tExercise{Exercise: klassischerLiegestuetz},
+						tExercise{Exercise: militaryPressMitErhoehtenHaenden},
+						tExercise{Exercise: engerLiegestuetzMitErhoehtenHaenden},
+						tExercise{Exercise: Seestern},
 					},
-					[]TExercise{
-						TExercise{Exercise: LIEGESTUETZ_MIT_ERHOEHTEN_FUESSEN},
-						TExercise{Exercise: MILITARY_PRESS},
-						TExercise{Exercise: ENGER_LIEGESTUETZ},
-						TExercise{Exercise: TRIZEPSDIP_MIT_UNTERSTUETZUNG, Note: "Beine nach hinten anwinklen und Fußspitzen auf einen Stuhl absetzen um das Hochdrücken zu erleichtern"},
+					[]tExercise{
+						tExercise{Exercise: liegestuetzMitErhoehtenFuessen},
+						tExercise{Exercise: militaryPress},
+						tExercise{Exercise: engerLiegestuetz},
+						tExercise{Exercise: trizepsdipMitUnterstuetzung, Note: "Beine nach hinten anwinklen und Fußspitzen auf einen Stuhl absetzen um das Hochdrücken zu erleichtern"},
 					},
-					[]TExercise{
-						TExercise{Exercise: EINARMIGER_LIEGESTUETZ_MIT_ERHOEHTEN_HAENDEN},
-						TExercise{Exercise: STURZFLUG},
-						TExercise{Exercise: MILITARY_PRESS_MIT_ERHOEHTEN_FUESSEN},
-						TExercise{Exercise: TRIZEPSDIP_MIT_UNTERSTUETZUNG},
+					[]tExercise{
+						tExercise{Exercise: einarmigerLiegestuetzMitErhoehtenHaenden},
+						tExercise{Exercise: sturzflug},
+						tExercise{Exercise: militaryPressMitErhoehtenFuessen},
+						tExercise{Exercise: trizepsdipMitUnterstuetzung},
 					},
-					[]TExercise{
-						TExercise{Exercise: EINARMIGER_LIEGESTUETZ},
-						TExercise{Exercise: HANDSTANDLIEGESTUETZ},
-						TExercise{Exercise: STURZFLUG},
-						TExercise{Exercise: ERHOEHTER_TRIZEPSSTRECKER, Note: "Hände etwa hüfthoch"},
+					[]tExercise{
+						tExercise{Exercise: einarmigerLiegestuetz},
+						tExercise{Exercise: handstandLiegestuetz},
+						tExercise{Exercise: sturzflug},
+						tExercise{Exercise: erhoehterTrizepsstrecker, Note: "Hände etwa hüfthoch"},
 					},
 				},
 			},
-			TrainingDay{
-				Method: INTERVALLSATZ,
-				Exercises: [][]TExercise{
-					[]TExercise{
-						TExercise{Exercise: KNIEBEUGE_IM_AUSFALLSCHRITT},
-						TExercise{Exercise: SEITLICHER_AUSFALLSCHRITT},
-						TExercise{Exercise: ENGE_KNIEBEUGE,
+			trainingDay{
+				Method: intervallSatz,
+				Exercises: [][]tExercise{
+					[]tExercise{
+						tExercise{Exercise: kniebeugeImAusfallschritt},
+						tExercise{Exercise: seitlicherAusfallschritt},
+						tExercise{Exercise: engeKniebeuge,
 							Note: "Arme in T-Halte mit 1-3 Sek. Haltezeit am tiefsten Punkt",
 						},
-						TExercise{Exercise: RUMAENISCHES_KREUZHEBEN_AUF_EINEM_BEIN_IM_WECHSEL,
+						tExercise{Exercise: rumaenischesKreuzhebenAufEinemBeinImWechsel,
 							Note: "auf einem Kissen"},
 					},
-					[]TExercise{
-						TExercise{Exercise: KNIEBEUGE_IM_AUSFALLSCHRITT,
+					[]tExercise{
+						tExercise{Exercise: kniebeugeImAusfallschritt,
 							Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: SEITLICHER_AUSFALLSCHRITT,
+						tExercise{Exercise: seitlicherAusfallschritt,
 							Note: "mit 4-6 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: GESPRUNGENE_KNIEBEUGE,
+						tExercise{Exercise: gesprungeneKniebeuge,
 							Note: "mit 4-6 Sek. Haltezeit am tiefsten Punkt",
 						},
-						TExercise{Exercise: RUMAENISCHES_KREUZHEBEN_AUF_EINEM_BEIN_IM_WECHSEL,
+						tExercise{Exercise: rumaenischesKreuzhebenAufEinemBeinImWechsel,
 							Note: "auf einem Kissen"},
 					},
-					[]TExercise{
-						TExercise{Exercise: EINBINIGE_KNIEBEUGE_MIT_UNTERSTUETZUNG},
-						TExercise{Exercise: KNIEBEUGE_IM_AUSFALLSCHRITT,
+					[]tExercise{
+						tExercise{Exercise: einbeinigeKniebeugeMitUnterstuetzung},
+						tExercise{Exercise: kniebeugeImAusfallschritt,
 							Note: "mit 4-6 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: SEITLICHER_AUSFALLSCHRITT,
+						tExercise{Exercise: seitlicherAusfallschritt,
 							Note: "mit 4-6 Sek. Haltezeit am tiefsten Punkt",
 						},
-						TExercise{Exercise: EINBEINIGER_HUEFTSTRECKER,
+						tExercise{Exercise: einbeinigerHueftstrecker,
 							Note: "auf einem Kissen"},
 					},
-					[]TExercise{
-						TExercise{Exercise: KNIENDER_BEINWECHSEL},
-						TExercise{Exercise: KNIEBEUGE_IM_AUSFALLSCHRITT,
+					[]tExercise{
+						tExercise{Exercise: knieenderBeinwechsel},
+						tExercise{Exercise: kniebeugeImAusfallschritt,
 							Note: "mit 4-6 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: RUMAENISCHES_KREUZHEBEN_AUF_EINEM_BEIN_IM_WECHSEL,
+						tExercise{Exercise: rumaenischesKreuzhebenAufEinemBeinImWechsel,
 							Note: "mit 1-3 Sek. Pause",
 						},
-						TExercise{Exercise: IRON_MIKE},
+						tExercise{Exercise: ironMike},
 					},
 				},
 			},
-			TrainingDay{
-				Method: INTERVALLSATZ,
-				Exercises: [][]TExercise{
-					[]TExercise{
-						TExercise{Exercise: TUERZIEHEN},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN},
-						TExercise{Exercise: TUERZIEHEN, Note: "Im Untergriff"},
-						TExercise{Exercise: CURL_MIT_HANDTUCH},
+			trainingDay{
+				Method: intervallSatz,
+				Exercises: [][]tExercise{
+					[]tExercise{
+						tExercise{Exercise: tuerziehen},
+						tExercise{Exercise: umgekehrtesBankdruecken},
+						tExercise{Exercise: tuerziehen, Note: "Im Untergriff"},
+						tExercise{Exercise: curlMitHandtuch},
 					},
-					[]TExercise{
-						TExercise{Exercise: KLIMMZUG_MIT_UNTERSTUEZUNG,
+					[]tExercise{
+						tExercise{Exercise: klimmzugMitUnterstuetzung,
 							Note: "ohne Unterstützung in der Negativphase"},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN},
-						TExercise{Exercise: TUERZIEHEN, Note: "Im Untergriff"},
-						TExercise{Exercise: CURL_MIT_HANDTUCH},
+						tExercise{Exercise: umgekehrtesBankdruecken},
+						tExercise{Exercise: tuerziehen, Note: "Im Untergriff"},
+						tExercise{Exercise: curlMitHandtuch},
 					},
-					[]TExercise{
-						TExercise{Exercise: KLIMMZUG},
-						TExercise{Exercise: TUERZIEHEN, Note: "mit 1-3 Sek. Haltezeit bei der Kontraktion am höchsten Punkt"},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN_IM_UNTERGRIFF},
+					[]tExercise{
+						tExercise{Exercise: klimmzug},
+						tExercise{Exercise: tuerziehen, Note: "mit 1-3 Sek. Haltezeit bei der Kontraktion am höchsten Punkt"},
+						tExercise{Exercise: umgekehrtesBankdruecken},
+						tExercise{Exercise: umgekehrtesBankdrueckenImUntergriff},
 					},
-					[]TExercise{
-						TExercise{Exercise: KLIMMZUG, Note: "mit 1-3 Sek. Haltezeit am höchsten Punkt"},
-						TExercise{Exercise: EINARMIGES_TUERZIEHEN},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN_IM_UNTERGRIFF, Note: "Füße erhöht"},
-						TExercise{Exercise: TUERZIEHEN, Note: "mit 4-6 Sek. Haltezeit bei der Kontraktion am höchsten Punkt"},
+					[]tExercise{
+						tExercise{Exercise: klimmzug, Note: "mit 1-3 Sek. Haltezeit am höchsten Punkt"},
+						tExercise{Exercise: einarmigesTuerziehen},
+						tExercise{Exercise: umgekehrtesBankdrueckenImUntergriff, Note: "Füße erhöht"},
+						tExercise{Exercise: tuerziehen, Note: "mit 4-6 Sek. Haltezeit bei der Kontraktion am höchsten Punkt"},
 					},
 				},
 			},
-			TrainingDay{
-				Method: INTERVALLSATZ,
-				Exercises: [][]TExercise{
-					[]TExercise{
-						TExercise{Exercise: BEINHEBER},
-						TExercise{Exercise: KAEFER_IPSILATERAL, Note: "Beine gebeugt"},
-						TExercise{Exercise: RUSSISCHER_TWIST},
-						TExercise{Exercise: CRUNCH},
+			trainingDay{
+				Method: intervallSatz,
+				Exercises: [][]tExercise{
+					[]tExercise{
+						tExercise{Exercise: beinheber},
+						tExercise{Exercise: kaeferIpsilateral, Note: "Beine gebeugt"},
+						tExercise{Exercise: russischerTwist},
+						tExercise{Exercise: crunch},
 					},
-					[]TExercise{
-						TExercise{Exercise: BEINHEBER, Note: "mit gekreuzten Armen auf der Brust"},
-						TExercise{Exercise: KAEFER_IPSILATERAL, Note: "iBeine gestreckt"},
-						TExercise{Exercise: FAHRRADFAHREN},
-						TExercise{Exercise: KAEFER_KONTRALATERAL},
+					[]tExercise{
+						tExercise{Exercise: beinheber, Note: "mit gekreuzten Armen auf der Brust"},
+						tExercise{Exercise: kaeferIpsilateral, Note: "iBeine gestreckt"},
+						tExercise{Exercise: fahrradfahren},
+						tExercise{Exercise: kaeferKontralateral},
 					},
-					[]TExercise{
-						TExercise{Exercise: HAENGENDES_BEINHEBEN, Note: "Beine gestreckt und parallel zum Boden"},
-						TExercise{Exercise: NACKENTRAINER_IN_BAUCHLAGE},
-						TExercise{Exercise: V_UP},
-						TExercise{Exercise: KAEFER_IPSILATERAL, Note: "Beine gestreckt"},
+					[]tExercise{
+						tExercise{Exercise: haengendesBeinheben, Note: "Beine gestreckt und parallel zum Boden"},
+						tExercise{Exercise: nackentrainerInBauchlage},
+						tExercise{Exercise: vUp},
+						tExercise{Exercise: kaeferIpsilateral, Note: "Beine gestreckt"},
 					},
-					[]TExercise{
-						TExercise{Exercise: HAENGENDES_BEINHEBEN, Note: "Beine gestreckt bis ganz nach oben"},
-						TExercise{Exercise: NACKENTRAINER_IN_BAUCHLAGE},
-						TExercise{Exercise: KLAPPMESSER},
-						TExercise{Exercise: KAEFER_KONTRALATERAL, Note: "Beine gestreckt"},
+					[]tExercise{
+						tExercise{Exercise: haengendesBeinheben, Note: "Beine gestreckt bis ganz nach oben"},
+						tExercise{Exercise: nackentrainerInBauchlage},
+						tExercise{Exercise: klappmesser},
+						tExercise{Exercise: kaeferKontralateral, Note: "Beine gestreckt"},
 					},
 				},
 			},
 		},
 	},
-	TrainingWeek{
+	trainingWeek{
 		Description: "Powerblock",
-		TrainingDays: []TrainingDay{
-			TrainingDay{
-				Method: SUPERSATZ,
-				Exercises: [][]TExercise{
-					[]TExercise{
-						TExercise{Exercise: LIEGESTUETZ_MIT_ERHOEHTEN_FUESSEN},
-						TExercise{Exercise: LIEGESTUETZ_MIT_ABSTOSSEN},
-						TExercise{Exercise: MILITARY_PRESS},
-						TExercise{Exercise: BAERENGANG},
-						TExercise{Exercise: ENGER_LIEGESTUETZ},
-						TExercise{Exercise: SEESTERN},
+		TrainingDays: []trainingDay{
+			trainingDay{
+				Method: superSatz,
+				Exercises: [][]tExercise{
+					[]tExercise{
+						tExercise{Exercise: liegestuetzMitErhoehtenFuessen},
+						tExercise{Exercise: liegestuetzMitAbstossen},
+						tExercise{Exercise: militaryPress},
+						tExercise{Exercise: baerenGang},
+						tExercise{Exercise: engerLiegestuetz},
+						tExercise{Exercise: Seestern},
 					},
-					[]TExercise{
-						TExercise{Exercise: LIEGESTUETZ_MIT_ERHOEHTEN_FUESSEN, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: LIEGESTUETZ_MIT_ABSTOSSEN},
-						TExercise{Exercise: MILITARY_PRESS_MIT_ERHOEHTEN_FUESSEN},
-						TExercise{Exercise: STURZFLUG},
-						TExercise{Exercise: ENGER_LIEGESTUETZ_MIT_ERHOEHTEN_FUESSEN},
-						TExercise{Exercise: TRIZEPSDIP},
+					[]tExercise{
+						tExercise{Exercise: liegestuetzMitErhoehtenFuessen, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
+						tExercise{Exercise: liegestuetzMitAbstossen},
+						tExercise{Exercise: militaryPressMitErhoehtenFuessen},
+						tExercise{Exercise: sturzflug},
+						tExercise{Exercise: engerLiegestuetzMitErhoehtenFuessen},
+						tExercise{Exercise: trizepsdip},
 					},
-					[]TExercise{
-						TExercise{Exercise: EINARMIGER_LIEGESTUETZ},
-						TExercise{Exercise: FEDERNDER_LIEGESTUETZ},
-						TExercise{Exercise: MILITARY_PRESS_MIT_ERHOEHTEN_FUESSEN},
-						TExercise{Exercise: STURZFLUG},
-						TExercise{Exercise: ERHOEHTER_TRIZEPSSTRECKER},
-						TExercise{Exercise: LIEGESTUETZ_MIT_ABSTOSSEN},
+					[]tExercise{
+						tExercise{Exercise: einarmigerLiegestuetz},
+						tExercise{Exercise: federnderLiegestuetz},
+						tExercise{Exercise: militaryPressMitErhoehtenFuessen},
+						tExercise{Exercise: sturzflug},
+						tExercise{Exercise: erhoehterTrizepsstrecker},
+						tExercise{Exercise: liegestuetzMitAbstossen},
 					},
-					[]TExercise{
-						TExercise{Exercise: EINARMIGER_LIEGESTUETZ_MIT_ERHOEHTEN_FUESSEN},
-						TExercise{Exercise: FEDERNDER_LIEGESTUETZ},
-						TExercise{Exercise: HANDSTANDLIEGESTUETZ, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: STURZFLUG},
-						TExercise{Exercise: ERHOEHTER_TRIZEPSSTRECKER, Note: "Hände etwa hüfthoch"},
-						TExercise{Exercise: LIEGESTUETZ_MIT_ABSTOSSEN},
+					[]tExercise{
+						tExercise{Exercise: einarmigerLiegestuetzMitErhoehtenFuessen},
+						tExercise{Exercise: federnderLiegestuetz},
+						tExercise{Exercise: handstandLiegestuetz, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
+						tExercise{Exercise: sturzflug},
+						tExercise{Exercise: erhoehterTrizepsstrecker, Note: "Hände etwa hüfthoch"},
+						tExercise{Exercise: liegestuetzMitAbstossen},
 					},
 				},
 			},
-			TrainingDay{
-				Method: SUPERSATZ,
-				Exercises: [][]TExercise{
-					[]TExercise{
-						TExercise{Exercise: AUSFALLSCHRITT_NACH_HINTEN_IM_WECHSEL,
+			trainingDay{
+				Method: superSatz,
+				Exercises: [][]tExercise{
+					[]tExercise{
+						tExercise{Exercise: ausfallschrittNachHintenImWechsel,
 							Note: "mit 4-6 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: GESPRUNGENE_KNIEBEUGE},
-						TExercise{Exercise: AUSFALLSCHRITT_NACH_VORNE_IM_WECHSEL,
+						tExercise{Exercise: gesprungeneKniebeuge},
+						tExercise{Exercise: ausfallschrittNachVorneImWechsel,
 							Note: "mit 4-6 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: SEITLICHER_AUSFALLSCHRITT},
-						TExercise{Exercise: RUMAENISCHES_KREUZHEBEN_AUF_EINEM_BEIN_IM_WECHSEL,
+						tExercise{Exercise: seitlicherAusfallschritt},
+						tExercise{Exercise: rumaenischesKreuzhebenAufEinemBeinImWechsel,
 							Note: "auf einem Kissen"},
-						TExercise{Exercise: ENGE_KNIEBEUGE,
+						tExercise{Exercise: engeKniebeuge,
 							Note: "Arme in Streamline-Position mit 3 Sek. Haltezeit am tiefsten Punkt"},
 					},
-					[]TExercise{
-						TExercise{Exercise: EINBINIGE_KNIEBEUGE_MIT_UNTERSTUETZUNG},
-						TExercise{Exercise: GESPRUNGENE_KNIEBEUGE,
+					[]tExercise{
+						tExercise{Exercise: einbeinigeKniebeugeMitUnterstuetzung},
+						tExercise{Exercise: gesprungeneKniebeuge,
 							Note: "mit 4-6 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: SEITLICHER_AUSFALLSCHRITT,
+						tExercise{Exercise: seitlicherAusfallschritt,
 							Note: "mit 4-6 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: AUSFALLSCHRITT_NACH_HINTEN_IM_WECHSEL,
+						tExercise{Exercise: ausfallschrittNachHintenImWechsel,
 							Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: RUMAENISCHES_KREUZHEBEN_AUF_EINEM_BEIN_IM_WECHSEL,
+						tExercise{Exercise: rumaenischesKreuzhebenAufEinemBeinImWechsel,
 							Note: "auf einem Kissen mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: KISTENSPRUNG},
+						tExercise{Exercise: kistenSprung},
 					},
-					[]TExercise{
-						TExercise{Exercise: PISTOLE},
-						TExercise{Exercise: KISTENSPRUNG},
-						TExercise{Exercise: RUMAENISCHES_KREUZHEBEN_AUF_EINEM_BEIN_IM_WECHSEL,
+					[]tExercise{
+						tExercise{Exercise: pistole},
+						tExercise{Exercise: kistenSprung},
+						tExercise{Exercise: rumaenischesKreuzhebenAufEinemBeinImWechsel,
 							Note: "mit 4-6 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: IRON_MIKE},
-						TExercise{Exercise: KNIENDER_BEINWECHSEL},
-						TExercise{Exercise: SEITSPRUNG},
+						tExercise{Exercise: ironMike},
+						tExercise{Exercise: knieenderBeinwechsel},
+						tExercise{Exercise: seitensprung},
 					},
-					[]TExercise{
-						TExercise{Exercise: PISTOLE, Note: "Mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: KISTENSPRUNG},
-						TExercise{Exercise: RUMAENISCHES_KREUZHEBEN_AUF_EINEM_BEIN_IM_WECHSEL,
+					[]tExercise{
+						tExercise{Exercise: pistole, Note: "Mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
+						tExercise{Exercise: kistenSprung},
+						tExercise{Exercise: rumaenischesKreuzhebenAufEinemBeinImWechsel,
 							Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: IRON_MIKE},
-						TExercise{Exercise: KNIENDER_BEINWECHSEL},
-						TExercise{Exercise: SEITSPRUNG},
+						tExercise{Exercise: ironMike},
+						tExercise{Exercise: knieenderBeinwechsel},
+						tExercise{Exercise: seitensprung},
 					},
 				},
 			},
-			TrainingDay{
-				Method: SUPERSATZ,
-				Exercises: [][]TExercise{
-					[]TExercise{
-						TExercise{Exercise: KLIMMZUG_MIT_UNTERSTUEZUNG,
+			trainingDay{
+				Method: superSatz,
+				Exercises: [][]tExercise{
+					[]tExercise{
+						tExercise{Exercise: klimmzugMitUnterstuetzung,
 							Note: "ohne Unterstützung in der Negativphase"},
-						TExercise{Exercise: TUERZIEHEN},
-						TExercise{Exercise: TUERZIEHEN,
+						tExercise{Exercise: tuerziehen},
+						tExercise{Exercise: tuerziehen,
 							Note: "mit 4-6 Sek. Haltezeit am höchsten Punkt"},
-						TExercise{Exercise: CURL_MIT_HANDTUCH},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN_IM_UNTERGRIFF},
-						TExercise{Exercise: TUERZIEHEN_IM_UNTERGRIFF,
+						tExercise{Exercise: curlMitHandtuch},
+						tExercise{Exercise: umgekehrtesBankdrueckenImUntergriff},
+						tExercise{Exercise: tuerziehenImUntergriff,
 							Note: "Arme in Streamline-Position mit 3 Sek. Haltezeit am tiefsten Punkt"},
 					},
-					[]TExercise{
-						TExercise{Exercise: KLIMMZUG},
-						TExercise{Exercise: TUERZIEHEN},
-						TExercise{Exercise: TUERZIEHEN,
+					[]tExercise{
+						tExercise{Exercise: klimmzug},
+						tExercise{Exercise: tuerziehen},
+						tExercise{Exercise: tuerziehen,
 							Note: "mit 4-6 Sek. Haltezeit bei der Kontraktionam höchsten Punkt"},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN_IM_UNTERGRIFF, Note: "Füße erhöht"},
-						TExercise{Exercise: TUERZIEHEN_IM_UNTERGRIFF},
+						tExercise{Exercise: umgekehrtesBankdruecken},
+						tExercise{Exercise: umgekehrtesBankdrueckenImUntergriff, Note: "Füße erhöht"},
+						tExercise{Exercise: tuerziehenImUntergriff},
 					},
-					[]TExercise{
-						TExercise{Exercise: KLIMMZUG},
-						TExercise{Exercise: TUERZIEHEN},
-						TExercise{Exercise: EINARMIGES_TUERZIEHEN},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN_IM_UNTERGRIFF},
-						TExercise{Exercise: TUERZIEHEN_IM_UNTERGRIFF, Note: "mit 4-6 Sek. Haltezeit am höchsten Punkt"},
-						TExercise{Exercise: CURL_MIT_HANDTUCH},
+					[]tExercise{
+						tExercise{Exercise: klimmzug},
+						tExercise{Exercise: tuerziehen},
+						tExercise{Exercise: einarmigesTuerziehen},
+						tExercise{Exercise: umgekehrtesBankdrueckenImUntergriff},
+						tExercise{Exercise: tuerziehenImUntergriff, Note: "mit 4-6 Sek. Haltezeit am höchsten Punkt"},
+						tExercise{Exercise: curlMitHandtuch},
 					},
-					[]TExercise{
-						TExercise{Exercise: KLIMMZUG, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN, Note: "Füße erhöht"},
-						TExercise{Exercise: EINARMIGES_TUERZIEHEN, Note: "mit 1-3 Sek. Haltezeit bei der kontraktion am Höchsten Punkt"},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN_IM_UNTERGRIFF, Note: "Füße erhöht"},
-						TExercise{Exercise: KLIMMZUG, Note: "Bis zum Brustbein hochziehen"},
-						TExercise{Exercise: TUERZIEHEN_IM_UNTERGRIFF, Note: "mit 4-6 Sek. Haltezeit bei der Kontraktion am höchsten Punkt"},
+					[]tExercise{
+						tExercise{Exercise: klimmzug, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
+						tExercise{Exercise: umgekehrtesBankdruecken, Note: "Füße erhöht"},
+						tExercise{Exercise: einarmigesTuerziehen, Note: "mit 1-3 Sek. Haltezeit bei der kontraktion am Höchsten Punkt"},
+						tExercise{Exercise: umgekehrtesBankdrueckenImUntergriff, Note: "Füße erhöht"},
+						tExercise{Exercise: klimmzug, Note: "Bis zum Brustbein hochziehen"},
+						tExercise{Exercise: tuerziehenImUntergriff, Note: "mit 4-6 Sek. Haltezeit bei der Kontraktion am höchsten Punkt"},
 					},
 				},
 			},
-			TrainingDay{
-				Method: SUPERSATZ,
-				Exercises: [][]TExercise{
-					[]TExercise{
-						TExercise{Exercise: V_UP},
-						TExercise{Exercise: RUSSISCHER_TWIST},
-						TExercise{Exercise: KAEFER_IPSILATERAL,
+			trainingDay{
+				Method: superSatz,
+				Exercises: [][]tExercise{
+					[]tExercise{
+						tExercise{Exercise: vUp},
+						tExercise{Exercise: russischerTwist},
+						tExercise{Exercise: kaeferIpsilateral,
 							Note: "Beine gestreckt"},
-						TExercise{Exercise: CRUNCH_IT_UP},
-						TExercise{Exercise: HAENGENDES_BEINHEBEN},
-						TExercise{Exercise: BEINHEBER},
+						tExercise{Exercise: crunchItUp},
+						tExercise{Exercise: haengendesBeinheben},
+						tExercise{Exercise: beinheber},
 					},
-					[]TExercise{
-						TExercise{Exercise: HAENGENDES_BEINHEBEN},
-						TExercise{Exercise: BEINTWIST},
-						TExercise{Exercise: HUEFTTWIST},
-						TExercise{Exercise: KAEFER_UNILATERAL, Note: "Beine gestreckt"},
-						TExercise{Exercise: V_UP},
-						TExercise{Exercise: RUSSISCHER_TWIST},
+					[]tExercise{
+						tExercise{Exercise: haengendesBeinheben},
+						tExercise{Exercise: beinTwist},
+						tExercise{Exercise: hueftTwist},
+						tExercise{Exercise: kaeferUnilateral, Note: "Beine gestreckt"},
+						tExercise{Exercise: vUp},
+						tExercise{Exercise: russischerTwist},
 					},
-					[]TExercise{
-						TExercise{Exercise: HAENGENDES_BEINHEBEN},
-						TExercise{Exercise: FAHRRADFAHREN},
-						TExercise{Exercise: NACKENTRAINER_IN_BAUCHLAGE},
-						TExercise{Exercise: KAEFER_IPSILATERAL, Note: "Beine gebeugt"},
-						TExercise{Exercise: V_UP},
-						TExercise{Exercise: BEINTWIST},
+					[]tExercise{
+						tExercise{Exercise: haengendesBeinheben},
+						tExercise{Exercise: fahrradfahren},
+						tExercise{Exercise: nackentrainerInBauchlage},
+						tExercise{Exercise: kaeferIpsilateral, Note: "Beine gebeugt"},
+						tExercise{Exercise: vUp},
+						tExercise{Exercise: beinTwist},
 					},
-					[]TExercise{
-						TExercise{Exercise: HAENGENDES_BEINHEBEN, Note: "mit 4-6 Sek. Haltezeit am höchsten Punkt, Beine gestreckt bis ganz nach oben"},
-						TExercise{Exercise: FAHRRADFAHREN, Note: "langsam, 2 Sek. für das Heranziehen jedes Knies"},
-						TExercise{Exercise: NACKENTRAINER_IN_BAUCHLAGE, Note: "mit 4-6 Sek. Pause"},
-						TExercise{Exercise: KAEFER_UNILATERAL, Note: "Beine gestreckt"},
-						TExercise{Exercise: KLAPPMESSER},
-						TExercise{Exercise: BEINTWIST},
+					[]tExercise{
+						tExercise{Exercise: haengendesBeinheben, Note: "mit 4-6 Sek. Haltezeit am höchsten Punkt, Beine gestreckt bis ganz nach oben"},
+						tExercise{Exercise: fahrradfahren, Note: "langsam, 2 Sek. für das Heranziehen jedes Knies"},
+						tExercise{Exercise: nackentrainerInBauchlage, Note: "mit 4-6 Sek. Pause"},
+						tExercise{Exercise: kaeferUnilateral, Note: "Beine gestreckt"},
+						tExercise{Exercise: klappmesser},
+						tExercise{Exercise: beinTwist},
 					},
 				},
 			},
 		},
 	},
-	TrainingWeek{
+	trainingWeek{
 		Description: "Powerblock",
-		TrainingDays: []TrainingDay{
-			TrainingDay{
-				Method: SUPERSATZ,
-				Exercises: [][]TExercise{
-					[]TExercise{
-						TExercise{Exercise: LIEGESTUETZ_MIT_ERHOEHTEN_FUESSEN},
-						TExercise{Exercise: LIEGESTUETZ_MIT_ABSTOSSEN},
-						TExercise{Exercise: MILITARY_PRESS},
-						TExercise{Exercise: BAERENGANG},
-						TExercise{Exercise: ENGER_LIEGESTUETZ},
-						TExercise{Exercise: SEESTERN},
+		TrainingDays: []trainingDay{
+			trainingDay{
+				Method: superSatz,
+				Exercises: [][]tExercise{
+					[]tExercise{
+						tExercise{Exercise: liegestuetzMitErhoehtenFuessen},
+						tExercise{Exercise: liegestuetzMitAbstossen},
+						tExercise{Exercise: militaryPress},
+						tExercise{Exercise: baerenGang},
+						tExercise{Exercise: engerLiegestuetz},
+						tExercise{Exercise: Seestern},
 					},
-					[]TExercise{
-						TExercise{Exercise: LIEGESTUETZ_MIT_ERHOEHTEN_FUESSEN, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: LIEGESTUETZ_MIT_ABSTOSSEN},
-						TExercise{Exercise: MILITARY_PRESS_MIT_ERHOEHTEN_FUESSEN},
-						TExercise{Exercise: STURZFLUG},
-						TExercise{Exercise: ENGER_LIEGESTUETZ_MIT_ERHOEHTEN_FUESSEN},
-						TExercise{Exercise: TRIZEPSDIP},
+					[]tExercise{
+						tExercise{Exercise: liegestuetzMitErhoehtenFuessen, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
+						tExercise{Exercise: liegestuetzMitAbstossen},
+						tExercise{Exercise: militaryPressMitErhoehtenFuessen},
+						tExercise{Exercise: sturzflug},
+						tExercise{Exercise: engerLiegestuetzMitErhoehtenFuessen},
+						tExercise{Exercise: trizepsdip},
 					},
-					[]TExercise{
-						TExercise{Exercise: EINARMIGER_LIEGESTUETZ},
-						TExercise{Exercise: FEDERNDER_LIEGESTUETZ},
-						TExercise{Exercise: MILITARY_PRESS_MIT_ERHOEHTEN_FUESSEN},
-						TExercise{Exercise: STURZFLUG},
-						TExercise{Exercise: ERHOEHTER_TRIZEPSSTRECKER},
-						TExercise{Exercise: LIEGESTUETZ_MIT_ABSTOSSEN},
+					[]tExercise{
+						tExercise{Exercise: einarmigerLiegestuetz},
+						tExercise{Exercise: federnderLiegestuetz},
+						tExercise{Exercise: militaryPressMitErhoehtenFuessen},
+						tExercise{Exercise: sturzflug},
+						tExercise{Exercise: erhoehterTrizepsstrecker},
+						tExercise{Exercise: liegestuetzMitAbstossen},
 					},
-					[]TExercise{
-						TExercise{Exercise: EINARMIGER_LIEGESTUETZ_MIT_ERHOEHTEN_FUESSEN},
-						TExercise{Exercise: FEDERNDER_LIEGESTUETZ},
-						TExercise{Exercise: HANDSTANDLIEGESTUETZ, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: STURZFLUG},
-						TExercise{Exercise: ERHOEHTER_TRIZEPSSTRECKER, Note: "Hände etwa hüfthoch"},
-						TExercise{Exercise: LIEGESTUETZ_MIT_ABSTOSSEN},
+					[]tExercise{
+						tExercise{Exercise: einarmigerLiegestuetzMitErhoehtenFuessen},
+						tExercise{Exercise: federnderLiegestuetz},
+						tExercise{Exercise: handstandLiegestuetz, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
+						tExercise{Exercise: sturzflug},
+						tExercise{Exercise: erhoehterTrizepsstrecker, Note: "Hände etwa hüfthoch"},
+						tExercise{Exercise: liegestuetzMitAbstossen},
 					},
 				},
 			},
-			TrainingDay{
-				Method: SUPERSATZ,
-				Exercises: [][]TExercise{
-					[]TExercise{
-						TExercise{Exercise: AUSFALLSCHRITT_NACH_HINTEN_IM_WECHSEL,
+			trainingDay{
+				Method: superSatz,
+				Exercises: [][]tExercise{
+					[]tExercise{
+						tExercise{Exercise: ausfallschrittNachHintenImWechsel,
 							Note: "mit 4-6 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: GESPRUNGENE_KNIEBEUGE},
-						TExercise{Exercise: AUSFALLSCHRITT_NACH_VORNE_IM_WECHSEL,
+						tExercise{Exercise: gesprungeneKniebeuge},
+						tExercise{Exercise: ausfallschrittNachVorneImWechsel,
 							Note: "mit 4-6 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: SEITLICHER_AUSFALLSCHRITT},
-						TExercise{Exercise: RUMAENISCHES_KREUZHEBEN_AUF_EINEM_BEIN_IM_WECHSEL,
+						tExercise{Exercise: seitlicherAusfallschritt},
+						tExercise{Exercise: rumaenischesKreuzhebenAufEinemBeinImWechsel,
 							Note: "auf einem Kissen"},
-						TExercise{Exercise: ENGE_KNIEBEUGE,
+						tExercise{Exercise: engeKniebeuge,
 							Note: "Arme in Streamline-Position mit 3 Sek. Haltezeit am tiefsten Punkt"},
 					},
-					[]TExercise{
-						TExercise{Exercise: EINBINIGE_KNIEBEUGE_MIT_UNTERSTUETZUNG},
-						TExercise{Exercise: GESPRUNGENE_KNIEBEUGE,
+					[]tExercise{
+						tExercise{Exercise: einbeinigeKniebeugeMitUnterstuetzung},
+						tExercise{Exercise: gesprungeneKniebeuge,
 							Note: "mit 4-6 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: SEITLICHER_AUSFALLSCHRITT,
+						tExercise{Exercise: seitlicherAusfallschritt,
 							Note: "mit 4-6 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: AUSFALLSCHRITT_NACH_HINTEN_IM_WECHSEL,
+						tExercise{Exercise: ausfallschrittNachHintenImWechsel,
 							Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: RUMAENISCHES_KREUZHEBEN_AUF_EINEM_BEIN_IM_WECHSEL,
+						tExercise{Exercise: rumaenischesKreuzhebenAufEinemBeinImWechsel,
 							Note: "auf einem Kissen mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: KISTENSPRUNG},
+						tExercise{Exercise: kistenSprung},
 					},
-					[]TExercise{
-						TExercise{Exercise: PISTOLE},
-						TExercise{Exercise: KISTENSPRUNG},
-						TExercise{Exercise: RUMAENISCHES_KREUZHEBEN_AUF_EINEM_BEIN_IM_WECHSEL,
+					[]tExercise{
+						tExercise{Exercise: pistole},
+						tExercise{Exercise: kistenSprung},
+						tExercise{Exercise: rumaenischesKreuzhebenAufEinemBeinImWechsel,
 							Note: "mit 4-6 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: IRON_MIKE},
-						TExercise{Exercise: KNIENDER_BEINWECHSEL},
-						TExercise{Exercise: SEITSPRUNG},
+						tExercise{Exercise: ironMike},
+						tExercise{Exercise: knieenderBeinwechsel},
+						tExercise{Exercise: seitensprung},
 					},
-					[]TExercise{
-						TExercise{Exercise: PISTOLE, Note: "Mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: KISTENSPRUNG},
-						TExercise{Exercise: RUMAENISCHES_KREUZHEBEN_AUF_EINEM_BEIN_IM_WECHSEL,
+					[]tExercise{
+						tExercise{Exercise: pistole, Note: "Mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
+						tExercise{Exercise: kistenSprung},
+						tExercise{Exercise: rumaenischesKreuzhebenAufEinemBeinImWechsel,
 							Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: IRON_MIKE},
-						TExercise{Exercise: KNIENDER_BEINWECHSEL},
-						TExercise{Exercise: SEITSPRUNG},
+						tExercise{Exercise: ironMike},
+						tExercise{Exercise: knieenderBeinwechsel},
+						tExercise{Exercise: seitensprung},
 					},
 				},
 			},
-			TrainingDay{
-				Method: SUPERSATZ,
-				Exercises: [][]TExercise{
-					[]TExercise{
-						TExercise{Exercise: KLIMMZUG_MIT_UNTERSTUEZUNG,
+			trainingDay{
+				Method: superSatz,
+				Exercises: [][]tExercise{
+					[]tExercise{
+						tExercise{Exercise: klimmzugMitUnterstuetzung,
 							Note: "ohne Unterstützung in der Negativphase"},
-						TExercise{Exercise: TUERZIEHEN},
-						TExercise{Exercise: TUERZIEHEN,
+						tExercise{Exercise: tuerziehen},
+						tExercise{Exercise: tuerziehen,
 							Note: "mit 4-6 Sek. Haltezeit am höchsten Punkt"},
-						TExercise{Exercise: CURL_MIT_HANDTUCH},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN_IM_UNTERGRIFF},
-						TExercise{Exercise: TUERZIEHEN_IM_UNTERGRIFF,
+						tExercise{Exercise: curlMitHandtuch},
+						tExercise{Exercise: umgekehrtesBankdrueckenImUntergriff},
+						tExercise{Exercise: tuerziehenImUntergriff,
 							Note: "Arme in Streamline-Position mit 3 Sek. Haltezeit am tiefsten Punkt"},
 					},
-					[]TExercise{
-						TExercise{Exercise: KLIMMZUG},
-						TExercise{Exercise: TUERZIEHEN},
-						TExercise{Exercise: TUERZIEHEN,
+					[]tExercise{
+						tExercise{Exercise: klimmzug},
+						tExercise{Exercise: tuerziehen},
+						tExercise{Exercise: tuerziehen,
 							Note: "mit 4-6 Sek. Haltezeit bei der Kontraktionam höchsten Punkt"},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN_IM_UNTERGRIFF, Note: "Füße erhöht"},
-						TExercise{Exercise: TUERZIEHEN_IM_UNTERGRIFF},
+						tExercise{Exercise: umgekehrtesBankdruecken},
+						tExercise{Exercise: umgekehrtesBankdrueckenImUntergriff, Note: "Füße erhöht"},
+						tExercise{Exercise: tuerziehenImUntergriff},
 					},
-					[]TExercise{
-						TExercise{Exercise: KLIMMZUG},
-						TExercise{Exercise: TUERZIEHEN},
-						TExercise{Exercise: EINARMIGES_TUERZIEHEN},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN_IM_UNTERGRIFF},
-						TExercise{Exercise: TUERZIEHEN_IM_UNTERGRIFF, Note: "mit 4-6 Sek. Haltezeit am höchsten Punkt"},
-						TExercise{Exercise: CURL_MIT_HANDTUCH},
+					[]tExercise{
+						tExercise{Exercise: klimmzug},
+						tExercise{Exercise: tuerziehen},
+						tExercise{Exercise: einarmigesTuerziehen},
+						tExercise{Exercise: umgekehrtesBankdrueckenImUntergriff},
+						tExercise{Exercise: tuerziehenImUntergriff, Note: "mit 4-6 Sek. Haltezeit am höchsten Punkt"},
+						tExercise{Exercise: curlMitHandtuch},
 					},
-					[]TExercise{
-						TExercise{Exercise: KLIMMZUG, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN, Note: "Füße erhöht"},
-						TExercise{Exercise: EINARMIGES_TUERZIEHEN, Note: "mit 1-3 Sek. Haltezeit bei der kontraktion am Höchsten Punkt"},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN_IM_UNTERGRIFF, Note: "Füße erhöht"},
-						TExercise{Exercise: KLIMMZUG, Note: "Bis zum Brustbein hochziehen"},
-						TExercise{Exercise: TUERZIEHEN_IM_UNTERGRIFF, Note: "mit 4-6 Sek. Haltezeit bei der Kontraktion am höchsten Punkt"},
+					[]tExercise{
+						tExercise{Exercise: klimmzug, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
+						tExercise{Exercise: umgekehrtesBankdruecken, Note: "Füße erhöht"},
+						tExercise{Exercise: einarmigesTuerziehen, Note: "mit 1-3 Sek. Haltezeit bei der kontraktion am Höchsten Punkt"},
+						tExercise{Exercise: umgekehrtesBankdrueckenImUntergriff, Note: "Füße erhöht"},
+						tExercise{Exercise: klimmzug, Note: "Bis zum Brustbein hochziehen"},
+						tExercise{Exercise: tuerziehenImUntergriff, Note: "mit 4-6 Sek. Haltezeit bei der Kontraktion am höchsten Punkt"},
 					},
 				},
 			},
-			TrainingDay{
-				Method: SUPERSATZ,
-				Exercises: [][]TExercise{
-					[]TExercise{
-						TExercise{Exercise: V_UP},
-						TExercise{Exercise: RUSSISCHER_TWIST},
-						TExercise{Exercise: KAEFER_IPSILATERAL,
+			trainingDay{
+				Method: superSatz,
+				Exercises: [][]tExercise{
+					[]tExercise{
+						tExercise{Exercise: vUp},
+						tExercise{Exercise: russischerTwist},
+						tExercise{Exercise: kaeferIpsilateral,
 							Note: "Beine gestreckt"},
-						TExercise{Exercise: CRUNCH_IT_UP},
-						TExercise{Exercise: HAENGENDES_BEINHEBEN},
-						TExercise{Exercise: BEINHEBER},
+						tExercise{Exercise: crunchItUp},
+						tExercise{Exercise: haengendesBeinheben},
+						tExercise{Exercise: beinheber},
 					},
-					[]TExercise{
-						TExercise{Exercise: HAENGENDES_BEINHEBEN},
-						TExercise{Exercise: BEINTWIST},
-						TExercise{Exercise: HUEFTTWIST},
-						TExercise{Exercise: KAEFER_UNILATERAL, Note: "Beine gestreckt"},
-						TExercise{Exercise: V_UP},
-						TExercise{Exercise: RUSSISCHER_TWIST},
+					[]tExercise{
+						tExercise{Exercise: haengendesBeinheben},
+						tExercise{Exercise: beinTwist},
+						tExercise{Exercise: hueftTwist},
+						tExercise{Exercise: kaeferUnilateral, Note: "Beine gestreckt"},
+						tExercise{Exercise: vUp},
+						tExercise{Exercise: russischerTwist},
 					},
-					[]TExercise{
-						TExercise{Exercise: HAENGENDES_BEINHEBEN},
-						TExercise{Exercise: FAHRRADFAHREN},
-						TExercise{Exercise: NACKENTRAINER_IN_BAUCHLAGE},
-						TExercise{Exercise: KAEFER_IPSILATERAL, Note: "Beine gebeugt"},
-						TExercise{Exercise: V_UP},
-						TExercise{Exercise: BEINTWIST},
+					[]tExercise{
+						tExercise{Exercise: haengendesBeinheben},
+						tExercise{Exercise: fahrradfahren},
+						tExercise{Exercise: nackentrainerInBauchlage},
+						tExercise{Exercise: kaeferIpsilateral, Note: "Beine gebeugt"},
+						tExercise{Exercise: vUp},
+						tExercise{Exercise: beinTwist},
 					},
-					[]TExercise{
-						TExercise{Exercise: HAENGENDES_BEINHEBEN, Note: "mit 4-6 Sek. Haltezeit am höchsten Punkt, Beine gestreckt bis ganz nach oben"},
-						TExercise{Exercise: FAHRRADFAHREN, Note: "langsam, 2 Sek. für das Heranziehen jedes Knies"},
-						TExercise{Exercise: NACKENTRAINER_IN_BAUCHLAGE, Note: "mit 4-6 Sek. Pause"},
-						TExercise{Exercise: KAEFER_UNILATERAL, Note: "Beine gestreckt"},
-						TExercise{Exercise: KLAPPMESSER},
-						TExercise{Exercise: BEINTWIST},
+					[]tExercise{
+						tExercise{Exercise: haengendesBeinheben, Note: "mit 4-6 Sek. Haltezeit am höchsten Punkt, Beine gestreckt bis ganz nach oben"},
+						tExercise{Exercise: fahrradfahren, Note: "langsam, 2 Sek. für das Heranziehen jedes Knies"},
+						tExercise{Exercise: nackentrainerInBauchlage, Note: "mit 4-6 Sek. Pause"},
+						tExercise{Exercise: kaeferUnilateral, Note: "Beine gestreckt"},
+						tExercise{Exercise: klappmesser},
+						tExercise{Exercise: beinTwist},
 					},
 				},
 			},
 		},
 	},
-	TrainingWeek{
+	trainingWeek{
 		Description: "Wechselblock",
-		TrainingDays: []TrainingDay{
-			TrainingDay{
-				Method: STUFENINTERVALL,
-				Exercises: [][]TExercise{
-					[]TExercise{
-						TExercise{Exercise: MILITARY_PRESS_MIT_ERHOEHTEN_HAENDEN},
-						TExercise{Exercise: LIEGESTUETZ_MIT_ERHOEHTEN_HAENDEN},
-						TExercise{Exercise: ENGER_LIEGESTUETZ_MIT_ERHOEHTEN_HAENDEN},
-						TExercise{Exercise: SEESTERN},
+		TrainingDays: []trainingDay{
+			trainingDay{
+				Method: stufenIntervall,
+				Exercises: [][]tExercise{
+					[]tExercise{
+						tExercise{Exercise: militaryPressMitErhoehtenHaenden},
+						tExercise{Exercise: liegestuetzMitErhoehtenHaenden},
+						tExercise{Exercise: engerLiegestuetzMitErhoehtenHaenden},
+						tExercise{Exercise: Seestern},
 					},
-					[]TExercise{
-						TExercise{Exercise: MILITARY_PRESS},
-						TExercise{Exercise: KLASSISCHER_LIEGESTUETZ},
-						TExercise{Exercise: ENGER_LIEGESTUETZ},
-						TExercise{Exercise: SEESTERN},
+					[]tExercise{
+						tExercise{Exercise: militaryPress},
+						tExercise{Exercise: klassischerLiegestuetz},
+						tExercise{Exercise: engerLiegestuetz},
+						tExercise{Exercise: Seestern},
 					},
-					[]TExercise{
-						TExercise{Exercise: EINARMIGER_LIEGESTUETZ_MIT_ERHOEHTEN_HAENDEN},
-						TExercise{Exercise: STURZFLUG},
-						TExercise{Exercise: TRIZEPSDIP},
-						TExercise{Exercise: SEESTERN},
+					[]tExercise{
+						tExercise{Exercise: einarmigerLiegestuetzMitErhoehtenHaenden},
+						tExercise{Exercise: sturzflug},
+						tExercise{Exercise: trizepsdip},
+						tExercise{Exercise: Seestern},
 					},
-					[]TExercise{
-						TExercise{Exercise: EINARMIGER_LIEGESTUETZ},
-						TExercise{Exercise: HANDSTANDLIEGESTUETZ},
-						TExercise{Exercise: STURZFLUG},
-						TExercise{Exercise: TRIZEPSDIP, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
+					[]tExercise{
+						tExercise{Exercise: einarmigerLiegestuetz},
+						tExercise{Exercise: handstandLiegestuetz},
+						tExercise{Exercise: sturzflug},
+						tExercise{Exercise: trizepsdip, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
 					},
 				},
 			},
-			TrainingDay{
-				Method: SUPERSATZ,
-				Exercises: [][]TExercise{
-					[]TExercise{
-						TExercise{Exercise: AUSFALLSCHRITT_NACH_HINTEN_IM_WECHSEL,
+			trainingDay{
+				Method: superSatz,
+				Exercises: [][]tExercise{
+					[]tExercise{
+						tExercise{Exercise: ausfallschrittNachHintenImWechsel,
 							Note: "mit 4-6 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: GESPRUNGENE_KNIEBEUGE},
-						TExercise{Exercise: AUSFALLSCHRITT_NACH_VORNE_IM_WECHSEL,
+						tExercise{Exercise: gesprungeneKniebeuge},
+						tExercise{Exercise: ausfallschrittNachVorneImWechsel,
 							Note: "mit 4-6 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: SEITLICHER_AUSFALLSCHRITT},
-						TExercise{Exercise: RUMAENISCHES_KREUZHEBEN_AUF_EINEM_BEIN_IM_WECHSEL,
+						tExercise{Exercise: seitlicherAusfallschritt},
+						tExercise{Exercise: rumaenischesKreuzhebenAufEinemBeinImWechsel,
 							Note: "auf einem Kissen und mit 1-3 Sek. Haltezeit in der Mitte"},
-						TExercise{Exercise: POGO_SPRUNG},
+						tExercise{Exercise: pogoSprung},
 					},
-					[]TExercise{
-						TExercise{Exercise: EINBINIGE_KNIEBEUGE_MIT_UNTERSTUETZUNG},
-						TExercise{Exercise: GESPRUNGENE_KNIEBEUGE,
+					[]tExercise{
+						tExercise{Exercise: einbeinigeKniebeugeMitUnterstuetzung},
+						tExercise{Exercise: gesprungeneKniebeuge,
 							Note: "mit 4-6 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: SEITLICHER_AUSFALLSCHRITT,
+						tExercise{Exercise: seitlicherAusfallschritt,
 							Note: "mit 4-6 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: AUSFALLSCHRITT_NACH_HINTEN_IM_WECHSEL,
+						tExercise{Exercise: ausfallschrittNachHintenImWechsel,
 							Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: RUMAENISCHES_KREUZHEBEN_AUF_EINEM_BEIN_IM_WECHSEL,
+						tExercise{Exercise: rumaenischesKreuzhebenAufEinemBeinImWechsel,
 							Note: "auf einem Kissen und mit 1-3 Sek. Haltezeit in der Mitte"},
-						TExercise{Exercise: KISTENSPRUNG},
+						tExercise{Exercise: kistenSprung},
 					},
-					[]TExercise{
-						TExercise{Exercise: PISTOLE},
-						TExercise{Exercise: SEITLICHES_KNIEOEFFNEN_IM_STAND},
-						TExercise{Exercise: KISTENSPRUNG},
-						TExercise{Exercise: IRON_MIKE},
-						TExercise{Exercise: KNIENDER_BEINWECHSEL},
-						TExercise{Exercise: SEITSPRUNG},
+					[]tExercise{
+						tExercise{Exercise: pistole},
+						tExercise{Exercise: seitlichesKnieoeffnenImStand},
+						tExercise{Exercise: kistenSprung},
+						tExercise{Exercise: ironMike},
+						tExercise{Exercise: knieenderBeinwechsel},
+						tExercise{Exercise: seitensprung},
 					},
-					[]TExercise{
-						TExercise{Exercise: PISTOLE, Note: "im Wechsel mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: KISTENSPRUNG},
-						TExercise{Exercise: RUMAENISCHES_KREUZHEBEN_AUF_EINEM_BEIN_IM_WECHSEL, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: IRON_MIKE},
-						TExercise{Exercise: KNIENDER_BEINWECHSEL},
-						TExercise{Exercise: SEITSPRUNG},
+					[]tExercise{
+						tExercise{Exercise: pistole, Note: "im Wechsel mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
+						tExercise{Exercise: kistenSprung},
+						tExercise{Exercise: rumaenischesKreuzhebenAufEinemBeinImWechsel, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
+						tExercise{Exercise: ironMike},
+						tExercise{Exercise: knieenderBeinwechsel},
+						tExercise{Exercise: seitensprung},
 					},
 				},
 			},
-			TrainingDay{
-				Method: INTERVALLSATZ,
-				Exercises: [][]TExercise{
-					[]TExercise{
-						TExercise{Exercise: TUERZIEHEN},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN},
-						TExercise{Exercise: TUERZIEHEN_IM_UNTERGRIFF},
-						TExercise{Exercise: CURL_MIT_HANDTUCH},
+			trainingDay{
+				Method: intervallSatz,
+				Exercises: [][]tExercise{
+					[]tExercise{
+						tExercise{Exercise: tuerziehen},
+						tExercise{Exercise: umgekehrtesBankdruecken},
+						tExercise{Exercise: tuerziehenImUntergriff},
+						tExercise{Exercise: curlMitHandtuch},
 					},
-					[]TExercise{
-						TExercise{Exercise: KLIMMZUG_MIT_UNTERSTUEZUNG,
+					[]tExercise{
+						tExercise{Exercise: klimmzugMitUnterstuetzung,
 							Note: "ohne Unterstützung in der Negativphase"},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN},
-						TExercise{Exercise: TUERZIEHEN},
-						TExercise{Exercise: CURL_MIT_HANDTUCH},
+						tExercise{Exercise: umgekehrtesBankdruecken},
+						tExercise{Exercise: tuerziehen},
+						tExercise{Exercise: curlMitHandtuch},
 					},
-					[]TExercise{
-						TExercise{Exercise: KLIMMZUG},
-						TExercise{Exercise: TUERZIEHEN, Note: "mit 1-3 Sek. Haltezeit bei der Kontraktion am Höchsten Punkt"},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN_IM_UNTERGRIFF},
+					[]tExercise{
+						tExercise{Exercise: klimmzug},
+						tExercise{Exercise: tuerziehen, Note: "mit 1-3 Sek. Haltezeit bei der Kontraktion am Höchsten Punkt"},
+						tExercise{Exercise: umgekehrtesBankdruecken},
+						tExercise{Exercise: umgekehrtesBankdrueckenImUntergriff},
 					},
-					[]TExercise{
-						TExercise{Exercise: KLIMMZUG, Note: "mit 1-3 Sek. Haltezeit am höchsten Punkt"},
-						TExercise{Exercise: EINARMIGES_TUERZIEHEN},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN_IM_UNTERGRIFF, Note: "Füße erhöht"},
-						TExercise{Exercise: TUERZIEHEN_IM_UNTERGRIFF, Note: "mit 4-6 Sek. Haltezeit bei der Kontraktion am höchsten Punkt"},
-					},
-				},
-			},
-			TrainingDay{
-				Method: HOCHINTENSITAETSSATZ,
-				Exercises: [][]TExercise{
-					[]TExercise{
-						TExercise{Exercise: RUSSISCHER_TWIST},
-						TExercise{Exercise: HUEFTTWIST},
-						TExercise{Exercise: KNIEHEBER_IM_STEHEN},
-					},
-					[]TExercise{
-						TExercise{Exercise: RUSSISCHER_TWIST},
-						TExercise{Exercise: BODYROCK},
-						TExercise{Exercise: TIEFE_KNIEBEUGE, Note: "Hände hinter dem Kopf"},
-					},
-					[]TExercise{
-						TExercise{Exercise: SCHRAEGER_V_UP, Note: "4 Sätze pro Seite"},
-						TExercise{Exercise: BODYROCK},
-						TExercise{Exercise: TIEFE_KNIEBEUGE, Note: "Arme in Streamline Position"},
-					},
-					[]TExercise{
-						TExercise{Exercise: V_UP},
-						TExercise{Exercise: SCHRAEGER_V_UP, Note: "nach jedem Satz Seitenwechsel, insgesamt 4 Sätze"},
-						TExercise{Exercise: RUSSISCHER_TWIST},
-						TExercise{Exercise: BERGSTEIGER},
+					[]tExercise{
+						tExercise{Exercise: klimmzug, Note: "mit 1-3 Sek. Haltezeit am höchsten Punkt"},
+						tExercise{Exercise: einarmigesTuerziehen},
+						tExercise{Exercise: umgekehrtesBankdrueckenImUntergriff, Note: "Füße erhöht"},
+						tExercise{Exercise: tuerziehenImUntergriff, Note: "mit 4-6 Sek. Haltezeit bei der Kontraktion am höchsten Punkt"},
 					},
 				},
 			},
-			TrainingDay{
-				Method: ZIRKELINTERVALL,
-				Exercises: [][]TExercise{
-					[]TExercise{
-						TExercise{Exercise: AUSFALLSCHRITT_NACH_HINTEN_IM_WECHSEL,
+			trainingDay{
+				Method: hochIntensitaetsSatz,
+				Exercises: [][]tExercise{
+					[]tExercise{
+						tExercise{Exercise: russischerTwist},
+						tExercise{Exercise: hueftTwist},
+						tExercise{Exercise: knieheberImStehen},
+					},
+					[]tExercise{
+						tExercise{Exercise: russischerTwist},
+						tExercise{Exercise: bodyRock},
+						tExercise{Exercise: tiefeKniebeuge, Note: "Hände hinter dem Kopf"},
+					},
+					[]tExercise{
+						tExercise{Exercise: schraegerVUp, Note: "4 Sätze pro Seite"},
+						tExercise{Exercise: bodyRock},
+						tExercise{Exercise: tiefeKniebeuge, Note: "Arme in Streamline Position"},
+					},
+					[]tExercise{
+						tExercise{Exercise: vUp},
+						tExercise{Exercise: schraegerVUp, Note: "nach jedem Satz Seitenwechsel, insgesamt 4 Sätze"},
+						tExercise{Exercise: russischerTwist},
+						tExercise{Exercise: bergsteiger},
+					},
+				},
+			},
+			trainingDay{
+				Method: zirkelIntervall,
+				Exercises: [][]tExercise{
+					[]tExercise{
+						tExercise{Exercise: ausfallschrittNachHintenImWechsel,
 							Note: "10 Wiederholungen pro Seite"},
-						TExercise{Exercise: TUERZIEHEN,
+						tExercise{Exercise: tuerziehen,
 							Note: "8 Wiederholungen"},
-						TExercise{Exercise: KLASSISCHER_LIEGESTUETZ,
+						tExercise{Exercise: klassischerLiegestuetz,
 							Note: "6 Wiederholungen"},
 					},
-					[]TExercise{
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN,
+					[]tExercise{
+						tExercise{Exercise: umgekehrtesBankdruecken,
 							Note: "6 Wiederholungen"},
-						TExercise{Exercise: SEITLICHER_AUSFALLSCHRITT,
+						tExercise{Exercise: seitlicherAusfallschritt,
 							Note: "12 Wiederholungen"},
-						TExercise{Exercise: KLASSISCHER_LIEGESTUETZ,
+						tExercise{Exercise: klassischerLiegestuetz,
 							Note: "8 Wiederholungen"},
 					},
-					[]TExercise{
-						TExercise{Exercise: EINBEINIGE_KNIEBEUGE,
+					[]tExercise{
+						tExercise{Exercise: einbeinigeKniebeuge,
 							Note: "12 Wiederholungen"},
-						TExercise{Exercise: STURZFLUG,
+						tExercise{Exercise: sturzflug,
 							Note: "6 Wiederholungen"},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN,
+						tExercise{Exercise: umgekehrtesBankdruecken,
 							Note: "8 Wiederholungen"},
 					},
-					[]TExercise{
-						TExercise{Exercise: PISTOLE,
+					[]tExercise{
+						tExercise{Exercise: pistole,
 							Note: "12 Wiederholungen"},
-						TExercise{Exercise: HANDSTANDLIEGESTUETZ,
+						tExercise{Exercise: handstandLiegestuetz,
 							Note: "6 Wiederholungen"},
-						TExercise{Exercise: KLIMMZUG,
+						tExercise{Exercise: klimmzug,
 							Note: "8 Wiederholungen"},
 					},
 				},
 			},
 		},
 	},
-	TrainingWeek{
+	trainingWeek{
 		Description: "Wechselblock",
-		TrainingDays: []TrainingDay{
-			TrainingDay{
-				Method: HOCHINTENSITAETSSATZ,
-				Exercises: [][]TExercise{
-					[]TExercise{
-						TExercise{Exercise: LIEGESTUETZ_MIT_ERHOEHTEN_HAENDEN, Note: "brusthoch abgestützt"},
-						TExercise{Exercise: BODYROCK},
-						TExercise{Exercise: VIER_PHASEN_LIEGESTUETZ},
+		TrainingDays: []trainingDay{
+			trainingDay{
+				Method: hochIntensitaetsSatz,
+				Exercises: [][]tExercise{
+					[]tExercise{
+						tExercise{Exercise: liegestuetzMitErhoehtenHaenden, Note: "brusthoch abgestützt"},
+						tExercise{Exercise: bodyRock},
+						tExercise{Exercise: vierPhasenLiegestuetz},
 					},
-					[]TExercise{
-						TExercise{Exercise: LIEGESTUETZ_MIT_ERHOEHTEN_HAENDEN},
-						TExercise{Exercise: SEESTERN},
-						TExercise{Exercise: TIEFE_KNIEBEUGE},
+					[]tExercise{
+						tExercise{Exercise: liegestuetzMitErhoehtenHaenden},
+						tExercise{Exercise: Seestern},
+						tExercise{Exercise: tiefeKniebeuge},
 					},
-					[]TExercise{
-						TExercise{Exercise: KLASSISCHER_LIEGESTUETZ},
-						TExercise{Exercise: LIEGESTUETZ_MIT_ABSTOSSEN},
-						TExercise{Exercise: TIEFE_KNIEBEUGE, Note: "Arme in T-Halte"},
+					[]tExercise{
+						tExercise{Exercise: klassischerLiegestuetz},
+						tExercise{Exercise: liegestuetzMitAbstossen},
+						tExercise{Exercise: tiefeKniebeuge, Note: "Arme in T-Halte"},
 					},
-					[]TExercise{
-						TExercise{Exercise: KLASSISCHER_LIEGESTUETZ},
-						TExercise{Exercise: LIEGESTUETZ_MIT_ABSTOSSEN},
-						TExercise{Exercise: MILITARY_PRESS_MIT_ERHOEHTEN_FUESSEN},
-					},
-				},
-			},
-			TrainingDay{
-				Method: STUFENINTERVALL,
-				Exercises: [][]TExercise{
-					[]TExercise{
-						TExercise{Exercise: AUSFALLSCHRITT_NACH_HINTEN_IM_WECHSEL},
-						TExercise{Exercise: RUMAENISCHES_KREUZHEBEN_AUF_EINEM_BEIN_IM_WECHSEL},
-						TExercise{Exercise: ENGE_KNIEBEUGE, Note: "Arme in Vorhalte mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: GOOD_MORNING, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
-					},
-					[]TExercise{
-						TExercise{Exercise: AUSFALLSCHRITT_NACH_HINTEN_IM_WECHSEL},
-						TExercise{Exercise: SEITLICHER_AUSFALLSCHRITT},
-						TExercise{Exercise: GESPRUNGENE_KNIEBEUGE, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: RUMAENISCHES_KREUZHEBEN_AUF_EINEM_BEIN_IM_WECHSEL},
-					},
-					[]TExercise{
-						TExercise{Exercise: EINBEINIGE_KNIEBEUGE},
-						TExercise{Exercise: KREUZSCHRITT},
-						TExercise{Exercise: SEITLICHER_AUSFALLSCHRITT, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: HUEFTSTRECKER},
-					},
-					[]TExercise{
-						TExercise{Exercise: EINBEINIGE_KNIEBEUGE},
-						TExercise{Exercise: SEITLICHES_KNIEOEFFNEN_IM_STAND},
-						TExercise{Exercise: IRON_MIKE},
-						TExercise{Exercise: EINBEINIGER_HUEFTSTRECKER},
+					[]tExercise{
+						tExercise{Exercise: klassischerLiegestuetz},
+						tExercise{Exercise: liegestuetzMitAbstossen},
+						tExercise{Exercise: militaryPressMitErhoehtenFuessen},
 					},
 				},
 			},
-			TrainingDay{
-				Method: SUPERSATZ,
-				Exercises: [][]TExercise{
-					[]TExercise{
-						TExercise{Exercise: KLIMMZUG_MIT_UNTERSTUEZUNG},
-						TExercise{Exercise: TUERZIEHEN},
-						TExercise{Exercise: TUERZIEHEN, Note: "mit 4-6 Sek. Haltezeit am höchsten Punkt"},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN, Note: "mit gebeugten Knien"},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN_IM_UNTERGRIFF, Note: "Beine gestreckt"},
-						TExercise{Exercise: TUERZIEHEN_IM_UNTERGRIFF},
+			trainingDay{
+				Method: stufenIntervall,
+				Exercises: [][]tExercise{
+					[]tExercise{
+						tExercise{Exercise: ausfallschrittNachHintenImWechsel},
+						tExercise{Exercise: rumaenischesKreuzhebenAufEinemBeinImWechsel},
+						tExercise{Exercise: engeKniebeuge, Note: "Arme in Vorhalte mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
+						tExercise{Exercise: goodMorning, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
 					},
-					[]TExercise{
-						TExercise{Exercise: KLIMMZUG},
-						TExercise{Exercise: TUERZIEHEN},
-						TExercise{Exercise: TUERZIEHEN, Note: "mit 4-6 Sek. Haltezeit am höchsten Punkt"},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN_IM_UNTERGRIFF},
-						TExercise{Exercise: TUERZIEHEN_IM_UNTERGRIFF},
+					[]tExercise{
+						tExercise{Exercise: ausfallschrittNachHintenImWechsel},
+						tExercise{Exercise: seitlicherAusfallschritt},
+						tExercise{Exercise: gesprungeneKniebeuge, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
+						tExercise{Exercise: rumaenischesKreuzhebenAufEinemBeinImWechsel},
 					},
-					[]TExercise{
-						TExercise{Exercise: KLIMMZUG},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN},
-						TExercise{Exercise: EINARMIGES_TUERZIEHEN},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN_IM_UNTERGRIFF, Note: "Füße erhöht"},
-						TExercise{Exercise: TUERZIEHEN_IM_UNTERGRIFF},
-						TExercise{Exercise: CURL_MIT_HANDTUCH},
+					[]tExercise{
+						tExercise{Exercise: einbeinigeKniebeuge},
+						tExercise{Exercise: kreuzschritt},
+						tExercise{Exercise: seitlicherAusfallschritt, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
+						tExercise{Exercise: hueftStrecker},
 					},
-					[]TExercise{
-						TExercise{Exercise: KLIMMZUG, Note: "mit 4-6 Sek. Haltezeit am höchsten Punkt"},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN, Note: "Füße erhöht"},
-						TExercise{Exercise: EINARMIGES_TUERZIEHEN, Note: "mit 1-3 Sek. Haltezeit bei der Kontraktion am höchsten Punkt"},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN_IM_UNTERGRIFF, Note: "Füße erhöht"},
-						TExercise{Exercise: KLIMMZUG, Note: "bis zum Brustbein hochziehen"},
-						TExercise{Exercise: TUERZIEHEN_IM_UNTERGRIFF, Note: "mit 4-6 Sek. Haltezeit bei der Kontraktion am höchsten Punkt"},
+					[]tExercise{
+						tExercise{Exercise: einbeinigeKniebeuge},
+						tExercise{Exercise: seitlichesKnieoeffnenImStand},
+						tExercise{Exercise: ironMike},
+						tExercise{Exercise: einbeinigerHueftstrecker},
 					},
 				},
 			},
-			TrainingDay{
-				Method: INTERVALLSATZ,
-				Exercises: [][]TExercise{
-					[]TExercise{
-						TExercise{Exercise: BEINHEBER},
-						TExercise{Exercise: KAEFER_KONTRALATERAL, Note: "Beine gebeugt"},
-						TExercise{Exercise: RUSSISCHER_TWIST},
-						TExercise{Exercise: SEITLICHES_HUEFTHEBEN},
+			trainingDay{
+				Method: superSatz,
+				Exercises: [][]tExercise{
+					[]tExercise{
+						tExercise{Exercise: klimmzugMitUnterstuetzung},
+						tExercise{Exercise: tuerziehen},
+						tExercise{Exercise: tuerziehen, Note: "mit 4-6 Sek. Haltezeit am höchsten Punkt"},
+						tExercise{Exercise: umgekehrtesBankdruecken, Note: "mit gebeugten Knien"},
+						tExercise{Exercise: umgekehrtesBankdrueckenImUntergriff, Note: "Beine gestreckt"},
+						tExercise{Exercise: tuerziehenImUntergriff},
 					},
-					[]TExercise{
-						TExercise{Exercise: BEINHEBER, Note: "mit gekreuzten Armen auf der Brust"},
-						TExercise{Exercise: KAEFER_IPSILATERAL, Note: "Beine gestreckt"},
-						TExercise{Exercise: FAHRRADFAHREN},
-						TExercise{Exercise: KAEFER_KONTRALATERAL, Note: "Beine gestreckt"},
+					[]tExercise{
+						tExercise{Exercise: klimmzug},
+						tExercise{Exercise: tuerziehen},
+						tExercise{Exercise: tuerziehen, Note: "mit 4-6 Sek. Haltezeit am höchsten Punkt"},
+						tExercise{Exercise: umgekehrtesBankdruecken},
+						tExercise{Exercise: umgekehrtesBankdrueckenImUntergriff},
+						tExercise{Exercise: tuerziehenImUntergriff},
 					},
-					[]TExercise{
-						TExercise{Exercise: GESTRECKTES_HAENGENDES_BEINHEBEN},
-						TExercise{Exercise: NACKENTRAINER_IN_BAUCHLAGE},
-						TExercise{Exercise: V_UP},
-						TExercise{Exercise: KAEFER_IPSILATERAL, Note: "Beine gestreckt"},
+					[]tExercise{
+						tExercise{Exercise: klimmzug},
+						tExercise{Exercise: umgekehrtesBankdruecken},
+						tExercise{Exercise: einarmigesTuerziehen},
+						tExercise{Exercise: umgekehrtesBankdrueckenImUntergriff, Note: "Füße erhöht"},
+						tExercise{Exercise: tuerziehenImUntergriff},
+						tExercise{Exercise: curlMitHandtuch},
 					},
-					[]TExercise{
-						TExercise{Exercise: HAENGENDES_BEINHEBEN, Note: "Beine gestreckt, Füße bis zu den Händen"},
-						TExercise{Exercise: NACKENTRAINER_IN_BAUCHLAGE, Note: "mit 1-3 Sek. Pause"},
-						TExercise{Exercise: GEKREUZTER_BERGSTEIGER},
-						TExercise{Exercise: KAEFER_IPSILATERAL, Note: "Beine gebeugt"},
+					[]tExercise{
+						tExercise{Exercise: klimmzug, Note: "mit 4-6 Sek. Haltezeit am höchsten Punkt"},
+						tExercise{Exercise: umgekehrtesBankdruecken, Note: "Füße erhöht"},
+						tExercise{Exercise: einarmigesTuerziehen, Note: "mit 1-3 Sek. Haltezeit bei der Kontraktion am höchsten Punkt"},
+						tExercise{Exercise: umgekehrtesBankdrueckenImUntergriff, Note: "Füße erhöht"},
+						tExercise{Exercise: klimmzug, Note: "bis zum Brustbein hochziehen"},
+						tExercise{Exercise: tuerziehenImUntergriff, Note: "mit 4-6 Sek. Haltezeit bei der Kontraktion am höchsten Punkt"},
 					},
 				},
 			},
-			TrainingDay{
-				Method: ZIRKELINTERVALL,
-				Exercises: [][]TExercise{
-					[]TExercise{
-						TExercise{Exercise: AUSFALLSCHRITT_NACH_HINTEN_IM_WECHSEL, Note: "10 Wiederholungen pro Seite"},
-						TExercise{Exercise: TUERZIEHEN, Note: "8 Wiederholungen"},
-						TExercise{Exercise: KLASSISCHER_LIEGESTUETZ, Note: "6 Wiederholungen"},
+			trainingDay{
+				Method: intervallSatz,
+				Exercises: [][]tExercise{
+					[]tExercise{
+						tExercise{Exercise: beinheber},
+						tExercise{Exercise: kaeferKontralateral, Note: "Beine gebeugt"},
+						tExercise{Exercise: russischerTwist},
+						tExercise{Exercise: seitlichesHueftheben},
 					},
-					[]TExercise{
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN, Note: "6 Wiederholungen"},
-						TExercise{Exercise: SEITLICHER_AUSFALLSCHRITT, Note: "12 Wiederholungen"},
-						TExercise{Exercise: KLASSISCHER_LIEGESTUETZ, Note: "8 Wiederholungen"},
+					[]tExercise{
+						tExercise{Exercise: beinheber, Note: "mit gekreuzten Armen auf der Brust"},
+						tExercise{Exercise: kaeferIpsilateral, Note: "Beine gestreckt"},
+						tExercise{Exercise: fahrradfahren},
+						tExercise{Exercise: kaeferKontralateral, Note: "Beine gestreckt"},
 					},
-					[]TExercise{
-						TExercise{Exercise: EINBEINIGE_KNIEBEUGE, Note: "12 Wiederholungen pro Seite"},
-						TExercise{Exercise: STURZFLUG, Note: "6 Wiederholungen"},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN, Note: "8 Wiederholungen"},
+					[]tExercise{
+						tExercise{Exercise: gestrecktesHaengendesBeinheben},
+						tExercise{Exercise: nackentrainerInBauchlage},
+						tExercise{Exercise: vUp},
+						tExercise{Exercise: kaeferIpsilateral, Note: "Beine gestreckt"},
 					},
-					[]TExercise{
-						TExercise{Exercise: PISTOLE, Note: "6 Wiederholungen pro Seite"},
-						TExercise{Exercise: HANDSTANDLIEGESTUETZ, Note: "6 Wiederholungen"},
-						TExercise{Exercise: KLIMMZUG, Note: "8 Wiederholungen"},
+					[]tExercise{
+						tExercise{Exercise: haengendesBeinheben, Note: "Beine gestreckt, Füße bis zu den Händen"},
+						tExercise{Exercise: nackentrainerInBauchlage, Note: "mit 1-3 Sek. Pause"},
+						tExercise{Exercise: gekreuzterBergsteiger},
+						tExercise{Exercise: kaeferIpsilateral, Note: "Beine gebeugt"},
+					},
+				},
+			},
+			trainingDay{
+				Method: zirkelIntervall,
+				Exercises: [][]tExercise{
+					[]tExercise{
+						tExercise{Exercise: ausfallschrittNachHintenImWechsel, Note: "10 Wiederholungen pro Seite"},
+						tExercise{Exercise: tuerziehen, Note: "8 Wiederholungen"},
+						tExercise{Exercise: klassischerLiegestuetz, Note: "6 Wiederholungen"},
+					},
+					[]tExercise{
+						tExercise{Exercise: umgekehrtesBankdruecken, Note: "6 Wiederholungen"},
+						tExercise{Exercise: seitlicherAusfallschritt, Note: "12 Wiederholungen"},
+						tExercise{Exercise: klassischerLiegestuetz, Note: "8 Wiederholungen"},
+					},
+					[]tExercise{
+						tExercise{Exercise: einbeinigeKniebeuge, Note: "12 Wiederholungen pro Seite"},
+						tExercise{Exercise: sturzflug, Note: "6 Wiederholungen"},
+						tExercise{Exercise: umgekehrtesBankdruecken, Note: "8 Wiederholungen"},
+					},
+					[]tExercise{
+						tExercise{Exercise: pistole, Note: "6 Wiederholungen pro Seite"},
+						tExercise{Exercise: handstandLiegestuetz, Note: "6 Wiederholungen"},
+						tExercise{Exercise: klimmzug, Note: "8 Wiederholungen"},
 					},
 				},
 			},
 		},
 	},
-	TrainingWeek{
+	trainingWeek{
 		Description: "Wechselblock",
-		TrainingDays: []TrainingDay{
-			TrainingDay{
-				Method: INTERVALLSATZ,
-				Exercises: [][]TExercise{
-					[]TExercise{
-						TExercise{Exercise: KLASSISCHER_LIEGESTUETZ},
-						TExercise{Exercise: MILITARY_PRESS_MIT_ERHOEHTEN_HAENDEN},
-						TExercise{Exercise: ENGER_LIEGESTUETZ_MIT_ERHOEHTEN_HAENDEN},
+		TrainingDays: []trainingDay{
+			trainingDay{
+				Method: intervallSatz,
+				Exercises: [][]tExercise{
+					[]tExercise{
+						tExercise{Exercise: klassischerLiegestuetz},
+						tExercise{Exercise: militaryPressMitErhoehtenHaenden},
+						tExercise{Exercise: engerLiegestuetzMitErhoehtenHaenden},
 					},
-					[]TExercise{
-						TExercise{Exercise: LIEGESTUETZ_MIT_ERHOEHTEN_FUESSEN},
-						TExercise{Exercise: MILITARY_PRESS_MIT_ERHOEHTEN_HAENDEN},
-						TExercise{Exercise: ENGER_LIEGESTUETZ_MIT_ERHOEHTEN_HAENDEN},
-						TExercise{Exercise: SEESTERN},
+					[]tExercise{
+						tExercise{Exercise: liegestuetzMitErhoehtenFuessen},
+						tExercise{Exercise: militaryPressMitErhoehtenHaenden},
+						tExercise{Exercise: engerLiegestuetzMitErhoehtenHaenden},
+						tExercise{Exercise: Seestern},
 					},
-					[]TExercise{
-						TExercise{Exercise: EINARMIGER_LIEGESTUETZ_MIT_ERHOEHTEN_HAENDEN},
-						TExercise{Exercise: STURZFLUG},
-						TExercise{Exercise: MILITARY_PRESS_MIT_ERHOEHTEN_FUESSEN},
-						TExercise{Exercise: TRIZEPSDIP},
+					[]tExercise{
+						tExercise{Exercise: einarmigerLiegestuetzMitErhoehtenHaenden},
+						tExercise{Exercise: sturzflug},
+						tExercise{Exercise: militaryPressMitErhoehtenFuessen},
+						tExercise{Exercise: trizepsdip},
 					},
-					[]TExercise{
-						TExercise{Exercise: EINARMIGER_LIEGESTUETZ},
-						TExercise{Exercise: HANDSTANDLIEGESTUETZ},
-						TExercise{Exercise: STURZFLUG},
-						TExercise{Exercise: ERHOEHTER_TRIZEPSSTRECKER, Note: "Hände etwa hüfthoch"},
-					},
-				},
-			},
-			TrainingDay{
-				Method: HOCHINTENSITAETSSATZ,
-				Exercises: [][]TExercise{
-					[]TExercise{
-						TExercise{Exercise: AUFSTEHEN_AUS_DEM_EINBINIGEN_KNIESTAND, Note: "Arme in Vorhalte"},
-						TExercise{Exercise: AUSFALLSCHRITT},
-						TExercise{Exercise: GOOD_MORNING},
-					},
-					[]TExercise{
-						TExercise{Exercise: IRON_MIKE},
-						TExercise{Exercise: SEITSPRUNG},
-						TExercise{Exercise: TIEFE_KNIEBEUGE, Note: "Arme in T-Halte"},
-					},
-					[]TExercise{
-						TExercise{Exercise: IRON_MIKE},
-						TExercise{Exercise: SEITSPRUNG},
-						TExercise{Exercise: TIEFE_KNIEBEUGE, Note: "Hände an den Hüften"},
-					},
-					[]TExercise{
-						TExercise{Exercise: IRON_MIKE},
-						TExercise{Exercise: SEITSPRUNG},
-						TExercise{Exercise: POINTER},
-						TExercise{Exercise: ENGE_KNIEBEUGE, Note: "Hände hinter dem Kopf"},
+					[]tExercise{
+						tExercise{Exercise: einarmigerLiegestuetz},
+						tExercise{Exercise: handstandLiegestuetz},
+						tExercise{Exercise: sturzflug},
+						tExercise{Exercise: erhoehterTrizepsstrecker, Note: "Hände etwa hüfthoch"},
 					},
 				},
 			},
-			TrainingDay{
-				Method: STUFENINTERVALL,
-				Exercises: [][]TExercise{
-					[]TExercise{
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN},
-						TExercise{Exercise: TUERZIEHEN},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN_IM_UNTERGRIFF},
-						TExercise{Exercise: TUERZIEHEN_IM_UNTERGRIFF},
+			trainingDay{
+				Method: hochIntensitaetsSatz,
+				Exercises: [][]tExercise{
+					[]tExercise{
+						tExercise{Exercise: aufstehenAusDemEinbeinigenKniestand, Note: "Arme in Vorhalte"},
+						tExercise{Exercise: ausfallSchritt},
+						tExercise{Exercise: goodMorning},
 					},
-					[]TExercise{
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN},
-						TExercise{Exercise: TUERZIEHEN},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN_IM_UNTERGRIFF},
-						TExercise{Exercise: TUERZIEHEN_IM_UNTERGRIFF},
+					[]tExercise{
+						tExercise{Exercise: ironMike},
+						tExercise{Exercise: seitensprung},
+						tExercise{Exercise: tiefeKniebeuge, Note: "Arme in T-Halte"},
 					},
-					[]TExercise{
-						TExercise{Exercise: KLIMMZUG_MIT_UNTERSTUEZUNG},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN_IM_UNTERGRIFF},
-						TExercise{Exercise: TUERZIEHEN},
+					[]tExercise{
+						tExercise{Exercise: ironMike},
+						tExercise{Exercise: seitensprung},
+						tExercise{Exercise: tiefeKniebeuge, Note: "Hände an den Hüften"},
 					},
-					[]TExercise{
-						TExercise{Exercise: KLIMMZUG},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN_IM_UNTERGRIFF},
-						TExercise{Exercise: EINARMIGES_TUERZIEHEN},
+					[]tExercise{
+						tExercise{Exercise: ironMike},
+						tExercise{Exercise: seitensprung},
+						tExercise{Exercise: pointer},
+						tExercise{Exercise: engeKniebeuge, Note: "Hände hinter dem Kopf"},
 					},
 				},
 			},
-			TrainingDay{
-				Method: SUPERSATZ,
-				Exercises: [][]TExercise{
-					[]TExercise{
-						TExercise{Exercise: V_UP},
-						TExercise{Exercise: RUSSISCHER_TWIST},
-						TExercise{Exercise: KAEFER_KONTRALATERAL, Note: "Beine gestreckt"},
-						TExercise{Exercise: SEITLICHES_HUEFTHEBEN},
-						TExercise{Exercise: FAHRRADFAHREN},
-						TExercise{Exercise: BEINHEBER},
+			trainingDay{
+				Method: stufenIntervall,
+				Exercises: [][]tExercise{
+					[]tExercise{
+						tExercise{Exercise: umgekehrtesBankdruecken},
+						tExercise{Exercise: tuerziehen},
+						tExercise{Exercise: umgekehrtesBankdrueckenImUntergriff},
+						tExercise{Exercise: tuerziehenImUntergriff},
 					},
-					[]TExercise{
-						TExercise{Exercise: HAENGENDES_BEINHEBEN},
-						TExercise{Exercise: BEINTWIST},
-						TExercise{Exercise: EINBEINIGER_HUEFTSTRECKER},
-						TExercise{Exercise: KAEFER_UNILATERAL, Note: "Beine gestreckt"},
-						TExercise{Exercise: V_UP},
-						TExercise{Exercise: RUSSISCHER_TWIST},
+					[]tExercise{
+						tExercise{Exercise: umgekehrtesBankdruecken},
+						tExercise{Exercise: tuerziehen},
+						tExercise{Exercise: umgekehrtesBankdrueckenImUntergriff},
+						tExercise{Exercise: tuerziehenImUntergriff},
 					},
-					[]TExercise{
-						TExercise{Exercise: HAENGENDES_BEINHEBEN},
-						TExercise{Exercise: FAHRRADFAHREN},
-						TExercise{Exercise: NACKENTRAINER_IN_BAUCHLAGE, Note: "mit 4-6 Sek. Pause"},
-						TExercise{Exercise: KAEFER_IPSILATERAL, Note: "Beine gebeugt"},
-						TExercise{Exercise: V_UP},
-						TExercise{Exercise: BEINTWIST},
+					[]tExercise{
+						tExercise{Exercise: klimmzugMitUnterstuetzung},
+						tExercise{Exercise: umgekehrtesBankdruecken},
+						tExercise{Exercise: umgekehrtesBankdrueckenImUntergriff},
+						tExercise{Exercise: tuerziehen},
 					},
-					[]TExercise{
-						TExercise{Exercise: HAENGENDES_BEINHEBEN, Note: "Beine gestreckt, Füße bis zu den Händen mit 4-6 Sek. Haltezeit am höchsten Punkt"},
-						TExercise{Exercise: FAHRRADFAHREN, Note: "12 langsame Wdh. pro Seite)"},
-						TExercise{Exercise: NACKENTRAINER_IN_BAUCHLAGE, Note: "mit 4-6 Sek. Pause"},
-						TExercise{Exercise: KAEFER_KONTRALATERAL, Note: "Beine gebeugt"},
-						TExercise{Exercise: KLAPPMESSER},
-						TExercise{Exercise: BEINTWIST, Note: "6 langsame Wiederholungen pro Seite"},
+					[]tExercise{
+						tExercise{Exercise: klimmzug},
+						tExercise{Exercise: umgekehrtesBankdruecken},
+						tExercise{Exercise: umgekehrtesBankdrueckenImUntergriff},
+						tExercise{Exercise: einarmigesTuerziehen},
 					},
 				},
 			},
-			TrainingDay{
-				Method: ZIRKELINTERVALL,
-				Exercises: [][]TExercise{
-					[]TExercise{
-						TExercise{Exercise: AUSFALLSCHRITT_NACH_HINTEN_IM_WECHSEL, Note: "10 Wiederholungen pro Seite"},
-						TExercise{Exercise: TUERZIEHEN, Note: "8 Wiederholungen"},
-						TExercise{Exercise: KLASSISCHER_LIEGESTUETZ, Note: "6 Wiederholungen"},
+			trainingDay{
+				Method: superSatz,
+				Exercises: [][]tExercise{
+					[]tExercise{
+						tExercise{Exercise: vUp},
+						tExercise{Exercise: russischerTwist},
+						tExercise{Exercise: kaeferKontralateral, Note: "Beine gestreckt"},
+						tExercise{Exercise: seitlichesHueftheben},
+						tExercise{Exercise: fahrradfahren},
+						tExercise{Exercise: beinheber},
 					},
-					[]TExercise{
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN, Note: "6 Wiederholungen pro Seite"},
-						TExercise{Exercise: SEITLICHER_AUSFALLSCHRITT, Note: "12 Wiederholungen"},
-						TExercise{Exercise: KLASSISCHER_LIEGESTUETZ, Note: "8 Wiederholungen"},
+					[]tExercise{
+						tExercise{Exercise: haengendesBeinheben},
+						tExercise{Exercise: beinTwist},
+						tExercise{Exercise: einbeinigerHueftstrecker},
+						tExercise{Exercise: kaeferUnilateral, Note: "Beine gestreckt"},
+						tExercise{Exercise: vUp},
+						tExercise{Exercise: russischerTwist},
 					},
-					[]TExercise{
-						TExercise{Exercise: EINBEINIGE_KNIEBEUGE_MIT_UNTERSTUETZUNG, Note: "12 Wiederholungen pro Seite"},
-						TExercise{Exercise: STURZFLUG, Note: "6 Wiederholungen"},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN, Note: "8 Wiederholungen"},
+					[]tExercise{
+						tExercise{Exercise: haengendesBeinheben},
+						tExercise{Exercise: fahrradfahren},
+						tExercise{Exercise: nackentrainerInBauchlage, Note: "mit 4-6 Sek. Pause"},
+						tExercise{Exercise: kaeferIpsilateral, Note: "Beine gebeugt"},
+						tExercise{Exercise: vUp},
+						tExercise{Exercise: beinTwist},
 					},
-					[]TExercise{
-						TExercise{Exercise: PISTOLE, Note: "6 Wiederholungen pro Seite"},
-						TExercise{Exercise: HANDSTANDLIEGESTUETZ, Note: "6 Wiederholungen"},
-						TExercise{Exercise: KLIMMZUG, Note: "8 Wiederholungen"},
+					[]tExercise{
+						tExercise{Exercise: haengendesBeinheben, Note: "Beine gestreckt, Füße bis zu den Händen mit 4-6 Sek. Haltezeit am höchsten Punkt"},
+						tExercise{Exercise: fahrradfahren, Note: "12 langsame Wdh. pro Seite)"},
+						tExercise{Exercise: nackentrainerInBauchlage, Note: "mit 4-6 Sek. Pause"},
+						tExercise{Exercise: kaeferKontralateral, Note: "Beine gebeugt"},
+						tExercise{Exercise: klappmesser},
+						tExercise{Exercise: beinTwist, Note: "6 langsame Wiederholungen pro Seite"},
+					},
+				},
+			},
+			trainingDay{
+				Method: zirkelIntervall,
+				Exercises: [][]tExercise{
+					[]tExercise{
+						tExercise{Exercise: ausfallschrittNachHintenImWechsel, Note: "10 Wiederholungen pro Seite"},
+						tExercise{Exercise: tuerziehen, Note: "8 Wiederholungen"},
+						tExercise{Exercise: klassischerLiegestuetz, Note: "6 Wiederholungen"},
+					},
+					[]tExercise{
+						tExercise{Exercise: umgekehrtesBankdruecken, Note: "6 Wiederholungen pro Seite"},
+						tExercise{Exercise: seitlicherAusfallschritt, Note: "12 Wiederholungen"},
+						tExercise{Exercise: klassischerLiegestuetz, Note: "8 Wiederholungen"},
+					},
+					[]tExercise{
+						tExercise{Exercise: einbeinigeKniebeugeMitUnterstuetzung, Note: "12 Wiederholungen pro Seite"},
+						tExercise{Exercise: sturzflug, Note: "6 Wiederholungen"},
+						tExercise{Exercise: umgekehrtesBankdruecken, Note: "8 Wiederholungen"},
+					},
+					[]tExercise{
+						tExercise{Exercise: pistole, Note: "6 Wiederholungen pro Seite"},
+						tExercise{Exercise: handstandLiegestuetz, Note: "6 Wiederholungen"},
+						tExercise{Exercise: klimmzug, Note: "8 Wiederholungen"},
 					},
 				},
 			},
 		},
 	},
-	TrainingWeek{
+	trainingWeek{
 		Description: "Wechselblock",
-		TrainingDays: []TrainingDay{
-			TrainingDay{
-				Method: SUPERSATZ,
-				Exercises: [][]TExercise{
-					[]TExercise{
-						TExercise{Exercise: LIEGESTUETZ_MIT_ERHOEHTEN_FUESSEN},
-						TExercise{Exercise: LIEGESTUETZ_MIT_ABSTOSSEN},
-						TExercise{Exercise: MILITARY_PRESS},
-						TExercise{Exercise: BAERENGANG},
-						TExercise{Exercise: ENGER_LIEGESTUETZ},
-						TExercise{Exercise: SEESTERN},
+		TrainingDays: []trainingDay{
+			trainingDay{
+				Method: superSatz,
+				Exercises: [][]tExercise{
+					[]tExercise{
+						tExercise{Exercise: liegestuetzMitErhoehtenFuessen},
+						tExercise{Exercise: liegestuetzMitAbstossen},
+						tExercise{Exercise: militaryPress},
+						tExercise{Exercise: baerenGang},
+						tExercise{Exercise: engerLiegestuetz},
+						tExercise{Exercise: Seestern},
 					},
-					[]TExercise{
-						TExercise{Exercise: LIEGESTUETZ_MIT_ERHOEHTEN_FUESSEN, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: LIEGESTUETZ_MIT_ABSTOSSEN},
-						TExercise{Exercise: MILITARY_PRESS_MIT_ERHOEHTEN_FUESSEN},
-						TExercise{Exercise: BREITER_STURZFLUG},
-						TExercise{Exercise: ENGER_LIEGESTUETZ_MIT_ERHOEHTEN_FUESSEN},
-						TExercise{Exercise: SEESTERN},
+					[]tExercise{
+						tExercise{Exercise: liegestuetzMitErhoehtenFuessen, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
+						tExercise{Exercise: liegestuetzMitAbstossen},
+						tExercise{Exercise: militaryPressMitErhoehtenFuessen},
+						tExercise{Exercise: breiterSturzflug},
+						tExercise{Exercise: engerLiegestuetzMitErhoehtenFuessen},
+						tExercise{Exercise: Seestern},
 					},
-					[]TExercise{
-						TExercise{Exercise: EINARMIGER_LIEGESTUETZ},
-						TExercise{Exercise: FEDERNDER_LIEGESTUETZ},
-						TExercise{Exercise: MILITARY_PRESS_MIT_ERHOEHTEN_FUESSEN},
-						TExercise{Exercise: STURZFLUG},
-						TExercise{Exercise: ERHOEHTER_TRIZEPSSTRECKER},
-						TExercise{Exercise: LIEGESTUETZ_MIT_ABSTOSSEN},
+					[]tExercise{
+						tExercise{Exercise: einarmigerLiegestuetz},
+						tExercise{Exercise: federnderLiegestuetz},
+						tExercise{Exercise: militaryPressMitErhoehtenFuessen},
+						tExercise{Exercise: sturzflug},
+						tExercise{Exercise: erhoehterTrizepsstrecker},
+						tExercise{Exercise: liegestuetzMitAbstossen},
 					},
-					[]TExercise{
-						TExercise{Exercise: EINARMIGER_LIEGESTUETZ},
-						TExercise{Exercise: FEDERNDER_LIEGESTUETZ},
-						TExercise{Exercise: HANDSTANDLIEGESTUETZ},
-						TExercise{Exercise: STURZFLUG, Note: "mit Haltezeit wenn die Brust am tiefsten Punkt der Kontraktion zwischen den Händen ist"},
-						TExercise{Exercise: ERHOEHTER_TRIZEPSSTRECKER, Note: "Trizepsstrecker, hände kniehoch"},
-						TExercise{Exercise: LIEGESTUETZ_MIT_ABSTOSSEN},
-					},
-				},
-			},
-			TrainingDay{
-				Method: INTERVALLSATZ,
-				Exercises: [][]TExercise{
-					[]TExercise{
-						TExercise{Exercise: KNIEBEUGE_IM_AUSFALLSCHRITT},
-						TExercise{Exercise: SEITLICHER_AUSFALLSCHRITT},
-						TExercise{Exercise: ENGE_KNIEBEUGE, Note: "Arme in T-Halte, mit 4-6 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: RUMAENISCHES_KREUZHEBEN_AUF_EINEM_BEIN_IM_WECHSEL, Note: "auf einem Kissen"},
-					},
-					[]TExercise{
-						TExercise{Exercise: KNIEBEUGE_IM_AUSFALLSCHRITT, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: SEITLICHER_AUSFALLSCHRITT, Note: "mit 4-6 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: GESPRUNGENE_KNIEBEUGE, Note: "mit 4-6 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: RUMAENISCHES_KREUZHEBEN_AUF_EINEM_BEIN_IM_WECHSEL, Note: "auf einem Kissen"},
-					},
-					[]TExercise{
-						TExercise{Exercise: EINBEINIGE_KNIEBEUGE},
-						TExercise{Exercise: KNIEBEUGE_IM_AUSFALLSCHRITT, Note: "mit 4-6 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: SEITLICHER_AUSFALLSCHRITT, Note: "mit 4-6 Sek. Haltezeit am tiefsten Punkt"},
-						TExercise{Exercise: EINBEINIGER_HUEFTSTRECKER},
-					},
-					[]TExercise{
-						TExercise{Exercise: EINBEINIGE_KNIEBEUGE, Note: "knieend"},
-						TExercise{Exercise: KNIEBEUGE_IM_AUSFALLSCHRITT, Note: "dabei am tiefsten Punkt einen Rucksack über den Kopf stemen"},
-						TExercise{Exercise: IRON_MIKE},
-						TExercise{Exercise: KNIENDER_BEINWECHSEL},
+					[]tExercise{
+						tExercise{Exercise: einarmigerLiegestuetz},
+						tExercise{Exercise: federnderLiegestuetz},
+						tExercise{Exercise: handstandLiegestuetz},
+						tExercise{Exercise: sturzflug, Note: "mit Haltezeit wenn die Brust am tiefsten Punkt der Kontraktion zwischen den Händen ist"},
+						tExercise{Exercise: erhoehterTrizepsstrecker, Note: "Trizepsstrecker, hände kniehoch"},
+						tExercise{Exercise: liegestuetzMitAbstossen},
 					},
 				},
 			},
-			TrainingDay{
-				Method: HOCHINTENSITAETSSATZ,
-				Exercises: [][]TExercise{
-					[]TExercise{
-						TExercise{Exercise: TUERZIEHEN, Note: "Füße sind hinter den Händen platziert, gehen Sie dafür einem Schritt zurürck"},
-						TExercise{Exercise: KREUZHEBEN},
-						TExercise{Exercise: CURL_MIT_HANDTUCH},
+			trainingDay{
+				Method: intervallSatz,
+				Exercises: [][]tExercise{
+					[]tExercise{
+						tExercise{Exercise: kniebeugeImAusfallschritt},
+						tExercise{Exercise: seitlicherAusfallschritt},
+						tExercise{Exercise: engeKniebeuge, Note: "Arme in T-Halte, mit 4-6 Sek. Haltezeit am tiefsten Punkt"},
+						tExercise{Exercise: rumaenischesKreuzhebenAufEinemBeinImWechsel, Note: "auf einem Kissen"},
 					},
-					[]TExercise{
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN},
-						TExercise{Exercise: TUERZIEHEN},
-						TExercise{Exercise: TIEFE_KNIEBEUGE, Note: "Arme in Streamline Position"},
+					[]tExercise{
+						tExercise{Exercise: kniebeugeImAusfallschritt, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
+						tExercise{Exercise: seitlicherAusfallschritt, Note: "mit 4-6 Sek. Haltezeit am tiefsten Punkt"},
+						tExercise{Exercise: gesprungeneKniebeuge, Note: "mit 4-6 Sek. Haltezeit am tiefsten Punkt"},
+						tExercise{Exercise: rumaenischesKreuzhebenAufEinemBeinImWechsel, Note: "auf einem Kissen"},
 					},
-					[]TExercise{
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN},
-						TExercise{Exercise: TUERZIEHEN},
-						TExercise{Exercise: TIEFE_KNIEBEUGE, Note: "Hände hinter dem Kopf"},
+					[]tExercise{
+						tExercise{Exercise: einbeinigeKniebeuge},
+						tExercise{Exercise: kniebeugeImAusfallschritt, Note: "mit 4-6 Sek. Haltezeit am tiefsten Punkt"},
+						tExercise{Exercise: seitlicherAusfallschritt, Note: "mit 4-6 Sek. Haltezeit am tiefsten Punkt"},
+						tExercise{Exercise: einbeinigerHueftstrecker},
 					},
-					[]TExercise{
-						TExercise{Exercise: KLIMMZUG_MIT_UNTERSTUEZUNG},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN},
-						TExercise{Exercise: TUERZIEHEN},
-						TExercise{Exercise: VORGEBEUGTES_SEITLICHES_SCHULTERHEBEN},
-					},
-				},
-			},
-			TrainingDay{
-				Method: STUFENINTERVALL,
-				Exercises: [][]TExercise{
-					[]TExercise{
-						TExercise{Exercise: CRUNCH_IT_UP},
-						TExercise{Exercise: KAEFER_IPSILATERAL},
-						TExercise{Exercise: BEINHEBER},
-						TExercise{Exercise: KAEFER_KONTRALATERAL},
-					},
-					[]TExercise{
-						TExercise{Exercise: FAHRRADFAHREN},
-						TExercise{Exercise: KAEFER_IPSILATERAL, Note: "Beine gestreckt"},
-						TExercise{Exercise: BODYROCK, Note: "mit vorwärtsgreifen"},
-						TExercise{Exercise: GESTRECKTER_BEINTWIST},
-					},
-					[]TExercise{
-						TExercise{Exercise: SCHRAEGER_V_UP, Note: "gebeugten Beinen"},
-						TExercise{Exercise: KREUZHEBEN},
-						TExercise{Exercise: BEINHEBER, Note: "mit gekreuzten Armen auf der Brust"},
-						TExercise{Exercise: KAEFER_IPSILATERAL, Note: "Beine gebeugt"},
-					},
-					[]TExercise{
-						TExercise{Exercise: KLAPPMESSER},
-						TExercise{Exercise: NACKENTRAINER_IN_BAUCHLAGE},
-						TExercise{Exercise: SCHRAEGER_V_UP, Note: "mit gekreuzten Armen auf der Brust"},
-						TExercise{Exercise: KAEFER_IPSILATERAL, Note: "Beine gestreckt"},
+					[]tExercise{
+						tExercise{Exercise: einbeinigeKniebeuge, Note: "knieend"},
+						tExercise{Exercise: kniebeugeImAusfallschritt, Note: "dabei am tiefsten Punkt einen Rucksack über den Kopf stemen"},
+						tExercise{Exercise: ironMike},
+						tExercise{Exercise: knieenderBeinwechsel},
 					},
 				},
 			},
-			TrainingDay{
-				Method: ZIRKELINTERVALL,
-				Exercises: [][]TExercise{
-					[]TExercise{
-						TExercise{Exercise: AUSFALLSCHRITT_NACH_HINTEN_IM_WECHSEL, Note: "10 Wiederholungen pro Seite"},
-						TExercise{Exercise: TUERZIEHEN, Note: "8 Wiederholungen"},
-						TExercise{Exercise: KLASSISCHER_LIEGESTUETZ, Note: "6 Wiederholungen"},
+			trainingDay{
+				Method: hochIntensitaetsSatz,
+				Exercises: [][]tExercise{
+					[]tExercise{
+						tExercise{Exercise: tuerziehen, Note: "Füße sind hinter den Händen platziert, gehen Sie dafür einem Schritt zurürck"},
+						tExercise{Exercise: kreuzheben},
+						tExercise{Exercise: curlMitHandtuch},
 					},
-					[]TExercise{
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN, Note: "6 Wiederholungen pro Seite"},
-						TExercise{Exercise: SEITLICHER_AUSFALLSCHRITT, Note: "12 Wiederholungen"},
-						TExercise{Exercise: KLASSISCHER_LIEGESTUETZ, Note: "8 Wiederholungen"},
+					[]tExercise{
+						tExercise{Exercise: umgekehrtesBankdruecken},
+						tExercise{Exercise: tuerziehen},
+						tExercise{Exercise: tiefeKniebeuge, Note: "Arme in Streamline Position"},
 					},
-					[]TExercise{
-						TExercise{Exercise: EINBEINIGE_KNIEBEUGE_MIT_UNTERSTUETZUNG, Note: "12 Wiederholungen pro Seite"},
-						TExercise{Exercise: STURZFLUG, Note: "6 Wiederholungen"},
-						TExercise{Exercise: UMGEKEHRTES_BANKDRUECKEN, Note: "8 Wiederholungen"},
+					[]tExercise{
+						tExercise{Exercise: umgekehrtesBankdruecken},
+						tExercise{Exercise: tuerziehen},
+						tExercise{Exercise: tiefeKniebeuge, Note: "Hände hinter dem Kopf"},
 					},
-					[]TExercise{
-						TExercise{Exercise: PISTOLE, Note: "6 Wiederholungen pro Seite"},
-						TExercise{Exercise: HANDSTANDLIEGESTUETZ, Note: "6 Wiederholungen"},
-						TExercise{Exercise: KLIMMZUG, Note: "8 Wiederholungen"},
+					[]tExercise{
+						tExercise{Exercise: klimmzugMitUnterstuetzung},
+						tExercise{Exercise: umgekehrtesBankdruecken},
+						tExercise{Exercise: tuerziehen},
+						tExercise{Exercise: vorgebeugtesSeitlichesSchulterheben},
+					},
+				},
+			},
+			trainingDay{
+				Method: stufenIntervall,
+				Exercises: [][]tExercise{
+					[]tExercise{
+						tExercise{Exercise: crunchItUp},
+						tExercise{Exercise: kaeferIpsilateral},
+						tExercise{Exercise: beinheber},
+						tExercise{Exercise: kaeferKontralateral},
+					},
+					[]tExercise{
+						tExercise{Exercise: fahrradfahren},
+						tExercise{Exercise: kaeferIpsilateral, Note: "Beine gestreckt"},
+						tExercise{Exercise: bodyRock, Note: "mit vorwärtsgreifen"},
+						tExercise{Exercise: gestreckterBeinTwist},
+					},
+					[]tExercise{
+						tExercise{Exercise: schraegerVUp, Note: "gebeugten Beinen"},
+						tExercise{Exercise: kreuzheben},
+						tExercise{Exercise: beinheber, Note: "mit gekreuzten Armen auf der Brust"},
+						tExercise{Exercise: kaeferIpsilateral, Note: "Beine gebeugt"},
+					},
+					[]tExercise{
+						tExercise{Exercise: klappmesser},
+						tExercise{Exercise: nackentrainerInBauchlage},
+						tExercise{Exercise: schraegerVUp, Note: "mit gekreuzten Armen auf der Brust"},
+						tExercise{Exercise: kaeferIpsilateral, Note: "Beine gestreckt"},
+					},
+				},
+			},
+			trainingDay{
+				Method: zirkelIntervall,
+				Exercises: [][]tExercise{
+					[]tExercise{
+						tExercise{Exercise: ausfallschrittNachHintenImWechsel, Note: "10 Wiederholungen pro Seite"},
+						tExercise{Exercise: tuerziehen, Note: "8 Wiederholungen"},
+						tExercise{Exercise: klassischerLiegestuetz, Note: "6 Wiederholungen"},
+					},
+					[]tExercise{
+						tExercise{Exercise: umgekehrtesBankdruecken, Note: "6 Wiederholungen pro Seite"},
+						tExercise{Exercise: seitlicherAusfallschritt, Note: "12 Wiederholungen"},
+						tExercise{Exercise: klassischerLiegestuetz, Note: "8 Wiederholungen"},
+					},
+					[]tExercise{
+						tExercise{Exercise: einbeinigeKniebeugeMitUnterstuetzung, Note: "12 Wiederholungen pro Seite"},
+						tExercise{Exercise: sturzflug, Note: "6 Wiederholungen"},
+						tExercise{Exercise: umgekehrtesBankdruecken, Note: "8 Wiederholungen"},
+					},
+					[]tExercise{
+						tExercise{Exercise: pistole, Note: "6 Wiederholungen pro Seite"},
+						tExercise{Exercise: handstandLiegestuetz, Note: "6 Wiederholungen"},
+						tExercise{Exercise: klimmzug, Note: "8 Wiederholungen"},
 					},
 				},
 			},

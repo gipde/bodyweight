@@ -12,13 +12,23 @@ func checkState(state *TrainingState) error {
 	return nil
 }
 
+// GetBeginningTrainingState initial Trainig State
+func GetBeginningTrainingState() TrainingState {
+	return TrainingState{
+		Level: basisProgram,
+		Week:  0,
+		Day:   0,
+		Unit:  0,
+	}
+}
+
 // AnnounceDailyTraining tells about Training Content
 func AnnounceDailyTraining(current *TrainingState) string {
 	if checkState(current) != nil {
 		return "Dein Trainingszustand enthält einen Fehler. Wende dich bitte an den Administrator"
 	}
-	week := Trainings[current.Week]
-	day := Trainings[current.Week].TrainingDays[current.Day]
+	week := trainings[current.Week]
+	day := trainings[current.Week].TrainingDays[current.Day]
 	exes := day.Exercises[current.Level]
 
 	text := fmt.Sprintf("Du bist derzeit in der %d. Trainingswoche und beim %d. Übungstag angelangt. ", current.Week+1, current.Day+1)
@@ -26,15 +36,15 @@ func AnnounceDailyTraining(current *TrainingState) string {
 	text += fmt.Sprintf(`Das Training steht in dieser Woche unter dem 
 	Motto "%s" und ist heute mit %s durchzuführen. `, week.Description, day.Method.name())
 
-	if day.Method == STUFENINTERVALL {
+	if day.Method == stufenIntervall {
 		switch current.Level {
-		case BASISPROGRAM:
+		case basisProgram:
 			text += fmt.Sprintf("Im %s dauern die Intervalle 4 Minuten und 30 Sekunden. ", current.Level.name())
-		case FIRSTCLASS:
+		case firstClass:
 			text += fmt.Sprintf(`In der <lang xml:lang="en-US">%s</lang> dauern die Intervalle 5 Minuten und 30 Sekunden. `, current.Level.name())
-		case MASTERCLASSC:
+		case masterClass:
 			text += fmt.Sprintf(`In der <lang xml:lang="en-US">%s</lang> dauern die Intervalle 6 Minuten und 30 Sekunden. `, current.Level.name())
-		case CHIEFCLASS:
+		case chiefClass:
 			text += fmt.Sprintf(`In der <lang xml:lang="en-US">%s</lang> dauern die Intervalle 7 Minuten und 30 Sekunden. `, current.Level.name())
 		}
 	}
@@ -76,7 +86,7 @@ func timeAsStr(sec int) string {
 	if sec == 0 {
 		res = "Ende"
 	}
-		return res
+	return res
 }
 
 func count(word string) string {
@@ -84,7 +94,7 @@ func count(word string) string {
 	br := "<break time=\"500ms\"/>"
 	for i, r := range []string{"Drei", "Zwei", "Eins"} {
 		res += r
-		if i<2 {
+		if i < 2 {
 			res += br
 		}
 	}

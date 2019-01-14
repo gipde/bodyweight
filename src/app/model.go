@@ -1,19 +1,23 @@
 package app
 
-const LAUNCH_REQUEST = "LaunchRequest"
-const INTENT_REQUEST = "IntentRequest"
-const DEFINE_USER = "DefineUser"
-const STOP_INTENT = "AMAZON.StopIntent"
-const HELP_INTENT = "AMAZON.HelpIntent"
-const FALLBACK_INTENT = "AMAZON.FallbackIntent"
-const START_TRAINING = "StartTraining"
-const START_EXERCISE = "StartExercise"
-const AUDIO_TEST = "AudioTest"
-const SESSION_END = "SessionEndedRequest"
-const AUDIOPLAYER_STARTED = "AudioPlayer.PlaybackStarted"
-const AUDIOPLAYER_NEARLYFINISHED = "AudioPlayer.PlaybackNearlyFinished"
-const AUDIOPLAYER_FINISHED = "AudioPlayer.PlaybackFinished"
+const (
+	alexaLaunchRequest                    = "LaunchRequest"
+	alexaIntentRequest                    = "IntentRequest"
+	alexaSessionEndRequest                = "SessionEndedRequest"
+	alexaAudioplayerStartedRequest        = "AudioPlayer.PlaybackStarted"
+	alexaAudioplayerNearlyFinishedRequest = "AudioPlayer.PlaybackNearlyFinished"
+	alexaAudioplayerFinishedRequest       = "AudioPlayer.PlaybackFinished"
 
+	alexaDefineUserIntent    = "DefineUser"
+	alexaStopIntent          = "AMAZON.StopIntent"
+	alexaHelpIntent          = "AMAZON.HelpIntent"
+	alexaFallbackIntent      = "AMAZON.FallbackIntent"
+	alexaStartTrainingIntent = "StartTraining"
+	alexaStartExerciseIntent = "StartExercise"
+	alexaAudioTestIntent     = "AudioTest"
+)
+
+// Request API Call Request
 type Request struct {
 	Version     string      `json:"version"`
 	Session     Session     `json:"session"`
@@ -21,6 +25,7 @@ type Request struct {
 	RequestBody RequestBody `json:"request"`
 }
 
+// RequestBody API Call
 type RequestBody struct {
 	Type        string `json:"type"`
 	RequestID   string `json:"requestId"`
@@ -32,17 +37,20 @@ type RequestBody struct {
 	Error       Error  `json:"error"`
 }
 
+// Error API Call
 type Error struct {
 	Type    string `json:"type"`
 	Message string `json:"message"`
 }
 
+// Intent API Call
 type Intent struct {
 	Name               string          `json:"name"`
 	ConfirmationStatus string          `json:"confirmationStatus,omitempty"`
 	Slots              map[string]Slot `json:"slots,omitEmpty"`
 }
 
+// Slot API Call
 type Slot struct {
 	Name               string      `json:"name"`
 	Value              string      `json:"value,omitempty"`
@@ -50,30 +58,36 @@ type Slot struct {
 	Resolutions        Resolutions `json:"resolutions,omitempty"`
 }
 
+// Resolutions API Call
 type Resolutions struct {
 	ResolutionsPerAuthority []ResolutionsPerAuthority `json:"resolutionsPerAuthority"`
 }
 
+// ResolutionsPerAuthority API Call
 type ResolutionsPerAuthority struct {
 	Authority string             `json:"authority"`
 	Status    Status             `json:"status"`
 	Values    []map[string]Value `json:"values"`
 }
 
+// Status API Call
 type Status struct {
 	Code string `json:"code"`
 }
 
+// Value API Call
 type Value struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
 }
 
+// Context API Call
 type Context struct {
 	System      System      `json:"system"`
 	AudioPlayer interface{} `json:"AudioPlayer"`
 }
 
+// Session API Call
 type Session struct {
 	New         bool                   `json:"new"`
 	SessionID   string                 `json:"sessionId"`
@@ -82,6 +96,7 @@ type Session struct {
 	User        User                   `json:"user"`
 }
 
+// System API Call
 type System struct {
 	APIAccessToken string      `json:"apiAccessToken"`
 	APIEndpoint    string      `json:"apiEndpoint"`
@@ -90,20 +105,24 @@ type System struct {
 	User           User        `json:"user"`
 }
 
+// User API Call
 type User struct {
 	UserID      string     `json:"userId"`
 	AccessToken string     `json:"accessToken"`
 	Permissions Permission `json:"permission"`
 }
 
+// Permission API Call
 type Permission struct {
 	ConsentToken string `json:"consentToken"`
 }
 
+// Application API Call
 type Application struct {
 	ApplicationID string `json:"applicationId"`
 }
 
+// OutputSpeech API Call
 type OutputSpeech struct {
 	Type         string `json:"type"`
 	Text         string `json:"text"`
@@ -111,10 +130,13 @@ type OutputSpeech struct {
 	PlayBehavior string `json:"playBehavior,omitempty"`
 }
 
+// Image API Call
 type Image struct {
 	SmallImageURL string `json:"smallImageUrl"`
 	LargeImageURL string `json:"lageImageUrl"`
 }
+
+// Card API Call
 type Card struct {
 	Type    string `json:"type"`
 	Title   string `json:"title"`
@@ -123,16 +145,19 @@ type Card struct {
 	Image   *Image `json:"image,omitempty"`
 }
 
+// Response API Call
 type Response struct {
 	Version           string                 `json:"version"`
 	SessionAttributes map[string]interface{} `json:"sessionAttributes,omitempty"`
 	ResponseBody      ResponseBody           `json:"response"`
 }
 
+// Reprompt API Call
 type Reprompt struct {
 	OutputSpeech *OutputSpeech `json:"outputSpeech,omitempty"`
 }
 
+// ResponseBody API Call
 type ResponseBody struct {
 	OutputSpeech     *OutputSpeech `json:"outputSpeech,omitempty"`
 	Card             *Card         `json:"card,omitempty"`
@@ -141,16 +166,20 @@ type ResponseBody struct {
 	ShouldEndSession bool          `json:"shouldEndSession"`
 }
 
+// Stream API Call
 type Stream struct {
 	URL                   string `json:"url"`
 	Token                 string `json:"token"`
 	ExpectedPreviousToken string `json:"expectedPreviousToken,omitempty"`
 	OffsetInMilliseconds  int    `json:"offsetInMilliseconds"`
 }
+
+// AudioItem API Call
 type AudioItem struct {
 	Stream *Stream `json:"stream,omitempty"`
 }
 
+// Directive API Call
 type Directive struct {
 	Type          string     `json:"type"`
 	PlayBehavior  string     `json:"playBehavior,omitempty"`
@@ -160,6 +189,7 @@ type Directive struct {
 	AudioItem     *AudioItem `json:"audioItem,omitempt"`
 }
 
+// DBItem API Call
 type DBItem struct {
 	ID    string `json:"id"`
 	Value string `json:"value"`
