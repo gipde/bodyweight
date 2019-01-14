@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"encoding/json"
@@ -124,8 +124,6 @@ func TestResponseJson(t *testing.T) {
 	json, _ := json.MarshalIndent(r, "", "  ")
 	log.Println("Json: ", string(json))
 }
-
-
 
 func TestUnmarshal(t *testing.T) {
 	r := Request{}

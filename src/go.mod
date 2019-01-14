@@ -1,4 +1,4 @@
-module github.com/gipde/bodyweight
+module bodyweight
 
 require (
 	github.com/aws/aws-lambda-go v1.8.1

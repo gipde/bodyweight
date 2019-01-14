@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"context"
@@ -6,10 +6,10 @@ import (
 	"io/ioutil"
 	"log"
 
-	"github.com/gipde/bodyweight/training"
+	"bodyweight/database"
+	"bodyweight/training"
 
 	"github.com/aws/aws-lambda-go/lambda"
-	"github.com/gipde/bodyweight/database"
 )
 
 const debug = true
@@ -156,7 +156,7 @@ func init() {
 	db = database.NewDynamoDB("bodyweight")
 }
 
-func main() {
+func Start() {
 	if isClient() {
 		connectToServer()
 	}

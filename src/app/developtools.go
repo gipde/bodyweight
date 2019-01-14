@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"encoding/json"
@@ -47,7 +47,6 @@ var launchRequest = `{
 	  "locale": "en-US"
 	}
   }`
-
 
 func isDelegate() bool {
 	return os.Getenv("DELEGATE") != ""

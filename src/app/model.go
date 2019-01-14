@@ -1,8 +1,8 @@
-package main
+package app
 
 const LAUNCH_REQUEST = "LaunchRequest"
 const INTENT_REQUEST = "IntentRequest"
-const DEFINE_USER="DefineUser"
+const DEFINE_USER = "DefineUser"
 const STOP_INTENT = "AMAZON.StopIntent"
 const HELP_INTENT = "AMAZON.HelpIntent"
 const FALLBACK_INTENT = "AMAZON.FallbackIntent"
@@ -164,4 +164,3 @@ type DBItem struct {
 	ID    string `json:"id"`
 	Value string `json:"value"`
 }
-

@@ -4,8 +4,9 @@ import (
 	"log"
 	"time"
 
+	"bodyweight/training"
+
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
-	"github.com/gipde/bodyweight/training"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -24,19 +25,102 @@ func NewDynamoDB(tableName string) *DynamoDB {
 	}
 }
 
-func getDynamoDBSession() *dynamodb.DynamoDB {
-	sess, err := session.NewSession(&aws.Config{
-		Region: aws.String("eu-west-1")},
-	)
+func (d DynamoDB) CreateDBIfNotExists() error {
+	if !d.existsDB() {
+		log.Println("Creating DB-Table: ", d.tableName)
+
+		input := &dynamodb.CreateTableInput{
+			AttributeDefinitions: []*dynamodb.AttributeDefinition{
+				{
+					AttributeName: aws.String("alexa_id"),
+					AttributeType: aws.String("S"),
+				},
+				{
+					AttributeName: aws.String("date"),
+					AttributeType: aws.String("S"),
+				},
+			},
+			KeySchema: []*dynamodb.KeySchemaElement{
+				{
+					AttributeName: aws.String("alexa_id"),
+					KeyType:       aws.String("HASH"),
+				},
+				{
+					AttributeName: aws.String("date"),
+					KeyType:       aws.String("RANGE"),
+				},
+			},
+			ProvisionedThroughput: &dynamodb.ProvisionedThroughput{
+				ReadCapacityUnits:  aws.Int64(5),
+				WriteCapacityUnits: aws.Int64(5),
+			},
+			TableName: aws.String(d.tableName),
+		}
+
+		_, err := d.sess.CreateTable(input)
+
+		if err != nil {
+			log.Println("Got error calling CreateTable:")
+			log.Println(err.Error())
+			return err
+		}
+
+		d.waitForTableState("ACTIVE", 10, false)
+
+	} else {
+		log.Println("DB already exists")
+	}
+	return nil
+
+}
+
+func (d DynamoDB) DeleteDB() error {
+	_, err := d.sess.DeleteTable(&dynamodb.DeleteTableInput{
+		TableName: aws.String(d.tableName),
+	})
 
 	if err != nil {
-		log.Println(err.Error())
-		return nil
+		log.Println("Error: ", err)
+		return err
 	}
 
-	// Create DynamoDB client
-	return dynamodb.New(sess)
+	d.waitForTableState("DELETING", 100, true)
 
+	return nil
+
+	// TODO: wait for Table-State
+}
+
+func (d DynamoDB) CreateEntry(alexa_id string, name string, training training.TrainingState, desc string) error {
+
+	log.Printf("Session: %+v\n", d.sess)
+	entry := Entry{
+		AlexaID:       alexa_id,
+		Date:          time.Now(),
+		UserName:      name,
+		TrainingState: training,
+		Desc:          desc,
+	}
+
+	av, err := dynamodbattribute.MarshalMap(entry)
+	if err != nil {
+		log.Println("Error Marshalling: ", err)
+		return err
+	}
+
+	input := &dynamodb.PutItemInput{
+		Item:      av,
+		TableName: aws.String(d.tableName),
+	}
+
+	_, err = d.sess.PutItem(input)
+
+	if err != nil {
+		log.Println("Got error calling PutItem:", err)
+		return err
+	}
+	log.Println("Entry created: ", entry.AlexaID)
+	return nil
 }
 
 func (d DynamoDB) GetLastUsedEntry(alexaID string) (*Entry, error) {
@@ -126,36 +210,39 @@ func (d DynamoDB) DeleteAllEntries(alexaID string) error {
 	return nil
 }
 
-func (d DynamoDB) CreateEntry(alexa_id string, name string, training training.TrainingState, desc string) error {
+func (d DynamoDB) waitForTableState(desiredState string, timeout int, until bool) {
+	var state string
+	waitfn := func() {
+		log.Println("we have to wait for table state:", desiredState)
 
-	log.Printf("Session: %+v\n", d.sess)
-	entry := Entry{
-		AlexaID:       alexa_id,
-		Date:          time.Now(),
-		UserName:      name,
-		TrainingState: training,
-		Desc:          desc,
+		time.Sleep(1 * time.Second)
+		out, err := d.sess.DescribeTable(&dynamodb.DescribeTableInput{
+			TableName: aws.String(d.tableName),
+		})
+		if err != nil {
+			log.Println("we got an error: ", err)
+			state = err.Error()
+			return
+		}
+
+		state = *out.Table.TableStatus
+
+		if timeout--; timeout < 0 {
+			log.Panic("Timeout Table State:", desiredState)
+		}
 	}
 
-	av, err := dynamodbattribute.MarshalMap(entry)
-	if err != nil {
-		log.Println("Error Marshalling: ", err)
-		return err
+	if until {
+		state = desiredState
+		for state == desiredState {
+			waitfn()
+		}
+	} else {
+		for state != desiredState {
+			waitfn()
+		}
 	}
 
-	input := &dynamodb.PutItemInput{
-		Item:      av,
-		TableName: aws.String(d.tableName),
-	}
-
-	_, err = d.sess.PutItem(input)
-
-	if err != nil {
-		log.Println("Got error calling PutItem:", err)
-		return err
-	}
-	log.Println("Entry created: ", entry.AlexaID)
-	return nil
 }
 
 func (d DynamoDB) existsDB() bool {
@@ -174,103 +261,17 @@ func (d DynamoDB) existsDB() bool {
 	return false
 }
 
-func (d DynamoDB) waitForTableState(desiredState string, timeout int, until bool) {
-	var state string
-	waitfn := func() {
-		log.Println("we have to wait for table state:", desiredState)
-
-		time.Sleep(1 * time.Second)
-		out, err := d.sess.DescribeTable(&dynamodb.DescribeTableInput{
-			TableName: aws.String(d.tableName),
-		})
-		if err != nil {
-			log.Println("we got an error: ", err)
-			state=err.Error()
-			return
-		}
-
-		state = *out.Table.TableStatus
-
-		if timeout--; timeout < 0 {
-			log.Panic("Timeout Table State:", desiredState)
-		}
-	}
-
-	if until {
-		state=desiredState
-		for state == desiredState {
-			waitfn()
-		}
-	} else {
-		for state != desiredState {
-			waitfn()
-		}
-	}
-
-}
-
-func (d DynamoDB) CreateDBIfNotExists() error {
-	if !d.existsDB() {
-		log.Println("Creating DB-Table: ", d.tableName)
-
-		input := &dynamodb.CreateTableInput{
-			AttributeDefinitions: []*dynamodb.AttributeDefinition{
-				{
-					AttributeName: aws.String("alexa_id"),
-					AttributeType: aws.String("S"),
-				},
-				{
-					AttributeName: aws.String("date"),
-					AttributeType: aws.String("S"),
-				},
-			},
-			KeySchema: []*dynamodb.KeySchemaElement{
-				{
-					AttributeName: aws.String("alexa_id"),
-					KeyType:       aws.String("HASH"),
-				},
-				{
-					AttributeName: aws.String("date"),
-					KeyType:       aws.String("RANGE"),
-				},
-			},
-			ProvisionedThroughput: &dynamodb.ProvisionedThroughput{
-				ReadCapacityUnits:  aws.Int64(5),
-				WriteCapacityUnits: aws.Int64(5),
-			},
-			TableName: aws.String(d.tableName),
-		}
-
-		_, err := d.sess.CreateTable(input)
-
-		if err != nil {
-			log.Println("Got error calling CreateTable:")
-			log.Println(err.Error())
-			return err
-		}
-
-		d.waitForTableState("ACTIVE", 10, false)
-
-	} else {
-		log.Println("DB already exists")
-	}
-	return nil
-
-}
-
-func (d DynamoDB) DeleteDB() error {
-	_, err := d.sess.DeleteTable(&dynamodb.DeleteTableInput{
-		TableName: aws.String(d.tableName),
-	})
+func getDynamoDBSession() *dynamodb.DynamoDB {
+	sess, err := session.NewSession(&aws.Config{
+		Region: aws.String("eu-west-1")},
+	)
 
 	if err != nil {
-		log.Println("Error: ", err)
-		return err
+		log.Println(err.Error())
+		return nil
 	}
 
-	d.waitForTableState("DELETING", 100, true)
+	// Create DynamoDB client
+	return dynamodb.New(sess)
 
-	return nil
-
-	// TODO: wait for Table-State
 }

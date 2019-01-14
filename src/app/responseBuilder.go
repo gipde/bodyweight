@@ -1,4 +1,4 @@
-package main
+package app
 
 func responseBuilder() *Response {
 	sessionAttributes := make(map[string]interface{})
@@ -42,7 +42,6 @@ func (r *Response) withSimpleCard() *Response {
 	return r
 }
 
-
 func (r *Response) speak(payload string) *Response {
 	r.ResponseBody.OutputSpeech = &OutputSpeech{
 		Type: "SSML",
@@ -70,7 +69,7 @@ func (r *Response) reprompt(text string) *Response {
 	r.ResponseBody.Reprompt = &Reprompt{
 		OutputSpeech: &OutputSpeech{
 			Type: "SSML",
-			SSML: "<speak>"+text+"</speak>",
+			SSML: "<speak>" + text + "</speak>",
 		},
 	}
 	return r

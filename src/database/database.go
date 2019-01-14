@@ -3,7 +3,7 @@ package database
 import (
 	"time"
 
-	"github.com/gipde/bodyweight/training"
+	"bodyweight/training"
 )
 
 // Entry is a database Entry
@@ -16,7 +16,6 @@ type Entry struct {
 }
 
 type DB interface {
-
 	CreateDBIfNotExists() error
 	DeleteDB() error
 
