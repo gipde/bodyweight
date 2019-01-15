@@ -25,8 +25,8 @@ type trainingWeek struct {
 	Description  string        `json:"description"`
 }
 
-//TrainingState contains every State of the training
-type TrainingState struct {
+//State contains every State of the training
+type State struct {
 	Level trainingLevel `json:"level"`
 	Week  int           `json:"week"`
 	Day   int           `json:"day"`
@@ -79,6 +79,14 @@ var trainingLevels = []string{
 func (t trainingLevel) name() string {
 	return trainingLevels[t]
 }
+
+// func getLevel(level int) trainingLevel {
+// 	return trainingLevel(level)
+// }
+
+// func (t trainingLevel) int() int {
+// 	return int(t)
+// }
 
 type trainingMethod int
 

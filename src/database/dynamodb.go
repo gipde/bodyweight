@@ -13,11 +13,13 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 )
 
+// DynamoDB base Structure
 type DynamoDB struct {
 	tableName string
 	sess      *dynamodb.DynamoDB
 }
 
+// NewDynamoDB gets a new instance
 func NewDynamoDB(tableName string) *DynamoDB {
 	return &DynamoDB{
 		tableName: tableName,
@@ -25,6 +27,7 @@ func NewDynamoDB(tableName string) *DynamoDB {
 	}
 }
 
+// CreateDBIfNotExists creates a new DB
 func (d DynamoDB) CreateDBIfNotExists() error {
 	if !d.existsDB() {
 		log.Println("Creating DB-Table: ", d.tableName)
@@ -74,6 +77,7 @@ func (d DynamoDB) CreateDBIfNotExists() error {
 
 }
 
+// DeleteDB deletes a DB
 func (d DynamoDB) DeleteDB() error {
 	_, err := d.sess.DeleteTable(&dynamodb.DeleteTableInput{
 		TableName: aws.String(d.tableName),
@@ -91,11 +95,12 @@ func (d DynamoDB) DeleteDB() error {
 	// TODO: wait for Table-State
 }
 
-func (d DynamoDB) CreateEntry(alexa_id string, name string, training training.TrainingState, desc string) error {
+// CreateEntry creates an Entry
+func (d DynamoDB) CreateEntry(alexaID string, name string, training training.State, desc string) error {
 
 	log.Printf("Session: %+v\n", d.sess)
 	entry := Entry{
-		AlexaID:       alexa_id,
+		AlexaID:       alexaID,
 		Date:          time.Now(),
 		UserName:      name,
 		TrainingState: training,
@@ -123,6 +128,7 @@ func (d DynamoDB) CreateEntry(alexa_id string, name string, training training.Tr
 	return nil
 }
 
+// GetLastUsedEntry gets the last used Entry
 func (d DynamoDB) GetLastUsedEntry(alexaID string) (*Entry, error) {
 	entries, err := d.GetEntries(alexaID)
 	if err != nil {
@@ -141,6 +147,7 @@ func (d DynamoDB) GetLastUsedEntry(alexaID string) (*Entry, error) {
 	return &latest, nil
 }
 
+// GetEntries gets all Entries
 func (d DynamoDB) GetEntries(alexaID string) (*[]Entry, error) {
 
 	result, err := d.sess.Scan(&dynamodb.ScanInput{
@@ -171,6 +178,7 @@ func (d DynamoDB) GetEntries(alexaID string) (*[]Entry, error) {
 	return nil, nil // no entries
 }
 
+// DeleteItem a item
 func (d DynamoDB) DeleteItem(alexaID string, date time.Time) error {
 	delitem := &dynamodb.DeleteItemInput{
 		TableName: aws.String(d.tableName),
@@ -192,6 +200,7 @@ func (d DynamoDB) DeleteItem(alexaID string, date time.Time) error {
 	return nil
 }
 
+//DeleteAllEntries deletes all entries
 func (d DynamoDB) DeleteAllEntries(alexaID string) error {
 	entries, err := d.GetEntries(alexaID)
 

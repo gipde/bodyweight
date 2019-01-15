@@ -53,7 +53,7 @@ func TestGetLastItem1(t *testing.T) {
 
 func TestCreateItem(t *testing.T) {
 	for i := 0; i < 10; i++ {
-		err := db.CreateEntry(testid, testname, training.TrainingState{Level: 0, Week: 0, Day: 0, Unit: i}, "TestRecord")
+		err := db.CreateEntry(testid, testname, training.State{Level: 0, Week: 0, Day: 0, Unit: i}, "TestRecord")
 		if err != nil {
 			t.Error(err)
 		}

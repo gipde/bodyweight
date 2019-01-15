@@ -4,38 +4,14 @@ import (
 	"fmt"
 )
 
-func getCurrentState(current *TrainingState) string {
-	return ""
-}
-
-func checkState(state *TrainingState) error {
-	return nil
-}
-
-// GetBeginningTrainingState initial Trainig State
-func GetBeginningTrainingState() TrainingState {
-	return TrainingState{
-		Level: basisProgram,
-		Week:  0,
-		Day:   0,
-		Unit:  0,
-	}
-}
-
-// AnnounceDailyTraining tells about Training Content
-func AnnounceDailyTraining(current *TrainingState) string {
-	if checkState(current) != nil {
-		return "Dein Trainingszustand enthält einen Fehler. Wende dich bitte an den Administrator"
-	}
+func GetCurrentState(current *State) string {
 	week := trainings[current.Week]
 	day := trainings[current.Week].TrainingDays[current.Day]
 	exes := day.Exercises[current.Level]
-
-	text := fmt.Sprintf("Du bist derzeit in der %d. Trainingswoche und beim %d. Übungstag angelangt. ", current.Week+1, current.Day+1)
-
-	text += fmt.Sprintf(`Das Training steht in dieser Woche unter dem 
-	Motto "%s" und ist heute mit %s durchzuführen. `, week.Description, day.Method.name())
-
+	text := fmt.Sprintf("Du absolvierst zur Zeit das %s", current.Level.name())
+	text += fmt.Sprintf("und bist in der %d. Trainingswoche beim %d. Übungstag angelangt. ", current.Week+1, current.Day+1)
+	text += fmt.Sprintf(`Das Training steht in dieser Woche unter dem Motto "%s". `, week.Description)
+	text += fmt.Sprintf("Das anstehende Training enthält insgesagt %d verschiedene Übungen und ist mit %s durchzuführen", len(exes), day.Method.name())
 	if day.Method == stufenIntervall {
 		switch current.Level {
 		case basisProgram:
@@ -48,24 +24,111 @@ func AnnounceDailyTraining(current *TrainingState) string {
 			text += fmt.Sprintf(`In der <lang xml:lang="en-US">%s</lang> dauern die Intervalle 7 Minuten und 30 Sekunden. `, current.Level.name())
 		}
 	}
+	return text
+}
 
-	text += fmt.Sprintf("Insgesamt musst Du %d verschiedene Übungen durchführen. ", len(exes))
+func checkState(state *State) error {
+	return nil
+}
 
-	text += fmt.Sprintf("Die erste Übung ist: %s. ", exes[0].Exercise.Name())
-	text += fmt.Sprintf("Die zweite Übung ist: %s. ", exes[1].Exercise.Name())
-	text += fmt.Sprintf("Die dritte Übung ist: %s. ", exes[2].Exercise.Name())
-	text += fmt.Sprintf("Die vierte Übung ist: %s. ", exes[3].Exercise.Name())
+// GetBeginningState initial Trainig State
+func GetBeginningState() State {
+	return State{
+		Level: basisProgram,
+		Week:  0,
+		Day:   0,
+		Unit:  0,
+	}
+}
 
-	text += "Wenn Du beginnen möchtest, sage: ich bin bereit."
+//StartTraining starting Training
+func StartTraining(state *State) string {
+	return timeText(4*60 + 30)
+}
+
+// AnnounceDailyTraining tells about Training Content
+func AnnounceDailyTraining(current *State) string {
+	if checkState(current) != nil {
+		return "Dein Trainingszustand enthält einen Fehler. Wende dich bitte an den Administrator"
+	}
+
+	text := GetCurrentState(current)
+
+	// text += fmt.Sprintf("Die erste Übung ist: %s. ", exes[0].Exercise.Name())
+	// text += fmt.Sprintf("Die zweite Übung ist: %s. ", exes[1].Exercise.Name())
+	// text += fmt.Sprintf("Die dritte Übung ist: %s. ", exes[2].Exercise.Name())
+	// text += fmt.Sprintf("Die vierte Übung ist: %s. ", exes[3].Exercise.Name())
+
+	// text += "Wenn Du beginnen möchtest, sage: ich bin bereit."
 
 	return text
 
 }
 
-func switchToNextTraining(last *TrainingState) *TrainingState {
-	// inc values
-	// return getCurrent
-	return nil
+//SwitchToNextTraining - switch to next Training Unit
+func SwitchToNextTraining(last *State) bool {
+	return switchToNextTrainingLinear(last)
+}
+
+type check struct {
+	val *int
+	le  int
+}
+
+func recur(last *State, arr []check) bool {
+	if len(arr) == 0 { // recursion exit fn
+		return true // initial value for first check
+	}
+	r := recur(last, arr[1:])
+	if r { // check only if from righter position set to zero
+		if *arr[0].val < arr[0].le-1 { // if checked value < max value
+			*arr[0].val++      // increment value +1
+			if len(arr) == 4 { // if on outer position (copy value)
+				last.Level = trainingLevel(*arr[0].val)
+			}
+			return false // the left side position should not checkt
+		}
+		*arr[0].val = 0 // checkd value == max value > set to zero
+		return true     // the left side position should be checked
+	}
+	return false // no check
+}
+
+func switchToNextTrainingRecursive(last *State) bool {
+	tLevel := int(last.Level)
+	return recur(last, []check{
+		check{&tLevel, len(trainings[last.Week].TrainingDays[last.Day].Exercises)},
+		check{&last.Week, len(trainings)},
+		check{&last.Day, len(trainings[last.Week].TrainingDays)},
+		check{&last.Unit, len(trainings[last.Week].TrainingDays[last.Day].Exercises[last.Level])},
+	})
+}
+
+func lt(val *int, aLen int) bool {
+	if *val < aLen-1 {
+		*val++
+		return true
+	}
+	*val = 0
+	return false
+}
+
+func switchToNextTrainingLinear(last *State) bool {
+	if lt(&last.Unit, len(trainings[last.Week].TrainingDays[last.Day].Exercises[last.Level])) {
+		return false
+	}
+	if lt(&last.Day, len(trainings[last.Week].TrainingDays)) {
+		return false
+	}
+	if lt(&last.Week, len(trainings)) {
+		return false
+	}
+	tLevel := int(last.Level)
+	if lt(&tLevel, len(trainings[last.Week].TrainingDays[last.Day].Exercises)) {
+		last.Level = trainingLevel(tLevel)
+		return false
+	}
+	return true
 }
 
 func timeAsStr(sec int) string {

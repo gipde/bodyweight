@@ -15,16 +15,18 @@ import (
 const debug = true
 
 const (
+	// Launch Intent
+	speechWelcome    = `Willkommen beim <lang xml:lang="en-US">Bodyweight Training</lang>. `
 	speechDefineUser = `Du benutzt das <lang xml:lang="en-US">Bodyweight Training</lang> zum ersten Mal. 
 	Du solltest zunächst deinen Namen festlegen. Sage hierzu bitte <break time="500ms"/>mein Name ist<break time="500ms"/> und deinen Vornamen. `
 	speechStartTraining = `
 	Du kannst die Trainings mit 
 	<break strength="x-strong"/>starte das training<break strength="x-strong"/>
 	starten. `
+
 	speechUnknown    = "Ich kann dich leider nicht verstehen. "
 	speechExitIfMute = "Wenn Du nichts mehr sagts, wird das Programm beendet. "
 	speechEnde       = "Auf Wiedersehen und bis bald. "
-	speechWelcome    = `Willkommen beim <lang xml:lang="en-US">Bodyweight Training</lang>. `
 	speechPersonal   = `%s, es ist schön, dass du wieder da bist. `
 )
 
@@ -69,17 +71,18 @@ func HandleRequest(ctx context.Context, event Request) (interface{}, error) {
 
 		entry, _ := db.GetLastUsedEntry(event.Session.User.UserID)
 		if entry == nil {
+			// First Usage
 			return responseBuilder().
 				speak(speechWelcome + speechDefineUser).
 				reprompt(speechStartTraining + speechExitIfMute), nil
 
 		}
+		// Welcome Back
+		// return responseBuilder().
+		// 	speak(speechWelcome + fmt.Sprintf(speechPersonal, entry.UserName) + speechStartTraining).
+		// 	reprompt(speechStartTraining + speechExitIfMute), nil
 
-		return responseBuilder().
-			speak(speechWelcome + fmt.Sprintf(speechPersonal, entry.UserName) + speechStartTraining).
-			reprompt(speechStartTraining + speechExitIfMute), nil
-
-		// return responseBuilder().speak(timeText(4*60 + 30)), nil
+		return responseBuilder().speak(training.StartTraining(nil)), nil
 
 	case alexaSessionEndRequest:
 		log.Println("End-Reason: ", event.RequestBody.Reason)
@@ -115,11 +118,14 @@ func HandleRequest(ctx context.Context, event Request) (interface{}, error) {
 }
 
 func handleStartTraining(ctx context.Context, event Request) (interface{}, error) {
+	// TODO: Es macht einen Unterschied, ob der Intent direkt gestartet wird, oder ob zunächst über einen
+	// Launch Request gestartet wird.
+
 	user := event.RequestBody.Intent.Slots["user"]
 	if user.Value != "" {
 		log.Println("we got user from Alexa")
 		user.ConfirmationStatus = "CONFIRMED"
-		db.CreateEntry(event.Session.User.UserID, user.Value, training.GetBeginningTrainingState(), "Start")
+		db.CreateEntry(event.Session.User.UserID, user.Value, training.GetBeginningState(), "Start")
 	}
 
 	entry, _ := db.GetLastUsedEntry(event.Session.User.UserID)
@@ -153,7 +159,7 @@ func handleStartTraining(ctx context.Context, event Request) (interface{}, error
 func defineUser(ctx context.Context, event Request) (interface{}, error) {
 	user := event.RequestBody.Intent.Slots["user"]
 	log.Printf("Session User: %+v", user.Value)
-	db.CreateEntry(event.Session.User.UserID, user.Value, training.GetBeginningTrainingState(), "Start")
+	db.CreateEntry(event.Session.User.UserID, user.Value, training.GetBeginningState(), "Start")
 	return responseBuilder().
 		speak(fmt.Sprintf("Hallo %s. Schön dass Du hier bist", user.Value)), nil
 

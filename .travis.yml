@@ -12,7 +12,7 @@ before_install:
 
 # override default build command
 script:
-  - go test -v -covermode=count -coverprofile=coverage.out ./... 
+  - go test -v -covermode=count -coverprofile=coverage.out bodyweight/... 
   - $HOME/gopath/bin/goveralls -coverprofile=coverage.out -service=travis-ci
   - go build -o bodyweight.bin *.go
 
