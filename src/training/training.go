@@ -8,7 +8,7 @@ func GetCurrentState(current *State) string {
 	week := trainings[current.Week]
 	day := trainings[current.Week].TrainingDays[current.Day]
 	exes := day.Exercises[current.Level]
-	text := fmt.Sprintf("Du absolvierst zur Zeit das %s", current.Level.name())
+	text := fmt.Sprintf("Du absolvierst zur Zeit das %s ", current.Level.name())
 	text += fmt.Sprintf("und bist in der %d. Trainingswoche beim %d. Übungstag angelangt. ", current.Week+1, current.Day+1)
 	text += fmt.Sprintf(`Das Training steht in dieser Woche unter dem Motto "%s". `, week.Description)
 	text += fmt.Sprintf("Das anstehende Training enthält insgesagt %d verschiedene Übungen und ist mit %s durchzuführen", len(exes), day.Method.name())

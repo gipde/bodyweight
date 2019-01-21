@@ -3,6 +3,7 @@ package app
 import (
 	"bodyweight/database"
 	"bodyweight/tools"
+	"bodyweight/training"
 	"fmt"
 	"github.com/stretchr/testify/assert"
 	"strings"
@@ -43,7 +44,7 @@ func TestMain(m *testing.M) {
 }
 
 func TestLaunchHandlerNewUser(t *testing.T) {
-	m := triggerLaunchRequest()
+	m, _ := triggerLaunchRequest()
 
 	// neuer, unbekannter User
 	assert.True(t, m.Card.Type == "Simple")
@@ -56,14 +57,14 @@ func TestLaunchHandlerNewUser(t *testing.T) {
 func TestLaunchWithDefineUser(t *testing.T) {
 	name := "Bob"
 	// trigger Define User Intent
-	m := triggerDefineUserIntent(name)
+	m, _ := triggerDefineUserIntent(name)
 
 	assert.Equal(t, "SSML", m.OutputSpeech.Type)
 	assert.False(t, m.ShouldEndSession)
 	assert.True(t, strings.Contains(m.OutputSpeech.SSML, name))
 
 	// trigger Launch Request
-	m = triggerLaunchRequest()
+	m, _ = triggerLaunchRequest()
 
 	assert.Equal(t, m.OutputSpeech.SSML,
 		speakyfy(speechWelcome+fmt.Sprintf(speechPersonal, name)+speechStartTraining))
@@ -71,16 +72,17 @@ func TestLaunchWithDefineUser(t *testing.T) {
 }
 
 func TestChangeToNewUser(t *testing.T) {
+	//  we assume, that the only user is bob
 	name1 := "Bob"
 	name2 := "Alice"
 
-	m := triggerDefineUserIntent(name2)
-	m = triggerLaunchRequest()
+	m, _ := triggerDefineUserIntent(name2)
+	m, _ = triggerLaunchRequest()
 	assert.Equal(t, m.OutputSpeech.SSML,
 		speakyfy(speechWelcome+fmt.Sprintf(speechPersonal, name2)+speechStartTraining))
 
-	m = triggerDefineUserIntent(name1)
-	m = triggerLaunchRequest()
+	m, _ = triggerDefineUserIntent(name1)
+	m, _ = triggerLaunchRequest()
 	assert.Equal(t, m.OutputSpeech.SSML,
 		speakyfy(speechWelcome+fmt.Sprintf(speechPersonal, name1)+speechStartTraining))
 
@@ -92,28 +94,52 @@ func TestChangeToNewUser(t *testing.T) {
 
 func TestLaunchHandlerKnownUser(t *testing.T) {
 	name1 := "Bob"
-	m := triggerLaunchRequest()
+	m, _ := triggerLaunchRequest()
 	assert.Equal(t, speakyfy(speechWelcome+fmt.Sprintf(speechPersonal, name1)+speechStartTraining),
 		m.OutputSpeech.SSML)
 }
 
-func TestStartTraining(t *testing.T) {
+func TestStartTrainingWithoutUserSet(t *testing.T) {
+	db.DeleteDB()
+	db.CreateDBIfNotExists()
+	m, e := triggerStartTraining("")
+	assert.NotNil(t, m.Directives)
+	assert.Equal(t, "Dialog.Delegate", m.Directives[0].Type)
+	assert.Nil(t, e)
 
+	m, e = triggerStartTraining("werner")
+	state := training.GetBeginningState()
+	assert.Equal(t, speakyfy(fmt.Sprintf("Herzlich Willkommen zurück %s. ", "werner")+
+		training.AnnounceDailyTraining(&state)), m.OutputSpeech.SSML)
 }
 
-func triggerLaunchRequest() *ResponseBody {
-	r, _ := HandleRequest(nil, BuildRequest(alexaLaunchRequest, nil))
+func triggerRequest(req Request) (*ResponseBody, error) {
+	r, e := HandleRequest(nil, req)
 	m := &r.(*Response).ResponseBody
-	return m
+	return m, e
 }
 
-func triggerDefineUserIntent(name string) *ResponseBody {
-	r, _ := HandleRequest(nil, BuildRequest(alexaIntentRequest, &Intent{
+func triggerLaunchRequest() (*ResponseBody, error) {
+	return triggerRequest(BuildRequest(alexaLaunchRequest, nil))
+}
+
+func triggerDefineUserIntent(name string) (*ResponseBody, error) {
+	return triggerRequest(BuildRequest(alexaIntentRequest, &Intent{
 		Name: alexaDefineUserIntent,
 		Slots: map[string]Slot{"user": {
 			Value: name,
 		}},
 	}))
-	m := r.(*Response).ResponseBody
-	return &m
+}
+
+func triggerStartTraining(name string) (*ResponseBody, error) {
+	i := &Intent{
+		Name: alexaStartTrainingIntent,
+	}
+	if name != "" {
+		i.Slots = map[string]Slot{"user": {
+			Value: name,
+		}}
+	}
+	return triggerRequest(BuildRequest(alexaIntentRequest, i))
 }

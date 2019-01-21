@@ -79,21 +79,21 @@ func HandleRequest(ctx context.Context, event Request) (interface{}, error) {
 	switch event.RequestBody.Type {
 
 	case alexaLaunchRequest:
-
 		uid := event.Session.User.UserID // Amazon UID
 		entry, _ := db.GetLastUsedEntry(uid)
 		if entry == nil {
 			// First Usage
 			return responseBuilder().
-				speak(speechWelcome + speechDefineUser).
-				withSimpleCard().
+				speak(speechWelcome+speechDefineUser).
+				withSimpleCard("Bodyweight Training", "Herzlich willkommen").
 				reprompt(speechStartTraining + speechExitIfMute), nil
 
 		}
 
 		// Welcome Back
 		return responseBuilder().
-			speak(speechWelcome + fmt.Sprintf(speechPersonal, entry.UserName) + speechStartTraining).
+			speak(speechWelcome+fmt.Sprintf(speechPersonal, entry.UserName)+speechStartTraining).
+			withSimpleCard("Bodyweight Training", "Herzlich willkommen "+entry.UserName).
 			reprompt(speechStartTraining + speechExitIfMute), nil
 
 	case alexaSessionEndRequest:
@@ -135,16 +135,15 @@ func getlastUserEntry(event Request) (dbEntry *database.Entry, notFoundMsg *Resp
 	// TODO: Es macht einen Unterschied, ob der Intent direkt gestartet wird, oder ob zunächst über einen
 	// Launch Request gestartet wird.
 
+	// without Slot-Value means called without a username set in slot
 	user := event.RequestBody.Intent.Slots["user"]
-	// if user.Value != "" {
-	// 	log.Println("we got user from Alexa")
-	// 	user.ConfirmationStatus = "CONFIRMED"
-	// 	db.
-	// 		CreateEntry(event.Session.User.UserID, user.Value, training.GetBeginningState(), "Start")
-	// }
+	if user.Value != "" {
+		log.Println("we got user from Alexa")
+		user.ConfirmationStatus = "CONFIRMED"
+		db.CreateEntry(getNewUserEntry(event.Session.User.UserID, user.Value))
+	}
 
-	entry, _ := db.
-		GetLastUsedEntry(event.Session.User.UserID)
+	entry, _ := db.GetLastUsedEntry(event.Session.User.UserID)
 	if entry != nil {
 		log.Println("we got user from DB")
 		user.Value = entry.UserName
@@ -176,7 +175,7 @@ func handleStartTraining(ctx context.Context, event Request) (interface{}, error
 
 	text := fmt.Sprintf("Herzlich Willkommen zurück %s. ", entry.UserName)
 	text += training.AnnounceDailyTraining(&entry.TrainingState)
-	return responseBuilder().speak(text), nil
+	return responseBuilder().withSimpleCard("Bodyweight Training", "für "+entry.UserName).speak(text), nil
 
 	//erkläre Übung
 	// sind sie bereit? sage: ich bin bereit
@@ -189,29 +188,32 @@ func handleBereit(ctx context.Context, event Request) (interface{}, error) {
 	return nil, nil
 }
 
-func defineUser(ctx context.Context, event Request) (interface{}, error) {
-	user := event.RequestBody.Intent.Slots["user"]
-	userEntry := database.Entry{
-		AlexaID:       event.Session.User.UserID,
+func getNewUserEntry(userid, username string) *database.Entry {
+	return &database.Entry{
+		AlexaID:       userid,
 		Date:          time.Now(),
 		Desc:          "Start",
 		TrainingState: training.GetBeginningState(),
-		UserName:      user.Value,
+		UserName:      username,
 	}
+}
+
+func defineUser(ctx context.Context, event Request) (interface{}, error) {
+	user := event.RequestBody.Intent.Slots["user"]
+	userEntry := *getNewUserEntry(event.Session.User.UserID, user.Value)
 
 	// we check, if this user already exists
 	entries, _ := db.GetEntries(event.Session.User.UserID)
 	if entries != nil {
 		for _, entry := range *entries {
-			log.Println("entry:", entry)
 			if entry.UserName == user.Value {
-				// delete old entry
-				db.
-					DeleteItem(entry.AlexaID, entry.Date)
-
 				// set userEntry
 				userEntry = entry
 				userEntry.Date = time.Now()
+
+				// delete old entry
+				db.DeleteItem(entry.AlexaID, entry.Date)
+
 			}
 		}
 	}

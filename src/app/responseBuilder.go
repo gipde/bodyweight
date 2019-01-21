@@ -35,9 +35,9 @@ func (r *Response) addAudioPlayerPlayDirective(url string) *Response {
 
 func (r *Response) withStandardCard() *Response {
 	r.ResponseBody.Card = &Card{
-		Type:    "Standard",
-		Title:   "Bodyweight Training",
-		Content: "Content",
+		Type:  "Standard",
+		Title: "Bodyweight Training",
+		Text:  "Content",
 		Image: &Image{
 			SmallImageURL: "http://bla",
 			LargeImageURL: "http://bla",
@@ -46,11 +46,11 @@ func (r *Response) withStandardCard() *Response {
 	return r
 }
 
-func (r *Response) withSimpleCard() *Response {
+func (r *Response) withSimpleCard(title, text string) *Response {
 	r.ResponseBody.Card = &Card{
-		Type:  "Simple",
-		Title: "Bodyweight Training",
-		Text:  "SimpleCard",
+		Type:    "Simple",
+		Title:   title,
+		Content: text,
 	}
 	return r
 }
@@ -89,12 +89,6 @@ func (r *Response) reprompt(text string) *Response {
 }
 
 func (r *Response) addDelegateDirective(intent *Intent, confirmed bool) *Response {
-
-	// m := make(map[string]Slot)
-	// m["user"] = Slot{
-	// 	Name: "user",
-	// }
-
 	r.ResponseBody.Directives = []Directive{
 		{
 			Type:          "Dialog.Delegate",
