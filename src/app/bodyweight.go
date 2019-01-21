@@ -1,16 +1,23 @@
 package app
 
 import (
+	"bodyweight/tools"
 	"context"
 	"fmt"
 	"io/ioutil"
 	"log"
+	"os"
+	"time"
 
 	"bodyweight/database"
 	"bodyweight/training"
 
 	"github.com/aws/aws-lambda-go/lambda"
 )
+
+/* TODO:
+Alexa-Return warum immer nil
+*/
 
 const debug = true
 
@@ -36,16 +43,20 @@ func init() {
 	if !debug {
 		log.SetOutput(ioutil.Discard)
 	}
-	db = database.NewDynamoDB("bodyweight")
 }
 
 // Start starts the Lambda Handler
 func Start() {
-	if isClient() {
-		connectToServer()
+
+	// start as Client
+	if tools.IsTestClient() {
+		tools.ConnectToServer()
+		os.Exit(0)
 	}
 
+	// start as Server
 	log.Println("Starting FN")
+	db = database.Accessor()
 	lambda.Start(HandleRequest)
 }
 
@@ -69,20 +80,21 @@ func HandleRequest(ctx context.Context, event Request) (interface{}, error) {
 
 	case alexaLaunchRequest:
 
-		entry, _ := db.GetLastUsedEntry(event.Session.User.UserID)
+		uid := event.Session.User.UserID // Amazon UID
+		entry, _ := db.GetLastUsedEntry(uid)
 		if entry == nil {
 			// First Usage
 			return responseBuilder().
 				speak(speechWelcome + speechDefineUser).
+				withSimpleCard().
 				reprompt(speechStartTraining + speechExitIfMute), nil
 
 		}
-		// Welcome Back
-		// return responseBuilder().
-		// 	speak(speechWelcome + fmt.Sprintf(speechPersonal, entry.UserName) + speechStartTraining).
-		// 	reprompt(speechStartTraining + speechExitIfMute), nil
 
-		return responseBuilder().speak(training.StartTraining(nil)), nil
+		// Welcome Back
+		return responseBuilder().
+			speak(speechWelcome + fmt.Sprintf(speechPersonal, entry.UserName) + speechStartTraining).
+			reprompt(speechStartTraining + speechExitIfMute), nil
 
 	case alexaSessionEndRequest:
 		log.Println("End-Reason: ", event.RequestBody.Reason)
@@ -106,6 +118,8 @@ func HandleRequest(ctx context.Context, event Request) (interface{}, error) {
 					"https://github.com/gipde/bodyweight/raw/master/contrib/alien-spaceship_daniel_simion.mp3"), nil
 		case alexaStartTrainingIntent:
 			return handleStartTraining(ctx, event)
+		case alexaBereitIntent:
+			return handleBereit(ctx, event)
 		case alexaDefineUserIntent:
 			return defineUser(ctx, event)
 		case alexaFallbackIntent:
@@ -117,18 +131,20 @@ func HandleRequest(ctx context.Context, event Request) (interface{}, error) {
 	return handleUnknown(ctx, event)
 }
 
-func handleStartTraining(ctx context.Context, event Request) (interface{}, error) {
+func getlastUserEntry(event Request) (dbEntry *database.Entry, notFoundMsg *Response) {
 	// TODO: Es macht einen Unterschied, ob der Intent direkt gestartet wird, oder ob zunächst über einen
 	// Launch Request gestartet wird.
 
 	user := event.RequestBody.Intent.Slots["user"]
-	if user.Value != "" {
-		log.Println("we got user from Alexa")
-		user.ConfirmationStatus = "CONFIRMED"
-		db.CreateEntry(event.Session.User.UserID, user.Value, training.GetBeginningState(), "Start")
-	}
+	// if user.Value != "" {
+	// 	log.Println("we got user from Alexa")
+	// 	user.ConfirmationStatus = "CONFIRMED"
+	// 	db.
+	// 		CreateEntry(event.Session.User.UserID, user.Value, training.GetBeginningState(), "Start")
+	// }
 
-	entry, _ := db.GetLastUsedEntry(event.Session.User.UserID)
+	entry, _ := db.
+		GetLastUsedEntry(event.Session.User.UserID)
 	if entry != nil {
 		log.Println("we got user from DB")
 		user.Value = entry.UserName
@@ -140,12 +156,25 @@ func handleStartTraining(ctx context.Context, event Request) (interface{}, error
 
 	// noch kein User festgelegt
 	if user.Value == "" {
-		return responseBuilder().addDelegateDirective(&event.RequestBody.Intent, false), nil
+		return nil, responseBuilder().addDelegateDirective(&event.RequestBody.Intent, false)
+	}
+
+	return entry, nil
+
+}
+
+func handleStartTraining(ctx context.Context, event Request) (interface{}, error) {
+	// TODO: Es macht einen Unterschied, ob der Intent direkt gestartet wird, oder ob zunächst über einen
+	// Launch Request gestartet wird.
+
+	entry, errmsg := getlastUserEntry(event)
+	if errmsg != nil {
+		return errmsg, nil
 	}
 
 	// zeige zustand auf (tag + )
 
-	text := fmt.Sprintf("Herzlich Willkommen zurück %s. ", user.Value)
+	text := fmt.Sprintf("Herzlich Willkommen zurück %s. ", entry.UserName)
 	text += training.AnnounceDailyTraining(&entry.TrainingState)
 	return responseBuilder().speak(text), nil
 
@@ -156,12 +185,41 @@ func handleStartTraining(ctx context.Context, event Request) (interface{}, error
 
 }
 
+func handleBereit(ctx context.Context, event Request) (interface{}, error) {
+	return nil, nil
+}
+
 func defineUser(ctx context.Context, event Request) (interface{}, error) {
 	user := event.RequestBody.Intent.Slots["user"]
-	log.Printf("Session User: %+v", user.Value)
-	db.CreateEntry(event.Session.User.UserID, user.Value, training.GetBeginningState(), "Start")
+	userEntry := database.Entry{
+		AlexaID:       event.Session.User.UserID,
+		Date:          time.Now(),
+		Desc:          "Start",
+		TrainingState: training.GetBeginningState(),
+		UserName:      user.Value,
+	}
+
+	// we check, if this user already exists
+	entries, _ := db.GetEntries(event.Session.User.UserID)
+	if entries != nil {
+		for _, entry := range *entries {
+			log.Println("entry:", entry)
+			if entry.UserName == user.Value {
+				// delete old entry
+				db.
+					DeleteItem(entry.AlexaID, entry.Date)
+
+				// set userEntry
+				userEntry = entry
+				userEntry.Date = time.Now()
+			}
+		}
+	}
+
+	db.CreateEntry(&userEntry)
+
 	return responseBuilder().
-		speak(fmt.Sprintf("Hallo %s. Schön dass Du hier bist", user.Value)), nil
+		speak(fmt.Sprintf("Hallo %s. Schön dass Du mit mir trainierst", user.Value)), nil
 
 }
 

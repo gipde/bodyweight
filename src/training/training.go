@@ -97,10 +97,10 @@ func recur(last *State, arr []check) bool {
 func switchToNextTrainingRecursive(last *State) bool {
 	tLevel := int(last.Level)
 	return recur(last, []check{
-		check{&tLevel, len(trainings[last.Week].TrainingDays[last.Day].Exercises)},
-		check{&last.Week, len(trainings)},
-		check{&last.Day, len(trainings[last.Week].TrainingDays)},
-		check{&last.Unit, len(trainings[last.Week].TrainingDays[last.Day].Exercises[last.Level])},
+		{&tLevel, len(trainings[last.Week].TrainingDays[last.Day].Exercises)},
+		{&last.Week, len(trainings)},
+		{&last.Day, len(trainings[last.Week].TrainingDays)},
+		{&last.Unit, len(trainings[last.Week].TrainingDays[last.Day].Exercises[last.Level])},
 	})
 }
 

@@ -2,9 +2,8 @@ package database
 
 import (
 	"log"
+	"os"
 	"time"
-
-	"bodyweight/training"
 
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 
@@ -19,12 +18,20 @@ type DynamoDB struct {
 	sess      *dynamodb.DynamoDB
 }
 
-// NewDynamoDB gets a new instance
-func NewDynamoDB(tableName string) *DynamoDB {
-	return &DynamoDB{
-		tableName: tableName,
+// DynamoDB gets a new instance
+func DynamoDBAccessor() *DynamoDB {
+
+	dbName := os.Getenv("TEST_DB")
+	if dbName == "" {
+		dbName = "bodyweight"
+	}
+	log.Println("Instantiating Table:", dbName)
+	db := &DynamoDB{
+		tableName: dbName,
 		sess:      getDynamoDBSession(),
 	}
+	db.CreateDBIfNotExists()
+	return db
 }
 
 // CreateDBIfNotExists creates a new DB
@@ -79,6 +86,7 @@ func (d DynamoDB) CreateDBIfNotExists() error {
 
 // DeleteDB deletes a DB
 func (d DynamoDB) DeleteDB() error {
+	log.Println("Deleting Table:", d)
 	_, err := d.sess.DeleteTable(&dynamodb.DeleteTableInput{
 		TableName: aws.String(d.tableName),
 	})
@@ -96,16 +104,7 @@ func (d DynamoDB) DeleteDB() error {
 }
 
 // CreateEntry creates an Entry
-func (d DynamoDB) CreateEntry(alexaID string, name string, training training.State, desc string) error {
-
-	log.Printf("Session: %+v\n", d.sess)
-	entry := Entry{
-		AlexaID:       alexaID,
-		Date:          time.Now(),
-		UserName:      name,
-		TrainingState: training,
-		Desc:          desc,
-	}
+func (d DynamoDB) CreateEntry(entry *Entry) error {
 
 	av, err := dynamodbattribute.MarshalMap(entry)
 	if err != nil {
@@ -124,7 +123,7 @@ func (d DynamoDB) CreateEntry(alexaID string, name string, training training.Sta
 		log.Println("Got error calling PutItem:", err)
 		return err
 	}
-	log.Println("Entry created: ", entry.AlexaID)
+	log.Println("Entry created: ", entry.AlexaID, entry.UserName)
 	return nil
 }
 
@@ -191,7 +190,7 @@ func (d DynamoDB) DeleteItem(alexaID string, date time.Time) error {
 			},
 		},
 	}
-
+	log.Println("Deleting:", alexaID, date)
 	_, err := d.sess.DeleteItem(delitem)
 	if err != nil {
 		log.Println("Error:", err)

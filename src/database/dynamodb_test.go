@@ -1,12 +1,13 @@
 package database
 
 import (
+	"bodyweight/tools"
 	"bodyweight/training"
+	"github.com/stretchr/testify/assert"
 	"log"
-	"math/rand"
 	"os"
-	"strconv"
 	"testing"
+	"time"
 )
 
 const (
@@ -14,75 +15,67 @@ const (
 	testname = "TESTER"
 )
 
-var db DB
-
-//TODO: test illeagal parameters
+var db *DynamoDB
 
 func TestMain(m *testing.M) {
 	log.Println("starting Tests ... ")
-
-	r := strconv.Itoa(rand.Int())
-	tablename := "TESTTABLE_" + r
-	log.Println("Creating Table:", tablename)
-
-	db = NewDynamoDB(tablename)
+	tools.SetupTestDB()
+	db = Accessor()
 
 	os.Exit(m.Run())
 }
 
 func TestCreateDB(t *testing.T) {
-	// DB not exists
-	db.CreateDBIfNotExists()
-	// DB already exists
-	db.CreateDBIfNotExists()
+	// DB already exists, because it is created in TestMain
+	err:=db.CreateDBIfNotExists()
+	assert.NoError(t, err)
 }
 
 func TestFindItem(t *testing.T) {
 	entries, _ := db.GetEntries(testid)
-	if entries != nil {
-		t.Error("Expected 0 Records. Wrong number of Records:", len(*entries))
-	}
+	assert.Nil(t, entries)
 }
 
 func TestGetLastItem1(t *testing.T) {
-	entry, _ := db.GetLastUsedEntry(testid)
-	if entry != nil {
-		t.Error("Expected nil, got: ", entry)
-	}
+	entry, err := db.GetLastUsedEntry(testid)
+	assert.NoError(t, err)
+	assert.Nil(t, entry)
 }
 
 func TestCreateItem(t *testing.T) {
 	for i := 0; i < 10; i++ {
-		err := db.CreateEntry(testid, testname, training.State{Level: 0, Week: 0, Day: 0, Unit: i}, "TestRecord")
-		if err != nil {
-			t.Error(err)
+		entry := Entry{
+			AlexaID:  testid,
+			UserName: testname,
+			Date:     time.Now(),
+			TrainingState: training.State{
+				Level: 0,
+				Week:  0,
+				Day:   0,
+				Unit:  i,
+			},
+			Desc: "TestRecord",
 		}
+		err := db.CreateEntry(&entry)
+		assert.NoError(t, err)
 	}
 }
 func TestGetItems2(t *testing.T) {
 	entries, _ := db.GetEntries(testid)
-	if len(*entries) != 10 {
-		t.Error("Expected 10 Record. Wrong number of Records:", len(*entries))
-	}
+	assert.Equal(t, 10, len(*entries), "Expected 10 Record. Wrong number of Records.")
 }
 
 func TestGetLastItem2(t *testing.T) {
 	entry, _ := db.GetLastUsedEntry(testid)
-	if entry.TrainingState.Unit != 9 {
-		t.Error("Expected Unit 9, got: ", entry.TrainingState.Unit)
-	}
+	assert.Equal(t, 9, entry.TrainingState.Unit)
 }
 
 func TestDeleteRecords(t *testing.T) {
 	err := db.DeleteAllEntries(testid)
-	if err != nil {
-		t.Error(err)
-	}
+	assert.NoError(t, err)
 }
 
 func TestDeleteDB(t *testing.T) {
 	err := db.DeleteDB()
-	if err != nil {
-		t.Error(err)
-	}
+	assert.NoError(t, err)
 }

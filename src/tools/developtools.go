@@ -1,12 +1,14 @@
-package app
+package tools
 
 import (
-	"encoding/json"
-	"log"
-	"net/rpc"
-	"os"
-
 	"github.com/aws/aws-lambda-go/lambda/messages"
+	"log"
+	"math/rand"
+	"net/rpc"
+
+	"os"
+	"strconv"
+	"time"
 )
 
 var launchRequest = `{
@@ -48,18 +50,13 @@ var launchRequest = `{
 	}
   }`
 
-func isDelegate() bool {
-	return os.Getenv("DELEGATE") != ""
-}
-
-func isClient() bool {
-	return os.Getenv("TESTCLIENT") != ""
-}
-
 /*
 Connect as Client
 */
-func connectToServer() {
+
+
+
+func ConnectToServer() {
 	client, err := rpc.Dial("tcp", "192.168.178.30:1234")
 	resp := new(messages.InvokeResponse)
 	req := messages.InvokeRequest{
@@ -78,30 +75,15 @@ func connectToServer() {
 	os.Exit(0)
 }
 
-func delegateRemote(req interface{}) (Response, error) {
-	client, err := rpc.Dial("tcp", "yrnrwxodb39dwkmr.myfritz.net:1234")
-	defer client.Close()
-	if err != nil {
-		log.Println("Error callin Remote: ", err)
-	}
+func IsTestClient() bool {
+	return os.Getenv("TESTCLIENT") != ""
+}
 
-	// marshall for remoting
-	payload, err2 := json.Marshal(req)
-	if err2 != nil {
-		log.Println("Error Marshalling: ", err2)
-	}
-	iResp := new(messages.InvokeResponse)
-	iReq := messages.InvokeRequest{
-		Payload: []byte(payload),
-	}
-	err = client.Call("Function.Invoke", iReq, iResp)
-	if err != nil {
-		log.Println("Error: ", err)
-	}
+func SetupTestDB() {
+	rand.Seed(time.Now().UTC().UnixNano())
+	r := strconv.Itoa(rand.Int())
+	tablename := "TESTTABLE_" + r
 
-	// unmarshal to response object
-	var r = Response{}
-	json.Unmarshal(iResp.Payload, &r)
-
-	return r, err
+	os.Setenv("TEST_DB", tablename)
+	log.Printf("Setup TEST DB Environment")
 }

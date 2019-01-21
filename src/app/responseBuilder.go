@@ -18,7 +18,7 @@ func (r *Response) withShouldEndSession() *Response {
 
 func (r *Response) addAudioPlayerPlayDirective(url string) *Response {
 	r.ResponseBody.Directives = []Directive{
-		Directive{
+		{
 			Type:         "AudioPlayer.Play",
 			PlayBehavior: "REPLACE_ALL",
 			AudioItem: &AudioItem{
@@ -28,6 +28,19 @@ func (r *Response) addAudioPlayerPlayDirective(url string) *Response {
 					OffsetInMilliseconds: 0,
 				},
 			},
+		},
+	}
+	return r
+}
+
+func (r *Response) withStandardCard() *Response {
+	r.ResponseBody.Card = &Card{
+		Type:    "Standard",
+		Title:   "Bodyweight Training",
+		Content: "Content",
+		Image: &Image{
+			SmallImageURL: "http://bla",
+			LargeImageURL: "http://bla",
 		},
 	}
 	return r
@@ -83,7 +96,7 @@ func (r *Response) addDelegateDirective(intent *Intent, confirmed bool) *Respons
 	// }
 
 	r.ResponseBody.Directives = []Directive{
-		Directive{
+		{
 			Type:          "Dialog.Delegate",
 			UpdatedIntent: intent,
 		}}

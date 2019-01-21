@@ -8,13 +8,14 @@ const (
 	alexaAudioplayerNearlyFinishedRequest = "AudioPlayer.PlaybackNearlyFinished"
 	alexaAudioplayerFinishedRequest       = "AudioPlayer.PlaybackFinished"
 
-	alexaDefineUserIntent    = "DefineUser"
 	alexaStopIntent          = "AMAZON.StopIntent"
 	alexaHelpIntent          = "AMAZON.HelpIntent"
 	alexaFallbackIntent      = "AMAZON.FallbackIntent"
+	alexaDefineUserIntent    = "DefineUser"
 	alexaStartTrainingIntent = "StartTraining"
 	alexaStartExerciseIntent = "StartExercise"
 	alexaAudioTestIntent     = "AudioTest"
+	alexaBereitIntent	= "Bereit"
 )
 
 // Request API Call Request
