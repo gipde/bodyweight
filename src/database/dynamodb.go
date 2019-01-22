@@ -189,9 +189,21 @@ func (d DynamoDB) DeleteItem(alexaID string, date time.Time) error {
 				S: aws.String(date.Format("2006-01-02T15:04:05.999999-07:00")),
 			},
 		},
+		ReturnValues: aws.String("ALL_OLD"),
 	}
 	log.Println("Deleting:", alexaID, date)
 	_, err := d.sess.DeleteItem(delitem)
+
+	// e := Entry{}
+	// log.Printf("Attributes: %+v",r.Attributes)
+
+	// err = dynamodbattribute.Unmarshal(r., &e)
+	// if err != nil {
+	// 	log.Println("error unmarshalling:",err)
+	// 	return err
+	// }
+
+	// log.Printf("deleted %+v, error %+v\nr:%+v\n", r, err, e)
 	if err != nil {
 		log.Println("Error:", err)
 		return err

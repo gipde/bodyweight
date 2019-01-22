@@ -27,7 +27,7 @@ func TestMain(m *testing.M) {
 
 func TestCreateDB(t *testing.T) {
 	// DB already exists, because it is created in TestMain
-	err:=db.CreateDBIfNotExists()
+	err := db.CreateDBIfNotExists()
 	assert.NoError(t, err)
 }
 
@@ -73,6 +73,11 @@ func TestGetLastItem2(t *testing.T) {
 func TestDeleteRecords(t *testing.T) {
 	err := db.DeleteAllEntries(testid)
 	assert.NoError(t, err)
+}
+
+func TestUnknown(t *testing.T) {
+	e := db.DeleteItem("unknown", time.Now())
+	log.Println("error:", e)
 }
 
 func TestDeleteDB(t *testing.T) {

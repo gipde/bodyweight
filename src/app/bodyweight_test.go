@@ -6,6 +6,7 @@ import (
 	"bodyweight/training"
 	"fmt"
 	"github.com/stretchr/testify/assert"
+	"os"
 	"strings"
 	"testing"
 )
@@ -40,7 +41,7 @@ func TestMain(m *testing.M) {
 	db = database.Accessor()
 	defer db.DeleteDB()
 
-	m.Run()
+	os.Exit(m.Run())
 }
 
 func TestLaunchHandlerNewUser(t *testing.T) {
@@ -112,6 +113,8 @@ func TestStartTrainingWithoutUserSet(t *testing.T) {
 	assert.Equal(t, speakyfy(fmt.Sprintf("Herzlich Willkommen zurück %s. ", "werner")+
 		training.AnnounceDailyTraining(&state)), m.OutputSpeech.SSML)
 }
+
+
 
 func triggerRequest(req Request) (*ResponseBody, error) {
 	r, e := HandleRequest(nil, req)
