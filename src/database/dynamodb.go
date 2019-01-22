@@ -281,6 +281,7 @@ func (d DynamoDB) existsDB() bool {
 
 func getDynamoDBSession() *dynamodb.DynamoDB {
 	sess, err := session.NewSession(&aws.Config{
+		LogLevel: aws.LogLevel(aws.LogDebugWithHTTPBody),
 		Region: aws.String("eu-west-1")},
 	)
 
