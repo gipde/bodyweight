@@ -123,7 +123,7 @@ func (d DynamoDB) CreateEntry(entry *Entry) error {
 		log.Println("Got error calling PutItem:", err)
 		return err
 	}
-	log.Println("Entry created: ", entry.AlexaID, entry.UserName)
+	log.Println("Entry created: ", entry.AlexaID, entry.Date, entry.UserName)
 	return nil
 }
 
@@ -192,22 +192,20 @@ func (d DynamoDB) DeleteItem(alexaID string, date time.Time) error {
 		ReturnValues: aws.String("ALL_OLD"),
 	}
 	r, err := d.sess.DeleteItem(delitem)
-	log.Println("Deleting:", alexaID, date, r, err)
-
-	// e := Entry{}
-	// log.Printf("Attributes: %+v",r.Attributes)
-
-	// err = dynamodbattribute.Unmarshal(r., &e)
-	// if err != nil {
-	// 	log.Println("error unmarshalling:",err)
-	// 	return err
-	// }
-
-	// log.Printf("deleted %+v, error %+v\nr:%+v\n", r, err, e)
 	if err != nil {
 		log.Println("Error:", err)
 		return err
 	}
+
+	e := Entry{}
+	err = dynamodbattribute.Unmarshal(&dynamodb.AttributeValue{M: r.Attributes}, &e)
+	if err != nil {
+		log.Println("error unmarshalling:", err)
+		return err
+	}
+
+	log.Println("Entry deleted:", e.AlexaID, e.Date, e.UserName)
+
 	return nil
 }
 
