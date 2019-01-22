@@ -19,7 +19,7 @@ type DynamoDB struct {
 	sess      *dynamodb.DynamoDB
 }
 
-// DynamoDB gets a new instance
+// DynamoDBAccessor gets a new instance
 func DynamoDBAccessor() *DynamoDB {
 
 	dbName := os.Getenv("TEST_DB")

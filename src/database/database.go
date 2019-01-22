@@ -6,7 +6,7 @@ import (
 	"bodyweight/training"
 )
 
-// Entry Primary Key
+// PK is the Primary Key
 type PK struct {
 	AlexaID string    `json:"alexa_id"`
 	Date    time.Time `json:"date"`
