@@ -191,6 +191,7 @@ func (d DynamoDB) DeleteItem(alexaID string, date time.Time) error {
 		},
 		ReturnValues: aws.String("ALL_OLD"),
 	}
+	log.Println("Delete Request:",delitem)
 	r, err := d.sess.DeleteItem(delitem)
 	if err != nil {
 		log.Println("Error:", err)
@@ -205,7 +206,7 @@ func (d DynamoDB) DeleteItem(alexaID string, date time.Time) error {
 	}
 
 	log.Println("Entry deleted:", e.AlexaID, e.Date, e.UserName)
-
+	if 
 	return nil
 }
 
