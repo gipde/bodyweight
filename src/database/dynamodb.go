@@ -206,7 +206,6 @@ func (d DynamoDB) DeleteItem(alexaID string, date time.Time) error {
 	}
 
 	log.Println("Entry deleted:", e.AlexaID, e.Date, e.UserName)
-	if 
 	return nil
 }
 
