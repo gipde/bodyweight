@@ -45,9 +45,11 @@ func TestGetLastItem1(t *testing.T) {
 func TestCreateItem(t *testing.T) {
 	for i := 0; i < 10; i++ {
 		entry := Entry{
-			AlexaID:  testid,
+			PK: PK{
+				AlexaID: testid,
+				Date:    time.Now(),
+			},
 			UserName: testname,
-			Date:     time.Now(),
 			TrainingState: training.State{
 				Level: 0,
 				Week:  0,
@@ -76,10 +78,9 @@ func TestDeleteRecords(t *testing.T) {
 }
 
 func TestUnknown(t *testing.T) {
-	e := db.DeleteItem("unknown", time.Now())
-	log.Println("error:", e)
+	err:= db.DeleteItem(PK{AlexaID: "unknown", Date: time.Now()})
+	assert.Error(t,err,"expected Error")
 }
-
 func TestDeleteDB(t *testing.T) {
 	err := db.DeleteDB()
 	assert.NoError(t, err)

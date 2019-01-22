@@ -6,10 +6,15 @@ import (
 	"bodyweight/training"
 )
 
+// Entry Primary Key
+type PK struct {
+	AlexaID string    `json:"alexa_id"`
+	Date    time.Time `json:"date"`
+}
+
 // Entry is a database Entry
 type Entry struct {
-	AlexaID       string         `json:"alexa_id"`
-	Date          time.Time      `json:"date"`
+	PK
 	UserName      string         `json:"username"`
 	TrainingState training.State `json:"training_state"`
 	Desc          string         `json:"desc"`
@@ -25,7 +30,7 @@ type DB interface {
 	GetLastUsedEntry(alexaID string) (*Entry, error)
 	GetEntries(alexaID string) (*[]Entry, error)
 
-	DeleteItem(alexaID string, date time.Time) error
+	DeleteItem(pk PK) error
 	DeleteAllEntries(alexaID string) error
 }
 

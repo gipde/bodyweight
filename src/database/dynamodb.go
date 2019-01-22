@@ -1,6 +1,7 @@
 package database
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"time"
@@ -177,22 +178,19 @@ func (d DynamoDB) GetEntries(alexaID string) (*[]Entry, error) {
 	return nil, nil // no entries
 }
 
-// DeleteItem a item
-func (d DynamoDB) DeleteItem(alexaID string, date time.Time) error {
-	delitem := &dynamodb.DeleteItemInput{
-		TableName: aws.String(d.tableName),
-		Key: map[string]*dynamodb.AttributeValue{
-			"alexa_id": {
-				S: aws.String(alexaID),
-			},
-			"date": {
-				S: aws.String(date.Format("2006-01-02T15:04:05.999999-07:00")),
-			},
-		},
-		ReturnValues: aws.String("ALL_OLD"),
+// DeleteItem deletes a Item
+func (d DynamoDB) DeleteItem(entry PK) error {
+	av, err := dynamodbattribute.MarshalMap(entry)
+	if err != nil {
+		log.Println(err)
+		return err
 	}
-	log.Println("Delete Request:",delitem)
-	r, err := d.sess.DeleteItem(delitem)
+
+	r, err := d.sess.DeleteItem(&dynamodb.DeleteItemInput{
+		Key:          av,
+		TableName:    aws.String(d.tableName),
+		ReturnValues: aws.String("ALL_OLD"),
+	})
 	if err != nil {
 		log.Println("Error:", err)
 		return err
@@ -206,6 +204,9 @@ func (d DynamoDB) DeleteItem(alexaID string, date time.Time) error {
 	}
 
 	log.Println("Entry deleted:", e.AlexaID, e.Date, e.UserName)
+	if e.AlexaID != entry.AlexaID || e.Date != entry.Date {
+		return fmt.Errorf("unable to delete: %s, %v", entry.AlexaID, entry.Date)
+	}
 	return nil
 }
 
@@ -219,7 +220,7 @@ func (d DynamoDB) DeleteAllEntries(alexaID string) error {
 
 	if entries != nil {
 		for _, entry := range *entries {
-			err := d.DeleteItem(entry.AlexaID, entry.Date)
+			err := d.DeleteItem(entry.PK)
 			if err != nil {
 				return err
 			}
@@ -281,7 +282,7 @@ func (d DynamoDB) existsDB() bool {
 
 func getDynamoDBSession() *dynamodb.DynamoDB {
 	sess, err := session.NewSession(&aws.Config{
-		LogLevel: aws.LogLevel(aws.LogDebugWithHTTPBody),
+		// LogLevel: aws.LogLevel(aws.LogDebugWithHTTPBody),
 		Region: aws.String("eu-west-1")},
 	)
 

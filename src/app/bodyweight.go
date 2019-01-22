@@ -190,8 +190,10 @@ func handleBereit(ctx context.Context, event Request) (interface{}, error) {
 
 func getNewUserEntry(userid, username string) *database.Entry {
 	return &database.Entry{
-		AlexaID:       userid,
-		Date:          time.Now(),
+		PK: database.PK{
+			AlexaID: userid,
+			Date:    time.Now(),
+		},
 		Desc:          "Start",
 		TrainingState: training.GetBeginningState(),
 		UserName:      username,
@@ -212,7 +214,7 @@ func defineUser(ctx context.Context, event Request) (interface{}, error) {
 				userEntry.Date = time.Now()
 
 				// delete old entry
-				db.DeleteItem(entry.AlexaID, entry.Date)
+				db.DeleteItem(entry.PK)
 
 			}
 		}
