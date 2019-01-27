@@ -53,13 +53,8 @@ running the function:
 
     Intent: StartTraining
         du kannst loslegen
-        ich bin bereit
+        bereit
             ----- startet die nächste übung mit zeitunterstütung und übungsansage
-
-    Intent: ExplainStatus
-        wie ist mein trainingsstand
-        wie ist mein status
-            ----- aktuellen status reporten
 
     Intent: ExplainTrainingMethod
         erkläre Das stufenintervall

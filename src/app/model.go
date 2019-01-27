@@ -10,16 +10,17 @@ const (
 	alexaAudioplayerNearlyFinishedRequest = "AudioPlayer.PlaybackNearlyFinished"
 	alexaAudioplayerFinishedRequest       = "AudioPlayer.PlaybackFinished"
 
-	alexaStopIntent          = "AMAZON.StopIntent"
-	alexaHelpIntent          = "AMAZON.HelpIntent"
-	alexaFallbackIntent      = "AMAZON.FallbackIntent"
-	alexaDefineUserIntent    = "DefineUser"
-	alexaStartTrainingIntent = "StartTraining"
-	alexaStartExerciseIntent = "StartExercise"
-	alexaAudioTestIntent     = "AudioTest"
-	alexaBereitIntent        = "Bereit"
-	alexaExplainTraining     = "ExplainTraining"
-	alexaExplainExercise     = "ExplainExercise"
+	alexaStopIntent                  = "AMAZON.StopIntent"
+	alexaHelpIntent                  = "AMAZON.HelpIntent"
+	alexaFallbackIntent              = "AMAZON.FallbackIntent"
+
+	alexaDefineUserIntent            = "DefineUser"
+	alexaExplainTrainingIntent       = "ExplainTraining"
+	alexaExplainExerciseIntent       = "ExplainExercise"
+	alexaStartTrainingIntent         = "StartTraining"
+	alexaExplainTrainingMethodIntent = "ExplainTrainingMethod"
+
+	alexaAudioTestIntent             = "AudioTest"
 )
 
 // Request API Call Request

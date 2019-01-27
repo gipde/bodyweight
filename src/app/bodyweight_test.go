@@ -3,7 +3,7 @@ package app
 import (
 	"bodyweight/database"
 	"bodyweight/tools"
-	"bodyweight/training"
+
 	"fmt"
 	"github.com/stretchr/testify/assert"
 	"os"
@@ -51,7 +51,7 @@ func TestLaunchHandlerNewUser(t *testing.T) {
 	assert.True(t, m.Card.Type == "Simple")
 	assert.True(t, m.OutputSpeech.Type == "SSML")
 	assert.Equal(t, m.OutputSpeech.SSML, speakyfy(speechWelcome+speechDefineUser))
-	assert.Equal(t, m.Reprompt.OutputSpeech.SSML, speakyfy(speechStartTraining+speechExitIfMute))
+	assert.Equal(t, m.Reprompt.OutputSpeech.SSML, speakyfy(speechStartNextExercise+speechExitIfMute))
 	assert.Equal(t, m.ShouldEndSession, false)
 }
 
@@ -68,7 +68,7 @@ func TestLaunchWithDefineUser(t *testing.T) {
 	m, _ = triggerLaunchRequest()
 
 	assert.Equal(t, m.OutputSpeech.SSML,
-		speakyfy(speechWelcome+fmt.Sprintf(speechPersonal, name)+speechStartTraining))
+		speakyfy(speechWelcome+fmt.Sprintf(speechPersonal, name)+speechStartNextExercise))
 	assert.False(t, m.ShouldEndSession)
 }
 
@@ -80,12 +80,12 @@ func TestChangeToNewUser(t *testing.T) {
 	m, _ := triggerDefineUserIntent(name2)
 	m, _ = triggerLaunchRequest()
 	assert.Equal(t, m.OutputSpeech.SSML,
-		speakyfy(speechWelcome+fmt.Sprintf(speechPersonal, name2)+speechStartTraining))
+		speakyfy(speechWelcome+fmt.Sprintf(speechPersonal, name2)+speechStartNextExercise))
 
 	m, _ = triggerDefineUserIntent(name1)
 	m, _ = triggerLaunchRequest()
 	assert.Equal(t, m.OutputSpeech.SSML,
-		speakyfy(speechWelcome+fmt.Sprintf(speechPersonal, name1)+speechStartTraining))
+		speakyfy(speechWelcome+fmt.Sprintf(speechPersonal, name1)+speechStartNextExercise))
 
 	entries, _ := db.GetEntries(amazonTestUser)
 	assert.Equal(t, 2, len(*entries))
@@ -96,7 +96,7 @@ func TestChangeToNewUser(t *testing.T) {
 func TestLaunchHandlerKnownUser(t *testing.T) {
 	name1 := "Bob"
 	m, _ := triggerLaunchRequest()
-	assert.Equal(t, speakyfy(speechWelcome+fmt.Sprintf(speechPersonal, name1)+speechStartTraining),
+	assert.Equal(t, speakyfy(speechWelcome+fmt.Sprintf(speechPersonal, name1)+speechStartNextExercise),
 		m.OutputSpeech.SSML)
 }
 
@@ -108,13 +108,11 @@ func TestStartTrainingWithoutUserSet(t *testing.T) {
 	assert.Equal(t, "Dialog.Delegate", m.Directives[0].Type)
 	assert.Nil(t, e)
 
-	m, e = triggerStartTraining("werner")
-	state := training.GetBeginningState()
-	assert.Equal(t, speakyfy(fmt.Sprintf("Herzlich Willkommen zurück %s. ", "werner")+
-		training.AnnounceDailyTraining(&state)), m.OutputSpeech.SSML)
+	// m, e = triggerStartTraining("werner")
+	// state := training.GetBeginningState()
+	// assert.Equal(t, speakyfy(fmt.Sprintf("Herzlich Willkommen zurück %s. ", "werner")+
+	// 	training.AnnounceDailyTraining(&state)), m.OutputSpeech.SSML)
 }
-
-
 
 func triggerRequest(req Request) (*ResponseBody, error) {
 	r, e := HandleRequest(nil, req)

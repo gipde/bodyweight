@@ -44,7 +44,7 @@ func BenchmarkTimeText(b *testing.B) {
 	}
 }
 
-func switchNextUnit(t *testing.T,fn func(*State) bool) {
+func switchNextUnit(t *testing.T, fn func(*State) bool) {
 	state := GetBeginningState()
 	for p := 0; p < 4; p++ {
 		for w := 0; w < 10; w++ {
@@ -63,13 +63,13 @@ func switchNextUnit(t *testing.T,fn func(*State) bool) {
 }
 
 func TestSwitchNextUnit(t *testing.T) {
-	switchNextUnit(t,switchToNextTrainingLinear)
-	switchNextUnit(t,switchToNextTrainingRecursive)
+	switchNextUnit(t, switchToNextTrainingLinear)
+	switchNextUnit(t, switchToNextTrainingRecursive)
 }
 
 func BenchmarkSwitchNextUnit(b *testing.B) {
 	for n := 0; n < b.N; n++ {
 		state := GetBeginningState()
-		SwitchToNextTraining(&state)
+		state.SwitchToNextTraining()
 	}
 }

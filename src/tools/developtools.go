@@ -54,7 +54,15 @@ var launchRequest = `{
 Connect as Client
 */
 
+var debug=false
 
+func IsDebug() bool {
+	return debug
+}
+
+func SetDebug() {
+	debug=true
+}
 
 func ConnectToServer() {
 	client, err := rpc.Dial("tcp", "192.168.178.30:1234")

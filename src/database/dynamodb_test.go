@@ -56,7 +56,6 @@ func TestCreateItem(t *testing.T) {
 				Day:   0,
 				Unit:  i,
 			},
-			Desc: "TestRecord",
 		}
 		err := db.CreateEntry(&entry)
 		assert.NoError(t, err)
@@ -78,8 +77,8 @@ func TestDeleteRecords(t *testing.T) {
 }
 
 func TestUnknown(t *testing.T) {
-	err:= db.DeleteItem(PK{AlexaID: "unknown", Date: time.Now()})
-	assert.Error(t,err,"expected Error")
+	err := db.DeleteItem(PK{AlexaID: "unknown", Date: time.Now()})
+	assert.Error(t, err, "expected Error")
 }
 func TestDeleteDB(t *testing.T) {
 	err := db.DeleteDB()

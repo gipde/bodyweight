@@ -199,10 +199,6 @@ func (n exerciseEnum) get() exercise {
 	return exes[n]
 }
 
-// func (n exerciseEnum) name() string {
-// 	return exes[n].Name
-// }
-
 var exes = []exercise{
 	{
 		Name:       "Liegestütz mit erhöhten Händen",
@@ -236,7 +232,7 @@ var exes = []exercise{
 		Difficulty: 1,
 	},
 	{
-		Name:       "Rumänisches Kruezheben auf einem Bein im Wechsel",
+		Name:       "Rumänisches Kreuzheben auf einem Bein im Wechsel",
 		Type:       beineUndGesaess,
 		Page:       176,
 		Difficulty: 2,
@@ -734,7 +730,7 @@ var trainings = []trainingWeek{
 						{Exercise: einarmigerLiegestuetzMitErhoehtenHaenden},
 						{Exercise: klimmzugMitUnterstuetzung},
 						{Exercise: sturzflug},
-						{Exercise: umgekehrtesBankdruecken, Note: "Füße erhöht"},
+						{Exercise: umgekehrtesBankdruecken, Note: "Die Füße sind erhöht. "},
 					},
 				},
 			},

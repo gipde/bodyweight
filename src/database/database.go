@@ -17,7 +17,6 @@ type Entry struct {
 	PK
 	UserName      string         `json:"username"`
 	TrainingState training.State `json:"training_state"`
-	Desc          string         `json:"desc"`
 }
 
 // DB interface

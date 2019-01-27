@@ -27,10 +27,31 @@ const (
 	speechDefineUser = `Du benutzt das <lang xml:lang="en-US">Bodyweight Training</lang> zum ersten Mal. 
 	Du solltest zunächst deinen Namen festlegen. Sage hierzu bitte <break time="500ms"/>mein Name ist<break time="500ms"/> und deinen Vornamen. `
 
-	speechExplainTraining = `Lass Dir zunächst das Training erklären. `
-	speechExplainExercise = `Lass Dir die nächste Übung erklären. `
-	speechStartTraining   = `Sage: <break strength="x-strong"/>Ich bin bereit,<break strength="x-strong"/> 
-	wenn du diese Übung beginnen möchtest.`
+	speechExplainTraining     = `Lass Dir zunächst das Training erklären. `
+	speechExplainThisExercise = `Lass Dir diese nächste Übung erklären. `
+	speechExplainNextExercise = `Lass Dir die nächste Übung erklären. `
+	speechStart               = `Sage: <break strength="x-strong"/>bereit,<break strength="x-strong"/>`
+	speechStartThisExercise   = speechStart + `wenn du mit dieser Übung beginnen möchtest. `
+	speechStartNextExercise   = speechStart + `wenn du mit der nächsten Übung beginnen möchtests. `
+	speechDone                = `Geschafft. `
+	speechReadyForToday       = `Jetzt kannst Du Dich erholen. Bis zum nächsten mal. `
+	speechStufenintervall     = `Jede Übung in diesem Block wird 4,5 bis 7,5 Minuten ausgeführt.
+	Du beginnst mit einer Wiederholung, machst eine Pause, machst zwei Wiederholungen und so weiter. 
+	Ab der Hälft der Zeit reduzierst Du die Sätze jeweils um eine Wiederholung. Wenn Du bereits 
+	vorher nicht mehr kannst, kannst Du auch früher schon reduzieren. Ist noch Zeit übrig, 
+	beginnst du mit einer neuen Stufe wieder mit zunächst 1 Wiederholung`
+	speechIntervallsatz = `Beim Intervallsatz wird sind von jeder Übung 3 Sätze mit 6-12 Wiederholungen
+	durchzuführen. Bei einem Satz solltest Du eigentlich bis zum Muskelversagen kommen. Für einen Satz hast Du
+	genau 3 Minuten zeit. Falls Du früher ferwig wirst, kannst Du die Zeit als Pause nutzen. Die Sätze beginnen damit
+	immer genau im Abstand von 3 Minuten. Wechsle bei einseitigen Übungen nach jedem Satz die Seite,es sei denn die 
+	Wiederholungen sind im Wechsel durchzuführen. Beginnst zunächst mit der schwächeren Seite`
+	speechSupersatz = `Ein Übungspaar bildet einen Supersatz, der jeweils 4 Minuten dauert. Bei der ersten Übung
+	sind jeweils 1 - 5 Wiederholungen, bei der zweiten Übung sind 6-12 Wiederholungen zu absolvieren. Pro Paar sind 2 
+	Supersätze direkt nacheinander durchzuführen. Bei einseitigen Übungen wechseln Sie nach jeder Wiederholung die Seite.`
+	speechHochintensitaetssatz = `Acht Sätze mit jeweils 20 Sekunden Training gefolgt von je 10 Sekunden Pause insgesamt 4 Minuten lang.`
+	speechZirkelintervall = `Das Zirkelintervall besteht aus insgesamt 3 verschiedenen Übungen, von denen jeweils 
+	eine angegebene Anzahl von Wiederholungen durchzuführen ist. Ohne Pause führen sie die Übungen im Wechsel durch.
+	Versuchen Sie das Zirkelintervall insgesamt 20 Minuten durchzuführen.`
 
 	speechUnknown    = "Ich kann dich leider nicht verstehen. "
 	speechExitIfMute = "Wenn Du nichts mehr sagts, wird das Programm beendet. "
@@ -48,6 +69,8 @@ var db database.DB
 func init() {
 	if !debug {
 		log.SetOutput(ioutil.Discard)
+	} else {
+		tools.SetDebug()
 	}
 }
 
@@ -72,7 +95,6 @@ func getUser(event Request) *database.Entry {
 	return entry
 }
 
-
 // HandleRequest handles every Request / Base-Entry FN
 func HandleRequest(ctx context.Context, event Request) (interface{}, error) {
 
@@ -90,8 +112,6 @@ func HandleRequest(ctx context.Context, event Request) (interface{}, error) {
 	}
 
 	user := getUser(event)
-	log.Println("User:", user)
-
 	switch event.RequestBody.Type {
 
 	case alexaLaunchRequest:
@@ -124,6 +144,9 @@ func HandleRequest(ctx context.Context, event Request) (interface{}, error) {
 		switch event.RequestBody.Intent.Name {
 		case alexaDefineUserIntent:
 			return defineUser(event)
+		case alexaExplainTrainingMethodIntent:
+			return handleExplainTrainingMethod(event)
+
 		case alexaStopIntent:
 			return responseBuilder().speak(speechEnde).withShouldEndSession(), nil
 		case alexaHelpIntent:
@@ -135,9 +158,6 @@ func HandleRequest(ctx context.Context, event Request) (interface{}, error) {
 				addAudioPlayerPlayDirective(
 					"https://github.com/gipde/bodyweight/raw/master/contrib/alien-spaceship_daniel_simion.mp3"), nil
 
-		case alexaStartTrainingIntent:
-			return handleStartTraining(ctx, event)
-
 		case alexaFallbackIntent:
 			return handleUnknown(ctx, event)
 		}
@@ -147,17 +167,39 @@ func HandleRequest(ctx context.Context, event Request) (interface{}, error) {
 			return responseBuilder().speak(speechDefineUser).reprompt(speechExitIfMute), nil
 		}
 		switch event.RequestBody.Intent.Name {
-		case alexaExplainTraining:
-			return responseBuilder().speak(training.GetCurrentState(&user.TrainingState)).
-				reprompt(speechExplainExercise + speechExitIfMute), nil
-		case alexaExplainExercise:
-			return responseBuilder().speak(training.GetCurrentExercise(&user.TrainingState)+speechStartTraining).
-				reprompt(speechStartTraining + speechExitIfMute), nil
-		case alexaBereitIntent:
-			return handleBereit(ctx, event)
+		case alexaExplainTrainingIntent:
+			return responseBuilder().speak(user.TrainingState.ExplainTraining() + speechExplainThisExercise).
+				reprompt(speechExplainThisExercise + speechExitIfMute), nil
+		case alexaExplainExerciseIntent:
+			return responseBuilder().speak(user.TrainingState.ExplainExercise() + speechStartThisExercise).
+				reprompt(speechStartThisExercise + speechExitIfMute), nil
+		case alexaStartTrainingIntent:
+			return handleStartTraining(user, event)
 		}
 	}
 	return handleUnknown(ctx, event)
+}
+
+func handleExplainTrainingMethod(event Request) (*Response, error) {
+	return responseBuilder().speak("nicht implementiert").reprompt(speechExitIfMute), nil
+}
+
+func handleStartTraining(user *database.Entry, event Request) (*Response, error) {
+	r := user.TrainingState.StartTraining()
+
+	// increment after return
+	defer func() {
+		newState := user.TrainingState.SwitchToNextTraining()
+		user.Date = time.Now()
+		user.TrainingState = newState
+		db.CreateEntry(user)
+	}()
+
+	if user.TrainingState.IsLastUnit() {
+		return responseBuilder().speak(r + speechDone + speechReadyForToday).withShouldEndSession(), nil
+	}
+	return responseBuilder().speak(r + speechDone + speechExplainNextExercise), nil
+
 }
 
 func getlastUserEntry(event Request) (dbEntry *database.Entry, notFoundMsg *Response) {
@@ -191,39 +233,12 @@ func getlastUserEntry(event Request) (dbEntry *database.Entry, notFoundMsg *Resp
 
 }
 
-func handleStartTraining(ctx context.Context, event Request) (interface{}, error) {
-	// TODO: Es macht einen Unterschied, ob der Intent direkt gestartet wird, oder ob zunächst über einen
-	// Launch Request gestartet wird.
-
-	entry, errmsg := getlastUserEntry(event)
-	if errmsg != nil {
-		return errmsg, nil
-	}
-
-	// zeige zustand auf (tag + )
-
-	text := fmt.Sprintf("Herzlich Willkommen zurück %s. ", entry.UserName)
-	text += training.AnnounceDailyTraining(&entry.TrainingState)
-	return responseBuilder().withSimpleCard("Bodyweight Training", "für "+entry.UserName).speak(text), nil
-
-	//erkläre Übung
-	// sind sie bereit? sage: ich bin bereit
-	// starte Übung
-	// spiele audio playback
-
-}
-
-func handleBereit(ctx context.Context, event Request) (interface{}, error) {
-	return nil, nil
-}
-
 func getNewUserEntry(userid, username string) *database.Entry {
 	return &database.Entry{
 		PK: database.PK{
 			AlexaID: userid,
 			Date:    time.Now(),
 		},
-		Desc:          "Start",
 		TrainingState: training.GetBeginningState(),
 		UserName:      username,
 	}
@@ -244,7 +259,6 @@ func defineUser(event Request) (interface{}, error) {
 
 				// delete old entry
 				db.DeleteItem(entry.PK)
-
 			}
 		}
 	}
@@ -252,11 +266,12 @@ func defineUser(event Request) (interface{}, error) {
 	db.CreateEntry(&userEntry)
 
 	return responseBuilder().
-		speak(fmt.Sprintf("Hallo %s. Schön dass Du mit mir trainierst", user.Value)), nil
+		speak(fmt.Sprintf("Hallo %s. Schön dass Du mit mir trainierst. ", user.Value) + speechExplainTraining).
+		reprompt(speechExplainTraining + speechExitIfMute), nil
 
 }
 
 func handleUnknown(ctx context.Context, event Request) (interface{}, error) {
-	return responseBuilder().speak(speechUnknown + " " + speechStartTraining).
+	return responseBuilder().speak(speechUnknown + " " + speechExplainTraining).
 		reprompt(speechExitIfMute), nil
 }

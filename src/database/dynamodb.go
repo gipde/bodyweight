@@ -149,7 +149,6 @@ func (d DynamoDB) GetLastUsedEntry(alexaID string) (*Entry, error) {
 
 // GetEntries gets all Entries
 func (d DynamoDB) GetEntries(alexaID string) (*[]Entry, error) {
-
 	result, err := d.sess.Scan(&dynamodb.ScanInput{
 		TableName:        aws.String(d.tableName),
 		FilterExpression: aws.String("alexa_id = :u"),
