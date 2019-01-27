@@ -2,8 +2,14 @@
 [![Build Status](https://travis-ci.org/gipde/bodyweight.svg?branch=master)](https://travis-ci.org/gipde/bodyweight)
 [![Coverage Status](https://coveralls.io/repos/github/gipde/bodyweight/badge.svg?branch=master)](https://coveralls.io/github/gipde/bodyweight?branch=master)
 
-- individuelles bodyweight training
+## individuelles bodyweight training
 
+Der Skill unterstützt dich bei der Ausführung des Bodyweight Training. Alle Übungen basieren auf dem Buch "Fitte Ohne Geräte" von Mark Lauren
+
+## TODO
+- Hintergrundmusik beim Training \
+  hierbei muss immer die Lautstärke an den enstprechenden Stellen reduzieret werden sonst sonst hört man die Ansagen nicht.
+- Panics abfangen, und als error senden (z.b. bei Type Assertions)
 
 ## Commands
 proxy local from 0.0.0.0:1234 to localhost 1234
@@ -24,7 +30,55 @@ running the function:
 
 ## Sprach Modell
 
-Willkommen ->       name   ja   -> persönliche begrüssung
-                    |
-                            nein   -> Name nachfragen -> Willkommen
+    Request: LaunchRequest
+        starte das bodyweight training
+            Willkommen ->       name   ja   -> persönliche Begrüssung
+                                |
+                                ------ nein   -> Name nachfragen -> Willkommen
+
+    Intent: DefineUser
+        mein Name ist {name}
+        ich bin {name}
+            ---- ändere den Namen
+
+    Intent: ExplainTraining
+        erkläre das heutige training
+        erkläre das training
+            ---- erklärt das training
+
+    Intent: ExplainExercise
+        erkläre die nächste übung (immer nur eine einzige)
+        starte die nächste übung
+            ----- erkläre die Übung
+
+    Intent: StartTraining
+        du kannst loslegen
+        ich bin bereit
+            ----- startet die nächste übung mit zeitunterstütung und übungsansage
+
+    Intent: ExplainStatus
+        wie ist mein trainingsstand
+        wie ist mein status
+            ----- aktuellen status reporten
+
+    Intent: ExplainTrainingMethod
+        erkläre Das stufenintervall
+        erkläre die Intervallsätze
+        erkläre den Supersatz
+        erkläre die Zirkelintervalle
+        erkläre den Hochintensitätssatz
+            ----- erklärt die trainingsmethoden
+
+    Inten: AMAZON.HelpIntent
+        kannst du mir helfen
+            ----- erkläre alle Funktionen
+
+    Intent: AMAZON.StopIntent
+        ich mag nicht mehr
+        beende das training
+        stoppe das Training
+        Ende
+
+
+
                     

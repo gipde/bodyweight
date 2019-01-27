@@ -1,6 +1,8 @@
 package app
 
 const (
+	sessionUser = "username"
+
 	alexaLaunchRequest                    = "LaunchRequest"
 	alexaIntentRequest                    = "IntentRequest"
 	alexaSessionEndRequest                = "SessionEndedRequest"
@@ -15,7 +17,9 @@ const (
 	alexaStartTrainingIntent = "StartTraining"
 	alexaStartExerciseIntent = "StartExercise"
 	alexaAudioTestIntent     = "AudioTest"
-	alexaBereitIntent	= "Bereit"
+	alexaBereitIntent        = "Bereit"
+	alexaExplainTraining     = "ExplainTraining"
+	alexaExplainExercise     = "ExplainExercise"
 )
 
 // Request API Call Request

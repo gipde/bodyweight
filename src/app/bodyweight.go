@@ -26,15 +26,21 @@ const (
 	speechWelcome    = `Willkommen beim <lang xml:lang="en-US">Bodyweight Training</lang>. `
 	speechDefineUser = `Du benutzt das <lang xml:lang="en-US">Bodyweight Training</lang> zum ersten Mal. 
 	Du solltest zunächst deinen Namen festlegen. Sage hierzu bitte <break time="500ms"/>mein Name ist<break time="500ms"/> und deinen Vornamen. `
-	speechStartTraining = `
-	Du kannst die Trainings mit 
-	<break strength="x-strong"/>starte das training<break strength="x-strong"/>
-	starten. `
+
+	speechExplainTraining = `Lass Dir zunächst das Training erklären. `
+	speechExplainExercise = `Lass Dir die nächste Übung erklären. `
+	speechStartTraining   = `Sage: <break strength="x-strong"/>Ich bin bereit,<break strength="x-strong"/> 
+	wenn du diese Übung beginnen möchtest.`
 
 	speechUnknown    = "Ich kann dich leider nicht verstehen. "
 	speechExitIfMute = "Wenn Du nichts mehr sagts, wird das Programm beendet. "
 	speechEnde       = "Auf Wiedersehen und bis bald. "
 	speechPersonal   = `%s, es ist schön, dass du wieder da bist. `
+	speechHelp       = `Du brauchst Hilfe?
+	
+	In diesem Skill kannst Du mi:
+	- erkläre das Training Dir das Training erklären lassen
+	- erkläre die nächste Übung - dir die nächste Übung erklären lassen`
 )
 
 var db database.DB
@@ -60,6 +66,13 @@ func Start() {
 	lambda.Start(HandleRequest)
 }
 
+func getUser(event Request) *database.Entry {
+	uid := event.Session.User.UserID // Amazon UID
+	entry, _ := db.GetLastUsedEntry(uid)
+	return entry
+}
+
+
 // HandleRequest handles every Request / Base-Entry FN
 func HandleRequest(ctx context.Context, event Request) (interface{}, error) {
 
@@ -76,25 +89,26 @@ func HandleRequest(ctx context.Context, event Request) (interface{}, error) {
 		return result, err
 	}
 
+	user := getUser(event)
+	log.Println("User:", user)
+
 	switch event.RequestBody.Type {
 
 	case alexaLaunchRequest:
-		uid := event.Session.User.UserID // Amazon UID
-		entry, _ := db.GetLastUsedEntry(uid)
-		if entry == nil {
+		if user == nil {
 			// First Usage
 			return responseBuilder().
 				speak(speechWelcome+speechDefineUser).
 				withSimpleCard("Bodyweight Training", "Herzlich willkommen").
-				reprompt(speechStartTraining + speechExitIfMute), nil
+				reprompt(speechDefineUser + speechExitIfMute), nil
 
 		}
 
 		// Welcome Back
 		return responseBuilder().
-			speak(speechWelcome+fmt.Sprintf(speechPersonal, entry.UserName)+speechStartTraining).
-			withSimpleCard("Bodyweight Training", "Herzlich willkommen "+entry.UserName).
-			reprompt(speechStartTraining + speechExitIfMute), nil
+			speak(speechWelcome+fmt.Sprintf(speechPersonal, user.UserName)+speechExplainTraining).
+			withSimpleCard("Bodyweight Training", "Herzlich willkommen "+user.UserName).
+			reprompt(speechExplainTraining + speechExitIfMute), nil
 
 	case alexaSessionEndRequest:
 		log.Println("End-Reason: ", event.RequestBody.Reason)
@@ -105,27 +119,42 @@ func HandleRequest(ctx context.Context, event Request) (interface{}, error) {
 		return nil, nil
 
 	case alexaIntentRequest:
+
+		// intents without user
 		switch event.RequestBody.Intent.Name {
+		case alexaDefineUserIntent:
+			return defineUser(event)
 		case alexaStopIntent:
 			return responseBuilder().speak(speechEnde).withShouldEndSession(), nil
 		case alexaHelpIntent:
-			return responseBuilder().speak(speechStartTraining), nil
+			return responseBuilder().speak(speechHelp), nil
 		case alexaAudioTestIntent:
 			/* die Audioausgabe läuft parallel zum Dialog.
 			D.h. wenn im Dialog nix mehr passiert, wird der Skill beendet */
 			return responseBuilder().
 				addAudioPlayerPlayDirective(
 					"https://github.com/gipde/bodyweight/raw/master/contrib/alien-spaceship_daniel_simion.mp3"), nil
+
 		case alexaStartTrainingIntent:
 			return handleStartTraining(ctx, event)
-		case alexaBereitIntent:
-			return handleBereit(ctx, event)
-		case alexaDefineUserIntent:
-			return defineUser(ctx, event)
+
 		case alexaFallbackIntent:
 			return handleUnknown(ctx, event)
-		default:
-			return handleUnknown(ctx, event)
+		}
+
+		// intents which require user
+		if user == nil {
+			return responseBuilder().speak(speechDefineUser).reprompt(speechExitIfMute), nil
+		}
+		switch event.RequestBody.Intent.Name {
+		case alexaExplainTraining:
+			return responseBuilder().speak(training.GetCurrentState(&user.TrainingState)).
+				reprompt(speechExplainExercise + speechExitIfMute), nil
+		case alexaExplainExercise:
+			return responseBuilder().speak(training.GetCurrentExercise(&user.TrainingState)+speechStartTraining).
+				reprompt(speechStartTraining + speechExitIfMute), nil
+		case alexaBereitIntent:
+			return handleBereit(ctx, event)
 		}
 	}
 	return handleUnknown(ctx, event)
@@ -200,7 +229,7 @@ func getNewUserEntry(userid, username string) *database.Entry {
 	}
 }
 
-func defineUser(ctx context.Context, event Request) (interface{}, error) {
+func defineUser(event Request) (interface{}, error) {
 	user := event.RequestBody.Intent.Slots["user"]
 	userEntry := *getNewUserEntry(event.Session.User.UserID, user.Value)
 

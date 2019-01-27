@@ -1,5 +1,9 @@
 package app
 
+import (
+
+)
+
 func responseBuilder() *Response {
 	sessionAttributes := make(map[string]interface{})
 	return &Response{
@@ -67,11 +71,16 @@ func (r *Request) getUser() string {
 	return r.Session.User.UserID
 }
 
-func (r *Request) getSessionAttribute(key string) interface{} {
-	return r.Session.Attributes[key]
+func (r *Request) getSessionAttribute(key string) string {
+	value := r.Session.Attributes[key]
+	if value != nil {
+		return value.(string)
+	} else {
+		return ""
+	}
 }
 
-func (r *Response) setSessionAttribute(key string, value interface{}) *Response {
+func (r *Response) setSessionAttribute(key string, value string) *Response {
 	r.SessionAttributes[key] = value
 	return r
 }

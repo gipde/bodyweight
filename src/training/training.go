@@ -11,7 +11,7 @@ func GetCurrentState(current *State) string {
 	text := fmt.Sprintf("Du absolvierst zur Zeit das %s ", current.Level.name())
 	text += fmt.Sprintf("und bist in der %d. Trainingswoche beim %d. Übungstag angelangt. ", current.Week+1, current.Day+1)
 	text += fmt.Sprintf(`Das Training steht in dieser Woche unter dem Motto "%s". `, week.Description)
-	text += fmt.Sprintf("Das anstehende Training enthält insgesagt %d verschiedene Übungen und ist mit %s durchzuführen", len(exes), day.Method.name())
+	text += fmt.Sprintf("Das anstehende Training enthält insgesagt %d verschiedene Übungen und ist mit %s durchzuführen. ", len(exes), day.Method.name())
 	if day.Method == stufenIntervall {
 		switch current.Level {
 		case basisProgram:
@@ -24,7 +24,18 @@ func GetCurrentState(current *State) string {
 			text += fmt.Sprintf(`In der <lang xml:lang="en-US">%s</lang> dauern die Intervalle 7 Minuten und 30 Sekunden. `, current.Level.name())
 		}
 	}
+	for i, ex := range exes {
+		text += fmt.Sprintf("%d. Übung: %s. ", i+1, ex.Exercise.get().Name)
+	}
 	return text
+}
+
+func GetCurrentExercise(current *State) string {
+	exes := trainings[current.Week].TrainingDays[current.Day].Exercises[current.Level]
+
+	// TODO: Sonderlösung für Interfallsätze und ?? 
+	ex := exes[exes[0].Exercise]
+	return fmt.Sprintf("Als nächste %s steht an: %s. Genauere Infos findest Du auf Seite %d im Buch. ", ex.Exercise.get().Type.name(), ex.Exercise.get().Name, ex.Exercise.get().Page)
 }
 
 func checkState(state *State) error {
@@ -53,13 +64,6 @@ func AnnounceDailyTraining(current *State) string {
 	}
 
 	text := GetCurrentState(current)
-
-	// text += fmt.Sprintf("Die erste Übung ist: %s. ", exes[0].Exercise.Name())
-	// text += fmt.Sprintf("Die zweite Übung ist: %s. ", exes[1].Exercise.Name())
-	// text += fmt.Sprintf("Die dritte Übung ist: %s. ", exes[2].Exercise.Name())
-	// text += fmt.Sprintf("Die vierte Übung ist: %s. ", exes[3].Exercise.Name())
-
-	// text += "Wenn Du beginnen möchtest, sage: ich bin bereit."
 
 	return text
 
