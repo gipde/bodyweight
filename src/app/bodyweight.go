@@ -49,7 +49,7 @@ const (
 	sind jeweils 1 - 5 Wiederholungen, bei der zweiten Übung sind 6-12 Wiederholungen zu absolvieren. Pro Paar sind 2 
 	Supersätze direkt nacheinander durchzuführen. Bei einseitigen Übungen wechseln Sie nach jeder Wiederholung die Seite.`
 	speechHochintensitaetssatz = `Acht Sätze mit jeweils 20 Sekunden Training gefolgt von je 10 Sekunden Pause insgesamt 4 Minuten lang.`
-	speechZirkelintervall = `Das Zirkelintervall besteht aus insgesamt 3 verschiedenen Übungen, von denen jeweils 
+	speechZirkelintervall      = `Das Zirkelintervall besteht aus insgesamt 3 verschiedenen Übungen, von denen jeweils 
 	eine angegebene Anzahl von Wiederholungen durchzuführen ist. Ohne Pause führen sie die Übungen im Wechsel durch.
 	Versuchen Sie das Zirkelintervall insgesamt 20 Minuten durchzuführen.`
 
@@ -185,11 +185,11 @@ func handleExplainTrainingMethod(event Request) (*Response, error) {
 }
 
 func handleStartTraining(user *database.Entry, event Request) (*Response, error) {
-	r := user.TrainingState.StartTraining()
+	r,newState := user.TrainingState.StartTraining()
 
 	// increment after return
 	defer func() {
-		newState := user.TrainingState.SwitchToNextTraining()
+
 		user.Date = time.Now()
 		user.TrainingState = newState
 		db.CreateEntry(user)

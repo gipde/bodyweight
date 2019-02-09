@@ -196,10 +196,10 @@ const (
 )
 
 func (n exerciseEnum) get() exercise {
-	return exes[n]
+	return exesList[n]
 }
 
-var exes = []exercise{
+var exesList = []exercise{
 	{
 		Name:       "Liegestütz mit erhöhten Händen",
 		Type:       druecken,
@@ -799,7 +799,7 @@ var trainings = []trainingWeek{
 					{
 						{Exercise: seitlicherAusfallschritt},
 						{Exercise: rumaenischesKreuzhebenAufEinemBeinImWechsel},
-						{Exercise: engeKniebeuge},
+						{Exercise: engeKniebeuge, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
 						{Exercise: schraegerCrunch},
 					},
 					{
