@@ -30,7 +30,7 @@ func (s State) ExplainTraining() string {
 
 	text += fmt.Sprintf(" und bist in der %d. Trainingswoche beim %d. Übungstag angelangt. ", s.Week+1, s.Day+1)
 	text += fmt.Sprintf(`Das Training steht in dieser Woche unter dem Motto "%s". `, week.Description)
-	text += fmt.Sprintf("Das derzeitige Trainingsprogramm enthält insgesagt %d verschiedene Übungen und ist mit %s durchzuführen. ", len(exes), day.Method.name())
+	text += fmt.Sprintf("Das derzeitige Trainingsprogramm enthält insgesamt %d verschiedene Übungen und ist mit %s durchzuführen. ", len(exes), day.Method.name())
 
 	if day.Method == stufenIntervall {
 		text += "Die Intervalle dauern "
@@ -95,23 +95,26 @@ func (s *State) getDayExesAndUnit() (trainingDay, []tExercise, tExercise) {
 
 func (s *State) stufenIntervallText() string {
 	var sec int
+	text := "Stufenintervalle mit einer Dauer von "
 	switch s.Level {
 	case basisProgram:
 		sec = 4*60 + 30
+		text += "4 Minuten und 30 Sekunden. "
 	case firstClass:
 		sec = 5*60 + 30
+		text += "5 Minuten und 30 Sekunden. "
 	case masterClass:
 		sec = 6*60 + 30
+		text += "6 Minuten und 30 Sekunden. "
 	case chiefClass:
 		sec = 7*60 + 30
+		text += "7 Minuten und 30 Sekunden. "
 	}
 
 	_, _, unit := s.getDayExesAndUnit()
-	text := "Wir staren mit: "
+	text += " Wir staren mit: "
 	text += unit.Exercise.get().Name + ". "
-	if unit.Note != "" {
-		text += "Anmerkung: " + unit.Note + ". "
-	}
+	text += addNote(unit)
 
 	s.switchToNextTraining()
 
@@ -129,6 +132,8 @@ func (s *State) intervallSatzText() string {
 		sUnit := exes[s.Unit].Exercise.get()
 		for j := 0; j < 3; j++ {
 			text += fmt.Sprintf("\n%d. Satz: %s.  ", (i*3)+j+1, sUnit.Name)
+			text += addNote(exes[s.Unit])
+
 			if i == 0 && j == 0 {
 				text += countDown("Start. ")
 			}
@@ -141,7 +146,7 @@ func (s *State) intervallSatzText() string {
 }
 
 func (s *State) superSatzText() string {
-	text := "Es sind insgesamt 6 Supersätze je 4 Minuten hintereinander auszuführen. Jeder Supersatz besteht aus 2 Übungen. \n"
+	text := "Heute sind insgesamt 6 Supersätze je 4 Minuten hintereinander auszuführen. Jeder Supersatz besteht aus 2 Übungen. \n"
 
 	_, exes, _ := s.getDayExesAndUnit()
 	for i := 0; i < len(exes); i++ {
@@ -152,11 +157,7 @@ func (s *State) superSatzText() string {
 			exercise := exes[(i/2)*2+j]
 			text += fmt.Sprintf(`<say-as interpret-as="ordinal">%d</say-as> Übung mit bis zu %d Wiederholungen: `, j+1, j*6+6)
 			text += fmt.Sprintf(`%s. `, exercise.Exercise.get().Name)
-			if exercise.Note != "" {
-				text += fmt.Sprintf("%s. \n", exercise.Note)
-			} else {
-				text += "\n"
-			}
+			text += addNote(exercise)
 			s.switchToNextTraining()
 		}
 		text += timeText(3*60+40, 60, false, false, true, true, false)
@@ -166,17 +167,22 @@ func (s *State) superSatzText() string {
 	return text
 }
 
+func addNote(ex tExercise) string {
+	if ex.Note != "" {
+		return fmt.Sprintf("Anmerkung: %s. ",ex.Note)
+	}
+	return ""
+}
+
 func (s *State) hochIntensitaetsSatzText() string {
 
 	_, exes, _ := s.getDayExesAndUnit()
 	ex := exes[s.Unit]
 
-	text := "Als nächste Übung steht an: " + ex.Exercise.get().Name + ". "
-	if ex.Note != "" {
-		text += ex.Note + ". "
-	}
-	text += "Es sind 8 Sätze mit je 20 Sekunden Training gefolgt von 10 Sekunden Pause durchzuführen. Die Anzahl der Wiederholungen sollte dabei in etwa gleich sein. "
-
+	text := "Es sind 8 Hochintenistätssätze mit je 20 Sekunden Training gefolgt von 10 Sekunden Pause durchzuführen. Die Anzahl der Wiederholungen sollte dabei in etwa gleich sein. "
+	text += "Wir starten mit: " + ex.Exercise.get().Name + ". "
+	text += addNote(ex)
+	
 	for i := 0; i < 8; i++ {
 		text += countDown("Start. ")
 		text += breakFor(20 * 1000)
@@ -194,9 +200,8 @@ func (s *State) zirkelIntervallText() string {
 	for i := 0; i < len(exes); i++ {
 		ex := exes[s.Unit]
 		exText := ex.Exercise.get().Name + ". "
-		if ex.Note != "" {
-			exText += ex.Note + ". "
-		}
+		exText += addNote(ex)
+
 		text += fmt.Sprintf(`<say-as interpret-as="ordinal">%d</say-as> Übung: %s`, i+1, exText)
 		s.switchToNextTraining()
 	}

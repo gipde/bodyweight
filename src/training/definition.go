@@ -52,7 +52,7 @@ var trainingTypes = []string{
 	"Druckübung",
 	"Zugübung",
 	"Übung für Beine und Gesäß",
-	"Übung für die Rumpfmuskulator",
+	"Übung für die Rumpfmuskulatur",
 	"ganzkörperliche Übung",
 }
 
