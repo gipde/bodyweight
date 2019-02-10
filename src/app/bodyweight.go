@@ -26,6 +26,7 @@ const (
 	speechWelcome    = `Willkommen beim <lang xml:lang="en-US">Bodyweight Training</lang>. `
 	speechDefineUser = `Du benutzt das <lang xml:lang="en-US">Bodyweight Training</lang> zum ersten Mal. 
 	Du solltest zunächst deinen Namen festlegen. Sage hierzu bitte <break time="500ms"/>mein Name ist<break time="500ms"/> und deinen Vornamen. `
+	speechWelcomNewUser = `Hallo %s. Schön dass Du mit mir trainierst. `
 
 	speechExplainTraining     = `Lass Dir zunächst das Training erklären. `
 	speechExplainThisExercise = `Lass Dir diese nächste Übung erklären. `
@@ -164,7 +165,7 @@ func HandleRequest(ctx context.Context, event Request) (interface{}, error) {
 
 		// intents which require user
 		if user == nil {
-			return responseBuilder().speak(speechDefineUser).reprompt(speechExitIfMute), nil
+			return responseBuilder().speak(speechDefineUser).reprompt(speechDefineUser + speechExitIfMute), nil
 		}
 		switch event.RequestBody.Intent.Name {
 		case alexaExplainTrainingIntent:
@@ -185,6 +186,7 @@ func handleExplainTrainingMethod(event Request) (*Response, error) {
 }
 
 func handleStartTraining(user *database.Entry, event Request) (*Response, error) {
+	//TODO: check if is directyl called
 	text := user.TrainingState.InstructTraining()
 
 	defer func() {
@@ -263,7 +265,7 @@ func defineUser(event Request) (interface{}, error) {
 	db.CreateEntry(&userEntry)
 
 	return responseBuilder().
-		speak(fmt.Sprintf("Hallo %s. Schön dass Du mit mir trainierst. ", user.Value) + speechExplainTraining).
+		speak(fmt.Sprintf(speechWelcomNewUser, user.Value) + speechExplainTraining).
 		reprompt(speechExplainTraining + speechExitIfMute), nil
 
 }

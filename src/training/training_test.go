@@ -1,10 +1,9 @@
 package training
 
 import (
+	"github.com/stretchr/testify/assert"
 	"log"
 	"testing"
-
-	"gotest.tools/assert"
 )
 
 func TestTimeAsString(t *testing.T) {
@@ -39,11 +38,11 @@ func TestIsLastTraining(t *testing.T) {
 	state.switchToNextTraining()
 	log.Println("State:", state)
 	assert.Equal(t, state.IsLastUnit(), false)
-	
+
 	state.switchToNextTraining()
 	log.Println("State:", state)
 	assert.Equal(t, state.IsLastUnit(), false)
-	
+
 	state.switchToNextTraining()
 	log.Println("State:", state)
 	assert.Equal(t, state.IsLastUnit(), true)
@@ -61,9 +60,9 @@ func TestSwitchNextUnit(t *testing.T) {
 				for u := 0; u < len(trainings[w].TrainingDays[d].Exercises[p]); u++ {
 					assert.Equal(t, state, State{Level: trainingLevel(p), Week: w, Day: d, Unit: u})
 					if !(p == 3 && w == 9 && d == 4 && u == 2) {
-						assert.Assert(t, state.switchToNextTraining() == false)
+						assert.Equal(t, false,state.switchToNextTraining())
 					} else {
-						assert.Assert(t, state.switchToNextTraining() == true) // end of alle trainings
+						assert.Equal(t,true, state.switchToNextTraining()) // end of alle trainings
 					}
 				}
 			}
