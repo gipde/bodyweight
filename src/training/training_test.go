@@ -105,11 +105,24 @@ func TestZirkelintervall(t *testing.T) {
 	t.Log(s.InstructTraining())
 }
 
+func TestEqual(t *testing.T) {
+	s := GetBeginningState()
+	last := State{Level: 4, Week: 0, Day: 0, Unit: 0}
+	for s != last {
+		s.InstructTraining()
+		t.Log("s after:", s)
+	}
+
+	assert.Equal(t, s, last)
+}
+
+
 func TestCompleteTraining(t *testing.T) {
 	s := GetBeginningState()
+	last := State{Level: 4, Week: 0, Day: 0, Unit: 0}
 	t.Log("-------------------------------------------------")
-	for s.Level == basisProgram {
-		t.Log("State: ",s)
+	for s != last {
+		t.Log("State: ", s)
 		if s.Day == 0 && s.Unit == 0 {
 			t.Log(fmt.Sprintf("Week: %d", s.Week))
 			t.Log("-------------------------------------------------")

@@ -744,7 +744,7 @@ var trainings = []trainingWeek{
 						{Exercise: schwimmer},
 					},
 					{
-						{Exercise: ausfallschrittNachHintenImWechsel},
+						{Exercise: ausfallschrittNachHintenImWechsel, Note:"mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
 						{Exercise: rumaenischesKreuzhebenAufEinemBeinImWechsel},
 						{Exercise: gesprungeneKniebeuge, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
 						{Exercise: kaeferUnilateral, Note: "Beine gestreckt"},
@@ -805,7 +805,7 @@ var trainings = []trainingWeek{
 					{
 						{Exercise: seitlicherAusfallschritt, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
 						{Exercise: rumaenischesKreuzhebenAufEinemBeinImWechsel},
-						{Exercise: engeKniebeuge, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
+						{Exercise: gesprungeneKniebeuge, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
 						{Exercise: russischerTwist},
 					},
 					{
@@ -866,7 +866,7 @@ var trainings = []trainingWeek{
 						{Exercise: schwimmer},
 					},
 					{
-						{Exercise: ausfallschrittNachHintenImWechsel},
+						{Exercise: ausfallschrittNachHintenImWechsel,Note:"mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
 						{Exercise: rumaenischesKreuzhebenAufEinemBeinImWechsel},
 						{Exercise: gesprungeneKniebeuge, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
 						{Exercise: kaeferUnilateral, Note: "Beine gestreckt"},
@@ -927,7 +927,7 @@ var trainings = []trainingWeek{
 					{
 						{Exercise: seitlicherAusfallschritt, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
 						{Exercise: rumaenischesKreuzhebenAufEinemBeinImWechsel},
-						{Exercise: engeKniebeuge, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
+						{Exercise: gesprungeneKniebeuge, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
 						{Exercise: russischerTwist},
 					},
 					{

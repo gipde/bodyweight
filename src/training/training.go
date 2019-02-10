@@ -152,6 +152,7 @@ func (s *State) superSatzText() string {
 		for j := 0; j < 2; j++ {
 
 			exercise := exes[(i/2)*2+j]
+			text += "\n"
 			text += fmt.Sprintf(`<say-as interpret-as="ordinal">%d</say-as> Übung mit bis zu %d Wiederholungen: `, j+1, j*6+6)
 			text += fmt.Sprintf(`%s. `, exercise.Exercise.get().Name)
 			text += addNote(exercise)
@@ -177,8 +178,9 @@ func (s *State) hochIntensitaetsSatzText() string {
 	ex := exes[s.Unit]
 
 	text := "Es sind 8 Hochintenistätssätze mit je 20 Sekunden Training gefolgt von 10 Sekunden Pause durchzuführen. Die Anzahl der Wiederholungen sollte dabei in etwa gleich sein. "
-	text += "Wir starten mit: " + ex.Exercise.get().Name + ". \n"
+	text += "\nWir starten mit: " + ex.Exercise.get().Name + "."
 	text += addNote(ex)
+	text += "\n"
 
 	for i := 0; i < 8; i++ {
 		text += countDown("Start. ")
@@ -205,7 +207,7 @@ func (s *State) zirkelIntervallText() string {
 		s.switchToNextTraining()
 	}
 
-	text += "\n"+timeText(20*60, 5*60, true, true, true, true, true)
+	text += "\n" + timeText(20*60, 5*60, true, true, true, true, true)
 	return text
 }
 
@@ -238,6 +240,12 @@ func (s *State) switchToNextTraining() bool {
 		s.Level = trainingLevel(tLevel)
 		return false
 	}
+
+	// TODO: How to handle Good-Level
+	s.Level = 4
+	s.Week = 0
+	s.Day = 0
+	s.Unit = 0
 	return true
 }
 
