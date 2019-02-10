@@ -129,8 +129,10 @@ func TestCompleteTraining(t *testing.T) {
 		}
 		if s.Unit == 0 {
 			t.Log(fmt.Sprintf("Day: %d", s.Day))
+			t.Log(s.ExplainTraining())
 			t.Log("-------------------------------------------------")
 		}
+		t.Log(s.ExplainExercise())
 		t.Log(s.InstructTraining())
 		if s.WasLastUnit() {
 			t.Log("end of day")

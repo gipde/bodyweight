@@ -48,13 +48,14 @@ func (s State) ExplainTraining() string {
 
 	text += "Folgende Übungen sind noch durchzuführen: "
 	for i := s.Unit; i < len(exes); i++ {
-		text += fmt.Sprintf("Die %d. Übung ist: %s. ", i+1, exes[i].Exercise.get().Name)
+		text += fmt.Sprintf("\n%d. Übung: %s. %s", i+1, exes[i].Exercise.get().Name,addNote(exes[i]))
 	}
 	return text
 }
 
 // ExplainExercise explains the next Exercise
 func (s State) ExplainExercise() string {
+	// TODO: wenn Supersatz, Intervallsatz und Zirkelintervall müssen alle Übungen angesagt werden
 	_, exes, _ := s.getDayExesAndUnit()
 	ex := exes[s.Unit].Exercise.get()
 	note := addNote(exes[s.Unit])

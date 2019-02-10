@@ -14,6 +14,7 @@ Der Skill unterstützt dich bei der Ausführung des Bodyweight Training. Alle Ü
 - Cleanup
 - Anzeige der Übungen auf dem Display
 - Testabdeckung erhöhen
+- alle Strings als speechText* auslagern
 
 ## Commands
 proxy local from 0.0.0.0:1234 to localhost 1234
