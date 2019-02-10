@@ -126,9 +126,9 @@ func (s *State) intervallSatzText() string {
 	text += "Pro Satz machst Du bis zu 12 Wiederholungen. "
 
 	for i := 0; i < len(exes); i++ {
-		currentUnit := exes[s.Unit].Exercise.get()
+		sUnit := exes[s.Unit].Exercise.get()
 		for j := 0; j < 3; j++ {
-			text += fmt.Sprintf("\n%d. Satz: %s.  ", (i*3)+j+1, currentUnit.Name)
+			text += fmt.Sprintf("\n%d. Satz: %s.  ", (i*3)+j+1, sUnit.Name)
 			if i == 0 && j == 0 {
 				text += countDown("Start. ")
 			}
@@ -215,23 +215,23 @@ func lt(val *int, aLen int) bool {
 	return false
 }
 
-func (current *State) switchToNextTraining() bool {
-	// if current Unit < Units per day {current Unit +=1 }
-	if lt(&current.Unit, len(trainings[current.Week].TrainingDays[current.Day].Exercises[current.Level])) {
+func (s *State) switchToNextTraining() bool {
+	// if s Unit < Units per day {s Unit +=1 }
+	if lt(&s.Unit, len(trainings[s.Week].TrainingDays[s.Day].Exercises[s.Level])) {
 		return false
 	}
-	// if current Day < Trainingsday per week { current Day += 1}
-	if lt(&current.Day, len(trainings[current.Week].TrainingDays)) {
+	// if s Day < Trainingsday per week { s Day += 1}
+	if lt(&s.Day, len(trainings[s.Week].TrainingDays)) {
 		return false
 	}
-	// if current Week < Trainingsweeks { current Week += 1}
-	if lt(&current.Week, len(trainings)) {
+	// if s Week < Trainingsweeks { s Week += 1}
+	if lt(&s.Week, len(trainings)) {
 		return false
 	}
-	tLevel := int(current.Level)
-	// if current Level < Levels (Trainings) { current Level}
-	if lt(&tLevel, len(trainings[current.Week].TrainingDays[current.Day].Exercises)) {
-		current.Level = trainingLevel(tLevel)
+	tLevel := int(s.Level)
+	// if s Level < Levels (Trainings) { s Level}
+	if lt(&tLevel, len(trainings[s.Week].TrainingDays[s.Day].Exercises)) {
+		s.Level = trainingLevel(tLevel)
 		return false
 	}
 	return true
