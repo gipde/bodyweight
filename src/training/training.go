@@ -112,7 +112,7 @@ func (s *State) stufenIntervallText() string {
 	}
 
 	_, _, unit := s.getDayExesAndUnit()
-	text += " Wir staren mit: "
+	text += "Wir starten mit: "
 	text += unit.Exercise.get().Name + ". "
 	text += addNote(unit)
 
