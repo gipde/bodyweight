@@ -57,7 +57,7 @@ Connect as Client
 var debug=false
 
 func IsDebug() bool {
-	return debug
+	return debug || os.Getenv("DEBUG") == "true"
 }
 
 func SetDebug() {

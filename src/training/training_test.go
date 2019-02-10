@@ -32,24 +32,26 @@ func TestCount(t *testing.T) {
 
 func TestIsLastTraining(t *testing.T) {
 	state := GetBeginningState()
-	log.Println("State:", state)
-	assert.Equal(t, state.IsLastUnit(), false)
 
 	state.switchToNextTraining()
-	log.Println("State:", state)
-	assert.Equal(t, state.IsLastUnit(), false)
+	log.Println("nach 1. State:", state)
+	assert.Equal(t, state.WasLastUnit(), false)
 
 	state.switchToNextTraining()
-	log.Println("State:", state)
-	assert.Equal(t, state.IsLastUnit(), false)
+	log.Println("nach 2. State:", state)
+	assert.Equal(t, state.WasLastUnit(), false)
 
 	state.switchToNextTraining()
-	log.Println("State:", state)
-	assert.Equal(t, state.IsLastUnit(), true)
+	log.Println("nach 3. State:", state)
+	assert.Equal(t, state.WasLastUnit(), false)
 
 	state.switchToNextTraining()
-	log.Println("State:", state)
-	assert.Equal(t, state.IsLastUnit(), false)
+	log.Println("nach 4. State:", state)
+	assert.Equal(t, state.WasLastUnit(), true)
+
+	state.switchToNextTraining()
+	log.Println("nach 1. State:", state)
+	assert.Equal(t, state.WasLastUnit(), false)
 }
 
 func TestSwitchNextUnit(t *testing.T) {
@@ -60,9 +62,9 @@ func TestSwitchNextUnit(t *testing.T) {
 				for u := 0; u < len(trainings[w].TrainingDays[d].Exercises[p]); u++ {
 					assert.Equal(t, state, State{Level: trainingLevel(p), Week: w, Day: d, Unit: u})
 					if !(p == 3 && w == 9 && d == 4 && u == 2) {
-						assert.Equal(t, false,state.switchToNextTraining())
+						assert.Equal(t, false, state.switchToNextTraining())
 					} else {
-						assert.Equal(t,true, state.switchToNextTraining()) // end of alle trainings
+						assert.Equal(t, true, state.switchToNextTraining()) // end of alle trainings
 					}
 				}
 			}

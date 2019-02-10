@@ -19,7 +19,7 @@ import (
 Alexa-Return warum immer nil
 */
 
-const debug = true
+const debug = false
 
 const (
 	// Launch Intent
@@ -60,7 +60,7 @@ const (
 	speechPersonal   = `%s, es ist schön, dass du wieder da bist. `
 	speechHelp       = `Du brauchst Hilfe?
 	
-	In diesem Skill kannst Du mi:
+	In diesem Skill kannst Du mit:
 	- erkläre das Training Dir das Training erklären lassen
 	- erkläre die nächste Übung - dir die nächste Übung erklären lassen`
 )
@@ -194,7 +194,7 @@ func handleStartTraining(user *database.Entry, event Request) (*Response, error)
 		db.CreateEntry(user)
 	}()
 
-	if user.TrainingState.IsLastUnit() {
+	if user.TrainingState.WasLastUnit() {
 		return responseBuilder().speak(text + speechDone + speechReadyForToday).withShouldEndSession(), nil
 	}
 	return responseBuilder().speak(text + speechDone + speechExplainNextExercise), nil
