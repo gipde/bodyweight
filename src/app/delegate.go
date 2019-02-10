@@ -9,7 +9,7 @@ import (
 )
 
 func isDelegate() bool {
-	return os.Getenv("DELEGATE") != ""
+	return os.Getenv("DELEGATE") == "true"
 }
 
 
