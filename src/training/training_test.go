@@ -28,7 +28,7 @@ func TestBreakFor(t *testing.T) {
 }
 
 func TestCount(t *testing.T) {
-	assert.Equal(t, countDown("test"), `Drei<break time="500ms"/>Zwei<break time="500ms"/>Eins<break time="500ms"/>test`)
+	assert.Equal(t, countDown("test"), `Drei. Zwei. Eins. test`)
 }
 
 func TestIsLastTraining(t *testing.T) {

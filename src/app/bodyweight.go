@@ -185,20 +185,17 @@ func handleExplainTrainingMethod(event Request) (*Response, error) {
 }
 
 func handleStartTraining(user *database.Entry, event Request) (*Response, error) {
-	r,newState := user.TrainingState.StartTraining()
+	text := user.TrainingState.InstructTraining()
 
-	// increment after return
 	defer func() {
-
 		user.Date = time.Now()
-		user.TrainingState = newState
 		db.CreateEntry(user)
 	}()
 
 	if user.TrainingState.IsLastUnit() {
-		return responseBuilder().speak(r + speechDone + speechReadyForToday).withShouldEndSession(), nil
+		return responseBuilder().speak(text + speechDone + speechReadyForToday).withShouldEndSession(), nil
 	}
-	return responseBuilder().speak(r + speechDone + speechExplainNextExercise), nil
+	return responseBuilder().speak(text + speechDone + speechExplainNextExercise), nil
 
 }
 
