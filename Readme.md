@@ -10,8 +10,10 @@ Der Skill unterstützt dich bei der Ausführung des Bodyweight Training. Alle Ü
 - Hintergrundmusik beim Training \
   hierbei muss immer die Lautstärke an den enstprechenden Stellen reduzieret werden sonst sonst hört man die Ansagen nicht.
 - Panics abfangen, und als error senden (z.b. bei Type Assertions)
+- ggf. Monkeypatching in tests
 - Cleanup
 - Anzeige der Übungen auf dem Display
+- Testabdeckung erhöhen
 
 ## Commands
 proxy local from 0.0.0.0:1234 to localhost 1234
