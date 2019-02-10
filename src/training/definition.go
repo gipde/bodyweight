@@ -207,7 +207,7 @@ var exesList = []exercise{
 		Difficulty: 1,
 	},
 	{
-		Name:       "Tür ziehen",
+		Name:       "Türziehen",
 		Type:       ziehen,
 		Page:       145,
 		Difficulty: 1,
@@ -370,7 +370,7 @@ var exesList = []exercise{
 		Difficulty: 3,
 	},
 	{
-		Name:       "Türziehen",
+		Name:       "Türziehen im Untergriff",
 		Type:       ziehen,
 		Page:       145,
 		Difficulty: 3,

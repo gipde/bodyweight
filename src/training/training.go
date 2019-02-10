@@ -57,9 +57,9 @@ func (s State) ExplainTraining() string {
 func (s State) ExplainExercise() string {
 	_, exes, _ := s.getDayExesAndUnit()
 	ex := exes[s.Unit].Exercise.get()
-	note := exes[s.Unit].Note
-	return fmt.Sprintf(`Als nächste %s steht an: %s. %s. Der Schwierigkeitsgrad ist: <say-as interpret-as="ordinal">%d</say-as>. Genauere Infos findest Du auf Seite %d im Buch. `,
-		ex.Type.name(), ex.Name, note, ex.Difficulty, ex.Page)
+	note := addNote(exes[s.Unit])
+	return fmt.Sprintf(`Als nächste %s steht mit dem Schwierigkeitskrad an: <say-as interpret-as="ordinal">%d</say-as> %s. %sGenauere Infos findest Du auf Seite %d im Buch. `,
+		ex.Type.name(), ex.Difficulty, ex.Name, note, ex.Page)
 }
 
 // WasLastUnit returns true, if
@@ -131,12 +131,9 @@ func (s *State) intervallSatzText() string {
 	for i := 0; i < len(exes); i++ {
 		sUnit := exes[s.Unit].Exercise.get()
 		for j := 0; j < 3; j++ {
-			text += fmt.Sprintf("\n%d. Satz: %s.  ", (i*3)+j+1, sUnit.Name)
+			text += fmt.Sprintf("\n%d. Satz: %s. ", (i*3)+j+1, sUnit.Name)
 			text += addNote(exes[s.Unit])
-
-			if i == 0 && j == 0 {
-				text += countDown("Start. ")
-			}
+			text += countDown("Start. ")
 			text += timeText(3*60, 60, false, false, true, false, false)
 		}
 
@@ -158,8 +155,8 @@ func (s *State) superSatzText() string {
 			text += fmt.Sprintf(`<say-as interpret-as="ordinal">%d</say-as> Übung mit bis zu %d Wiederholungen: `, j+1, j*6+6)
 			text += fmt.Sprintf(`%s. `, exercise.Exercise.get().Name)
 			text += addNote(exercise)
-			s.switchToNextTraining()
 		}
+		s.switchToNextTraining()
 		text += timeText(3*60+40, 60, false, false, true, true, false)
 		text += "\n"
 	}
@@ -169,7 +166,7 @@ func (s *State) superSatzText() string {
 
 func addNote(ex tExercise) string {
 	if ex.Note != "" {
-		return fmt.Sprintf("Anmerkung: %s. ",ex.Note)
+		return fmt.Sprintf("Anmerkung: %s. ", ex.Note)
 	}
 	return ""
 }
@@ -180,15 +177,17 @@ func (s *State) hochIntensitaetsSatzText() string {
 	ex := exes[s.Unit]
 
 	text := "Es sind 8 Hochintenistätssätze mit je 20 Sekunden Training gefolgt von 10 Sekunden Pause durchzuführen. Die Anzahl der Wiederholungen sollte dabei in etwa gleich sein. "
-	text += "Wir starten mit: " + ex.Exercise.get().Name + ". "
+	text += "Wir starten mit: " + ex.Exercise.get().Name + ". \n"
 	text += addNote(ex)
-	
+
 	for i := 0; i < 8; i++ {
 		text += countDown("Start. ")
 		text += breakFor(20 * 1000)
 		text += "Pause. "
 		text += breakFor(6 * 1000)
+		text += "\n"
 	}
+	text += countDown("Ende")
 	s.switchToNextTraining()
 	return text
 }
@@ -202,11 +201,11 @@ func (s *State) zirkelIntervallText() string {
 		exText := ex.Exercise.get().Name + ". "
 		exText += addNote(ex)
 
-		text += fmt.Sprintf(`<say-as interpret-as="ordinal">%d</say-as> Übung: %s`, i+1, exText)
+		text += fmt.Sprintf("\n"+`<say-as interpret-as="ordinal">%d</say-as> Übung: %s`, i+1, exText)
 		s.switchToNextTraining()
 	}
 
-	text += timeText(20*60, 5*60, true, true, true, true, true)
+	text += "\n"+timeText(20*60, 5*60, true, true, true, true, true)
 	return text
 }
 

@@ -1,6 +1,7 @@
 package training
 
 import (
+	"fmt"
 	"github.com/stretchr/testify/assert"
 	"log"
 	"testing"
@@ -102,4 +103,25 @@ func TestHochintensitaetssatz(t *testing.T) {
 func TestZirkelintervall(t *testing.T) {
 	s := State{Level: firstClass, Week: 6, Day: 4, Unit: 0}
 	t.Log(s.InstructTraining())
+}
+
+func TestCompleteTraining(t *testing.T) {
+	s := GetBeginningState()
+	t.Log("-------------------------------------------------")
+	for s.Level == basisProgram {
+		t.Log("State: ",s)
+		if s.Day == 0 && s.Unit == 0 {
+			t.Log(fmt.Sprintf("Week: %d", s.Week))
+			t.Log("-------------------------------------------------")
+		}
+		if s.Unit == 0 {
+			t.Log(fmt.Sprintf("Day: %d", s.Day))
+			t.Log("-------------------------------------------------")
+		}
+		t.Log(s.InstructTraining())
+		if s.WasLastUnit() {
+			t.Log("end of day")
+			t.Log("=================================================")
+		}
+	}
 }
