@@ -34,21 +34,58 @@ func (s State) ExplainTraining() string {
 
 	if day.Method == stufenIntervall {
 		text += "Die Intervalle dauern "
-		switch s.Level {
-		case basisProgram:
-			text += "4 Minuten und 30 Sekunden. "
-		case firstClass:
-			text += "5 Minuten und 30 Sekunden. "
-		case masterClass:
-			text += "6 Minuten und 30 Sekunden. "
-		case chiefClass:
-			text += "7 Minuten und 30 Sekunden. "
-		}
+		text += timeAsStr(getLevelTimeStufenIntervall(s.Level)) + ". "
 	}
 
 	text += "Folgende Übungen sind noch durchzuführen: "
 	for i := s.Unit; i < len(exes); i++ {
-		text += fmt.Sprintf("\n%d. Übung: %s. %s", i+1, exes[i].Exercise.get().Name,addNote(exes[i]))
+		text += fmt.Sprintf("\n%d. Übung: %s. %s", i+1, exes[i].Exercise.get().Name, addNote(exes[i]))
+	}
+	return text
+}
+
+// ShortProgress describes Progress in short
+func (s State) ShortProgress() string {
+	return fmt.Sprintf("%d. Woche, %d. Tag", s.Week+1, s.Day+1)
+}
+
+// DayShortDescription of Trainings a day
+func (s State) DayShortDescription() string {
+	day, exes, _ := s.getDayExesAndUnit()
+	text := fmt.Sprintf("Trainingsmethode: %s\n", day.Method.name())
+	for i, ex := range exes {
+		text += fmt.Sprintf("%d. %s %s\n", i+1, ex.Exercise.get().Name, addNote(ex))
+	}
+	return text
+}
+
+func (e tExercise) getShortInfo() string {
+	ex := e.Exercise.get()
+	text := fmt.Sprintf("%s\n", ex.Name)
+	if e.Note != "" {
+		text += fmt.Sprintf("%s\n", e.Note)
+	}
+	text += fmt.Sprintf("Seite %d", ex.Page)
+	return text
+}
+
+// UnitShortDescription describes the training in short
+func (s State) UnitShortDescription() string {
+	day, exes, unit := s.getDayExesAndUnit()
+	text := fmt.Sprintf("%s\n", day.Method.name())
+	switch day.Method {
+	case stufenIntervall, hochIntensitaetsSatz:
+		text += unit.getShortInfo()
+	case intervallSatz, zirkelIntervall:
+		for i, e := range exes {
+			text += fmt.Sprintf("%d. %s\n", i+1, e.getShortInfo())
+		}
+	case superSatz:
+		for i := 0; i < len(exes)/2; i++ {
+			text += fmt.Sprintf("%d. Supersatz\n", i+1)
+			text += fmt.Sprintf("%s\n", exes[i*2].getShortInfo())
+			text += fmt.Sprintf("%s\n\n", exes[i*2+1].getShortInfo())
+		}
 	}
 	return text
 }
@@ -59,7 +96,7 @@ func (s State) ExplainExercise() string {
 	_, exes, _ := s.getDayExesAndUnit()
 	ex := exes[s.Unit].Exercise.get()
 	note := addNote(exes[s.Unit])
-	return fmt.Sprintf(`Als nächste %s steht mit dem Schwierigkeitskrad an: <say-as interpret-as="ordinal">%d</say-as> %s. %sGenauere Infos findest Du auf Seite %d im Buch. `,
+	return fmt.Sprintf(`Als nächste %s steht mit Schwierigkeitsgrad %d an: %s. %sGenauere Infos findest Du auf Seite %d im Buch. `,
 		ex.Type.name(), ex.Difficulty, ex.Name, note, ex.Page)
 }
 
@@ -95,23 +132,9 @@ func (s *State) getDayExesAndUnit() (trainingDay, []tExercise, tExercise) {
 }
 
 func (s *State) stufenIntervallText() string {
-	var sec int
 	text := "Stufenintervalle mit einer Dauer von "
-	switch s.Level {
-	case basisProgram:
-		sec = 4*60 + 30
-		text += "4 Minuten und 30 Sekunden. "
-	case firstClass:
-		sec = 5*60 + 30
-		text += "5 Minuten und 30 Sekunden. "
-	case masterClass:
-		sec = 6*60 + 30
-		text += "6 Minuten und 30 Sekunden. "
-	case chiefClass:
-		sec = 7*60 + 30
-		text += "7 Minuten und 30 Sekunden. "
-	}
-
+	sec := getLevelTimeStufenIntervall(s.Level)
+	text += timeAsStr(sec) + ". "
 	_, _, unit := s.getDayExesAndUnit()
 	text += "Wir starten mit: "
 	text += unit.Exercise.get().Name + ". "
@@ -119,7 +142,7 @@ func (s *State) stufenIntervallText() string {
 
 	s.switchToNextTraining()
 
-	return text + timeText(sec, 30, true, true, true, true, true)
+	return text + timeText(sec, 30, false, true, true, true, true)
 }
 
 func (s *State) intervallSatzText() string {
@@ -164,13 +187,6 @@ func (s *State) superSatzText() string {
 	}
 	text += ""
 	return text
-}
-
-func addNote(ex tExercise) string {
-	if ex.Note != "" {
-		return fmt.Sprintf("Anmerkung: %s. ", ex.Note)
-	}
-	return ""
 }
 
 func (s *State) hochIntensitaetsSatzText() string {
@@ -339,4 +355,26 @@ func timeText(sec, interval int, begin, half, end, countin, countout bool) strin
 	}
 
 	return ret
+}
+
+func getLevelTimeStufenIntervall(level trainingLevel) int {
+	var sec int
+	switch level {
+	case basisProgram:
+		sec = 4*60 + 30
+	case firstClass:
+		sec = 5*60 + 30
+	case masterClass:
+		sec = 6*60 + 30
+	case chiefClass:
+		sec = 7*60 + 30
+	}
+	return sec
+}
+
+func addNote(ex tExercise) string {
+	if ex.Note != "" {
+		return fmt.Sprintf("Anmerkung: %s. ", ex.Note)
+	}
+	return ""
 }

@@ -101,7 +101,7 @@ const (
 var trainingMethods = []string{
 	"Stufenintervalle",
 	"Intervallsätze",
-	"den Supersatz",
+	"Supersatz",
 	"Zirkelintervalle",
 	"Hochintensitätssätze",
 }

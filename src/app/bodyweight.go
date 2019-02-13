@@ -1,6 +1,7 @@
 package app
 
 import (
+	// "os/user"
 	"bodyweight/tools"
 	"context"
 	"fmt"
@@ -19,7 +20,7 @@ import (
 Alexa-Return warum immer nil
 */
 
-const debug = false
+const debug = true
 
 const (
 	// Launch Intent
@@ -118,9 +119,10 @@ func HandleRequest(ctx context.Context, event Request) (interface{}, error) {
 	case alexaLaunchRequest:
 		if user == nil {
 			// First Usage
+
 			return responseBuilder().
 				speak(speechWelcome+speechDefineUser).
-				withSimpleCard("Bodyweight Training", "Herzlich willkommen").
+				withSimpleCard("Bodyweight Training", "Herzlich willkommen, du musst zunächst deinen Namen festlegen.").
 				reprompt(speechDefineUser + speechExitIfMute), nil
 
 		}
@@ -128,7 +130,7 @@ func HandleRequest(ctx context.Context, event Request) (interface{}, error) {
 		// Welcome Back
 		return responseBuilder().
 			speak(speechWelcome+fmt.Sprintf(speechPersonal, user.UserName)+speechExplainTraining).
-			withSimpleCard("Bodyweight Training", "Herzlich willkommen "+user.UserName).
+			withSimpleCard(user.TrainingState.ShortProgress(), user.TrainingState.DayShortDescription()).
 			reprompt(speechExplainTraining + speechExitIfMute), nil
 
 	case alexaSessionEndRequest:
@@ -169,10 +171,12 @@ func HandleRequest(ctx context.Context, event Request) (interface{}, error) {
 		}
 		switch event.RequestBody.Intent.Name {
 		case alexaExplainTrainingIntent:
-			return responseBuilder().speak(user.TrainingState.ExplainTraining() + speechExplainThisExercise).
+			return responseBuilder().speak(user.TrainingState.ExplainTraining()+speechExplainThisExercise).
+				withSimpleCard(user.TrainingState.ShortProgress(), user.TrainingState.DayShortDescription()).
 				reprompt(speechExplainThisExercise + speechExitIfMute), nil
 		case alexaExplainExerciseIntent:
-			return responseBuilder().speak(user.TrainingState.ExplainExercise() + speechStartThisExercise).
+			return responseBuilder().speak(user.TrainingState.ExplainExercise()+speechStartThisExercise).
+				withSimpleCard(user.TrainingState.ShortProgress(), user.TrainingState.UnitShortDescription()).
 				reprompt(speechStartThisExercise + speechExitIfMute), nil
 		case alexaStartTrainingIntent:
 			return handleStartTraining(user, event)

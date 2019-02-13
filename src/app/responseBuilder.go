@@ -1,9 +1,5 @@
 package app
 
-import (
-
-)
-
 func responseBuilder() *Response {
 	sessionAttributes := make(map[string]interface{})
 	return &Response{
@@ -37,19 +33,6 @@ func (r *Response) addAudioPlayerPlayDirective(url string) *Response {
 	return r
 }
 
-func (r *Response) withStandardCard() *Response {
-	r.ResponseBody.Card = &Card{
-		Type:  "Standard",
-		Title: "Bodyweight Training",
-		Text:  "Content",
-		Image: &Image{
-			SmallImageURL: "http://bla",
-			LargeImageURL: "http://bla",
-		},
-	}
-	return r
-}
-
 func (r *Response) withSimpleCard(title, text string) *Response {
 	r.ResponseBody.Card = &Card{
 		Type:    "Simple",
@@ -75,9 +58,8 @@ func (r *Request) getSessionAttribute(key string) string {
 	value := r.Session.Attributes[key]
 	if value != nil {
 		return value.(string)
-	} else {
-		return ""
 	}
+	return ""
 }
 
 func (r *Response) setSessionAttribute(key string, value string) *Response {

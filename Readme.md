@@ -15,11 +15,15 @@ Der Skill unterstützt dich bei der Ausführung des Bodyweight Training. Alle Ü
 - Anzeige der Übungen auf dem Display
 - Testabdeckung erhöhen
 - alle Strings als speechText* auslagern
+- definition sortieren
+- notes kategorisieren und vereinheitlichen
+- Trainingsmethoden erklären
+- TODO fixen
 
 ## Commands
 proxy local from 0.0.0.0:1234 to localhost 1234
 
-    socat -d -d -x TCP4-LISTEN:1234,fork,bind=192.168.178.30 TCP4:localhost:1234
+    socat -d -d -v TCP4-LISTEN:1234,fork,bind=192.168.178.30 TCP4:localhost:1234
 
 running the function:
 - as server

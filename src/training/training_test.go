@@ -2,9 +2,10 @@ package training
 
 import (
 	"fmt"
-	"github.com/stretchr/testify/assert"
 	"log"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestTimeAsString(t *testing.T) {
@@ -116,7 +117,6 @@ func TestEqual(t *testing.T) {
 	assert.Equal(t, s, last)
 }
 
-
 func TestCompleteTraining(t *testing.T) {
 	s := GetBeginningState()
 	last := State{Level: 4, Week: 0, Day: 0, Unit: 0}
@@ -138,5 +138,22 @@ func TestCompleteTraining(t *testing.T) {
 			t.Log("end of day")
 			t.Log("=================================================")
 		}
+	}
+}
+
+func Test_exercise_getUnitInfo(t *testing.T) {
+	s := GetBeginningState()
+	for i := 0; i < 100; i++ {
+		t.Log(s)
+		t.Log(s.UnitShortDescription())
+		s.InstructTraining()
+	}
+}
+
+func Test_exercise_getShortDayDesc(t *testing.T) {
+	s := GetBeginningState()
+	for i := 0; i < 100; i++ {
+		t.Log(s.DayShortDescription())
+		s.InstructTraining()
 	}
 }
