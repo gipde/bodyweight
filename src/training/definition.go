@@ -1,17 +1,19 @@
 package training
 
+import (
+	"fmt"
+)
+
 type exercise struct {
-	Number     int          `json:"number"`
 	Name       string       `json:"name"`
 	Type       trainingType `json:"type"`
 	Page       int          `json:"page"`
-	Comment    string       `json:"comment"`
 	Difficulty int          `json:"difficulty"`
 }
 
 type tExercise struct {
-	Exercise exerciseEnum `json:"exercise"`
-	Note     string       `json:"note"`
+	Exercise exercise `json:"exercise"`
+	Note     string   `json:"note"`
 }
 
 type trainingDay struct {
@@ -80,14 +82,6 @@ func (t trainingLevel) name() string {
 	return trainingLevels[t]
 }
 
-// func getLevel(level int) trainingLevel {
-// 	return trainingLevel(level)
-// }
-
-// func (t trainingLevel) int() int {
-// 	return int(t)
-// }
-
 type trainingMethod int
 
 const (
@@ -106,600 +100,144 @@ var trainingMethods = []string{
 	"Hochintensitätssätze",
 }
 
-type exerciseEnum int
-
-// Varianten werden als eigene Übung eingetragen
 const (
-	liegestuetzMitErhoehtenHaenden exerciseEnum = iota
-	tuerziehen
-	Seestern
-	umgekehrtesBankdruecken
-	ausfallschrittNachHintenImWechsel
-	rumaenischesKreuzhebenAufEinemBeinImWechsel
-	engeKniebeuge
-	schwimmer
-	seitlicherAusfallschritt
-	schraegerCrunch
-	klassischerLiegestuetz
-	militaryPressMitErhoehtenHaenden
-	engerLiegestuetzMitErhoehtenHaenden
-	kniebeugeImAusfallschritt
-	curlMitHandtuch
-	beinheber
-	kaefer
-	russischerTwist
-	crunch
-	liegestuetzMitErhoehtenFuessen
-	liegestuetzMitAbstossen
-	militaryPress
-	baerenGang
-	engerLiegestuetz
-	gesprungeneKniebeuge
-	ausfallschrittNachVorneImWechsel
-	klimmzugMitUnterstuetzung
-	umgekehrtesBankdrueckenImUntergriff
-	tuerziehenImUntergriff
-	vUp
-	kaeferIpsilateral
-	crunchItUp
-	haengendesBeinheben
-	pogoSprung
-	hueftTwist
-	knieheberImStehen
-	bodyRock
-	vierPhasenLiegestuetz
-	goodMorning
-	kaeferKontralateral
-	seitlichesHueftheben
-	aufstehenAusDemEinbeinigenKniestand
-	ausfallSchritt
-	fahrradfahren
-	kreuzheben
-	kaeferUnilateral
-	trizepsdipMitUnterstuetzung
-	militaryPressMitErhoehtenFuessen
-	sturzflug
-	engerLiegestuetzMitErhoehtenFuessen
-	trizepsdip
-	einbeinigeKniebeugeMitUnterstuetzung
-	kistenSprung
-	klimmzug
-	beinTwist
-	tiefeKniebeuge
-	ironMike
-	seitensprung
-	einbeinigerHueftstrecker
-	breiterSturzflug
-	gestreckterBeinTwist
-	einarmigerLiegestuetzMitErhoehtenHaenden
-	hueftStrecker
-	nackentrainerInBauchlage
-	einarmigerLiegestuetz
-	federnderLiegestuetz
-	erhoehterTrizepsstrecker
-	pistole
-	knieenderBeinwechsel
-	einarmigesTuerziehen
-	seitlichesKnieoeffnenImStand
-	schraegerVUp
-	einbeinigeKniebeuge
-	kreuzschritt
-	gestrecktesHaengendesBeinheben
-	storch
-	handstandLiegestuetz
-	klappmesser
-	einarmigerLiegestuetzMitErhoehtenFuessen
-	bergsteiger
-	gekreuzterBergsteiger
-	pointer
-	vorgebeugtesSeitlichesSchulterheben
+	langsame = "langsame"
+	proSeite = "pro Seite"
+	wdh6     = "6 Wiederholungen"
+	wdh8     = "8 Wiederholungen"
+	wdh10    = "10 Wiederholungen"
+	wdh12    = "12 Wiederholungen"
+
+	saetze4        = "4 Sätze pro Seite"
+	armeStreamline = "Arme in Streamline Position"
+	armeTHalte     = "Arme in T-Halte"
+	armeVorhalte   = "Arme in Vorhalte"
+	armeGekreuzt   = "mit gekreuzten Armen auf der Brust"
+
+	halte3  = "mit 3 Sekunden Haltezeit"
+	halte13 = "mit 1-3 Sekunden Haltezeit"
+	halte46 = "mit 4-6 Sekunden Haltezeit"
+	pause   = "pause"
+	kissen  = "auf einem Kissen"
+
+	oTiefsterPunkt  = "am tiefsten Punkt"
+	oHoechsterPunkt = "am höchsten Punkt"
+
+	bGebebeugt         = "Beine gebeugt"
+	bGestreckt         = "Beine gestreckt"
+	bBisGanzOben       = "bis ganz nach oben"
+	bParallelBoden     = "und parallel zum Boden"
+	bBisZuHaenden      = "Füße bis zu den Händen"
+	bNachHinten        = "Beine nach hinten anwinklen und Fußspitzen auf einen Stuhl absetzen um das Hochdrücken zu erleichtern"
+	bErhoeht           = "Füße erhöht"
+	hHuefthoch         = "Hände hüfthoch"
+	hKopf              = "Hände hinter dem Kopf"
+	hKnie              = "Hände kniehoch"
+	bisBurstbein       = "Bis zum Brustbein hochziehen"
+	fuesseHinterHaende = "Füße sind hinter den Händen platziert, gehen Sie dafür einem Schritt zurürck"
+	unterGriff         = "Im Untergriff"
+
+	brusthochAbgest = "brusthoch abgestützt"
+	rucksack        = "dabei am tiefsten Punkt einen Rucksack über den Kopf stemen"
+
+	knieend         = "knieend"
+	knieHeranziehen = "langsam, 2 Sek. für das Heranziehen jedes Knies"
+
+	brustHalte          = "mit Haltezeit wenn die Brust am tiefsten Punkt der Kontraktion zwischen den Händen ist"
+	knieGebeugt         = "mit gebeugten Knien"
+	vorwaertsGreifen    = "mit vorwärtsgreifen"
+	klimmzugOhneUnterst = "ohne Unterstützung in der Negativphase"
 )
 
-func (n exerciseEnum) get() exercise {
-	return exesList[n]
-}
+var (
+	n1 = fmt.Sprintf("%s %s", knieGebeugt, vorwaertsGreifen)
+)
 
-var exesList = []exercise{
-	{
-		Name:       "Liegestütz mit erhöhten Händen",
-		Type:       druecken,
-		Page:       112,
-		Difficulty: 1,
-	},
-	{
-		Name:       "Türziehen",
-		Type:       ziehen,
-		Page:       145,
-		Difficulty: 1,
-	},
-
-	{
-		Name:       "Seestern",
-		Type:       core,
-		Page:       207,
-		Difficulty: 1,
-	},
-	{
-		Name:       "Umgekehrtes Bankdrücken",
-		Type:       ziehen,
-		Page:       147,
-		Difficulty: 2,
-	},
-	{
-		Name:       "Ausfallschritt nach hinten im Wechsel",
-		Type:       beineUndGesaess,
-		Page:       178,
-		Difficulty: 1,
-	},
-	{
-		Name:       "Rumänisches Kreuzheben auf einem Bein im Wechsel",
-		Type:       beineUndGesaess,
-		Page:       176,
-		Difficulty: 2,
-	},
-	{
-		Name:       "Enge Kniebeuge",
-		Type:       beineUndGesaess,
-		Page:       183,
-		Difficulty: 1,
-	},
-	{
-		Name:       "Schwimmer",
-		Type:       beineUndGesaess,
-		Page:       174,
-		Difficulty: 2,
-	},
-	{
-		Name:       "Seitlicher Ausfallschritt",
-		Type:       beineUndGesaess,
-		Page:       179,
-		Difficulty: 2,
-	},
-	{
-		Name:       "Schräger Crunch",
-		Type:       beineUndGesaess,
-		Page:       215,
-		Difficulty: 1,
-	},
-	{
-		Name:       "Klassischer Liegestütz",
-		Type:       druecken,
-		Page:       112,
-		Difficulty: 2,
-	},
-	{
-		Name:       "Military Press mit erhöhten Händen",
-		Type:       druecken,
-		Page:       135,
-		Difficulty: 2,
-	},
-	{
-		Name:       "Enger Liegestütz mit erhöhten Händen",
-		Type:       druecken,
-		Page:       130,
-		Difficulty: 2,
-	},
-	{
-		Name:       "Kniebeuge im Ausfallschritt",
-		Type:       beineUndGesaess,
-		Page:       178,
-		Difficulty: 2,
-	},
-	{
-		Name:       "Curl mit Handtuch",
-		Type:       ziehen,
-		Page:       159,
-		Difficulty: 2,
-	},
-	{
-		Name:       "Beinheber",
-		Type:       core,
-		Page:       217,
-		Difficulty: 1,
-	},
-	{
-		Name:       "Käfer",
-		Type:       core,
-		Page:       204,
-		Difficulty: 2,
-	},
-	{
-		Name:       "Russischer Twist",
-		Type:       core,
-		Page:       213,
-		Difficulty: 1,
-	},
-	{
-		Name:       "Crunch",
-		Type:       core,
-		Page:       215,
-		Difficulty: 1,
-	},
-	{
-		Name:       "Liegestütz mit erhöhten Füßen",
-		Type:       druecken,
-		Page:       113,
-		Difficulty: 3,
-	},
-	{
-		Name:       "Liegestütz mit Abstoßen",
-		Type:       druecken,
-		Page:       117,
-		Difficulty: 3,
-	},
-	{
-		Name:       "Military Press",
-		Type:       druecken,
-		Page:       134,
-		Difficulty: 3,
-	},
-	{
-		Name:       "Bärengang",
-		Type:       druecken,
-		Page:       110,
-		Difficulty: 1,
-	},
-	{
-		Name:       "Enger Liegestütz",
-		Type:       druecken,
-		Page:       130,
-		Difficulty: 3,
-	},
-	{
-		Name:       "Gesprungene Kniebeuge",
-		Type:       beineUndGesaess,
-		Page:       191,
-		Difficulty: 1,
-	},
-	{
-		Name:       "Ausfallschritt nach vorn im Wechsel",
-		Type:       beineUndGesaess,
-		Page:       177,
-		Difficulty: 1,
-	},
-	{
-		Name:       "Klimmzug mit Unterstützung",
-		Type:       ziehen,
-		Page:       152,
-		Difficulty: 2,
-	},
-	{
-		Name:       "Umgekehrtes Bankdrücken im Untergriff",
-		Type:       ziehen,
-		Page:       148,
-		Difficulty: 3,
-	},
-	{
-		Name:       "Türziehen im Untergriff",
-		Type:       ziehen,
-		Page:       145,
-		Difficulty: 3,
-	},
-	{
-		Name:       "V-Up",
-		Type:       core,
-		Page:       219,
-		Difficulty: 2,
-	},
-	{
-		Name:       "Käfer ipsilateral",
-		Type:       core,
-		Page:       204,
-		Difficulty: 2,
-	},
-	{
-		Name:       "Crunch It Up",
-		Type:       core,
-		Page:       214,
-		Difficulty: 1,
-	},
-	{
-		Name:       "Hängendes Beinheben",
-		Type:       core,
-		Page:       223,
-		Difficulty: 3,
-	},
-	{
-		Name:       "Pogo Sprung",
-		Type:       beineUndGesaess,
-		Page:       199,
-		Difficulty: 2,
-	},
-	{
-		Name:       "Hüfttwist",
-		Type:       core,
-		Page:       206,
-		Difficulty: 1,
-	},
-	{
-		Name:       "Knieheber im Stehen",
-		Type:       ganzKoerper,
-		Page:       228,
-		Difficulty: 1,
-	},
-	{
-		Name:       "Bodyrock",
-		Type:       core,
-		Page:       208,
-		Difficulty: 1,
-	},
-	{
-		Name:       "4 Phasen Liegestütz",
-		Type:       ganzKoerper,
-		Page:       229,
-		Difficulty: 2,
-	},
-	{
-		Name:       "Good Morning",
-		Type:       beineUndGesaess,
-		Page:       164,
-		Difficulty: 2,
-	},
-	{
-		Name:       "Käfer kontralateral",
-		Type:       core,
-		Page:       204,
-		Difficulty: 2,
-	},
-	{
-		Name:       "Seitliches Hüftheben",
-		Type:       core,
-		Page:       204,
-		Difficulty: 3,
-	},
-	{
-		Name:       "Aufstehen aus dem einbeinigen Kniestand",
-		Type:       beineUndGesaess,
-		Page:       169,
-		Difficulty: 1,
-	},
-	{
-		Name:       "Ausfallschritt",
-		Type:       beineUndGesaess,
-		Page:       177,
-		Difficulty: 2,
-	},
-	{
-		Name:       "Fahrradfahren",
-		Type:       core,
-		Page:       218,
-		Difficulty: 2,
-	},
-	{
-		Name:       "Kreuzheben",
-		Type:       ziehen,
-		Page:       168,
-		Difficulty: 1,
-	},
-	{
-		Name:       "Käfer unilateral",
-		Type:       core,
-		Page:       204,
-		Difficulty: 2,
-	},
-	{
-		Name:       "Trizepsdip mit Unterstützung",
-		Type:       druecken,
-		Page:       132,
-		Difficulty: 2,
-	},
-	{
-		Name:       "Military Press mit erhöhten Füßen",
-		Type:       druecken,
-		Page:       135,
-		Difficulty: 3,
-	},
-	{
-		Name:       "Sturzflug",
-		Type:       druecken,
-		Page:       120,
-		Difficulty: 3,
-	},
-	{
-		Name:       "Enger Liegestütz mit erhöhten Füßen",
-		Type:       druecken,
-		Page:       130,
-		Difficulty: 2,
-	},
-	{
-		Name:       "Trizepsdip",
-		Type:       druecken,
-		Page:       130,
-		Difficulty: 4,
-	},
-	{
-		Name:       "Einbeinige Kniebeuge mit Unterstützung im Wechsel",
-		Type:       beineUndGesaess,
-		Page:       187,
-		Difficulty: 4,
-	},
-	{
-		Name:       "Kistensprung",
-		Type:       beineUndGesaess,
-		Page:       192,
-		Difficulty: 1,
-	},
-	{
-		Name:       "Klimmzug",
-		Type:       ziehen,
-		Page:       150,
-		Difficulty: 3,
-	},
-	{
-		Name:       "Beintwist",
-		Type:       core,
-		Page:       221,
-		Difficulty: 2,
-	},
-	{
-		Name:       "Tiefe Kniebeuge",
-		Type:       beineUndGesaess,
-		Page:       221,
-		Difficulty: 3,
-	},
-	{
-		Name:       "Iron Mike",
-		Type:       beineUndGesaess,
-		Page:       195,
-		Difficulty: 3,
-	},
-	{
-		Name:       "Seitsprung",
-		Type:       beineUndGesaess,
-		Page:       194,
-		Difficulty: 2,
-	},
-	{
-		Name:       "Einbeiniger Hüftstrecker",
-		Type:       beineUndGesaess,
-		Page:       194,
-		Difficulty: 2,
-	},
-	{
-		Name:       "Breiter Sturzflug",
-		Type:       beineUndGesaess,
-		Page:       121,
-		Difficulty: 3,
-	},
-	{
-		Name:       "Gestreckter Beintwist",
-		Type:       core,
-		Page:       221,
-		Difficulty: 3,
-	},
-	{
-		Name:       "Einarmiger Liegestütz mit erhöhten Händen im Wechsel",
-		Type:       druecken,
-		Page:       125,
-		Difficulty: 4,
-	},
-	{
-		Name:       "Hüftstrecker",
-		Type:       beineUndGesaess,
-		Page:       181,
-		Difficulty: 2,
-	},
-	{
-		Name:       "Nackentrainer in Bauchlage",
-		Type:       core,
-		Page:       227,
-		Difficulty: 2,
-	},
-	{
-		Name:       "Einarmiger Liegestütz",
-		Type:       druecken,
-		Page:       124,
-		Difficulty: 4,
-	},
-	{
-		Name:       "Federnder Liegestütz",
-		Type:       druecken,
-		Page:       117,
-		Difficulty: 3,
-	},
-	{
-		Name:       "Erhöhter Trizepsstrecker",
-		Type:       druecken,
-		Page:       131,
-		Difficulty: 4,
-	},
-	{
-		Name:       "Pistole",
-		Type:       beineUndGesaess,
-		Page:       188,
-		Difficulty: 4,
-	},
-	{
-		Name:       "Kniender Beinwechsel",
-		Type:       beineUndGesaess,
-		Page:       175,
-		Difficulty: 2,
-	},
-	{
-		Name:       "Einarmiges Türziehen",
-		Type:       ziehen,
-		Page:       146,
-		Difficulty: 2,
-	},
-	{
-		Name:       "Seitliches Knieöffnen im Stand",
-		Type:       beineUndGesaess,
-		Page:       166,
-		Difficulty: 1,
-	},
-	{
-		Name:       "Schräger V-Up",
-		Type:       core,
-		Page:       220,
-		Difficulty: 3,
-	},
-	{
-		Name:       "Einbeinige Kniebeuge im Wechsel",
-		Type:       beineUndGesaess,
-		Page:       188,
-		Difficulty: 4,
-	},
-	{
-		Name:       "Kreuzschritt",
-		Type:       beineUndGesaess,
-		Page:       167,
-		Difficulty: 1,
-	},
-	{
-		Name:       "Gestrecktes hängendes Beinheben",
-		Type:       core,
-		Page:       223,
-		Difficulty: 1,
-	},
-	{
-		Name:       "Storch",
-		Type:       beineUndGesaess,
-		Page:       165,
-		Difficulty: 1,
-	},
-	{
-		Name:       "Handstandliegestütz",
-		Type:       beineUndGesaess,
-		Page:       138,
-		Difficulty: 1,
-	},
-	{
-		Name:       "Klappmesser",
-		Type:       core,
-		Page:       222,
-		Difficulty: 3,
-	},
-	{
-		Name:       "Einarmiger Liegestütz mit erhöhten Füßen",
-		Type:       druecken,
-		Page:       126,
-		Difficulty: 4,
-	},
-	{
-		Name:       "Bergsteiger",
-		Type:       core,
-		Page:       202,
-		Difficulty: 2,
-	},
-	{
-		Name:       "gekreuzter Bergsteiger",
-		Type:       core,
-		Page:       203,
-		Difficulty: 2,
-	},
-	{
-		Name:       "Pointer",
-		Type:       beineUndGesaess,
-		Page:       174,
-		Difficulty: 2,
-	},
-	{
-		Name:       "Vorgebeugtes seitliches Schulterheben",
-		Type:       beineUndGesaess,
-		Page:       156,
-		Difficulty: 1,
-	},
-}
+var (
+	baerenGang                                  = exercise{"Bärengang", druecken, 110, 1}
+	klassischerLiegestuetz                      = exercise{"Klassischer Liegestütz", druecken, 112, 2}
+	liegestuetzMitErhoehtenHaenden              = exercise{"Liegestütz mit erhöhten Händen", druecken, 112, 1}
+	liegestuetzMitErhoehtenFuessen              = exercise{"Liegestütz mit erhöhten Füßen", druecken, 113, 3}
+	liegestuetzMitAbstossen                     = exercise{"Liegestütz mit Abstoßen", druecken, 117, 3}
+	federnderLiegestuetz                        = exercise{"Federnder Liegestütz", druecken, 117, 3}
+	sturzflug                                   = exercise{"Sturzflug", druecken, 120, 3}
+	breiterSturzflug                            = exercise{"Breiter Sturzflug", druecken, 121, 3}
+	einarmigerLiegestuetz                       = exercise{"Einarmiger Liegestütz", druecken, 124, 4}
+	einarmigerLiegestuetzMitErhoehtenHaenden    = exercise{"Einarmiger Liegestütz mit erhöhten Händen im Wechsel", druecken, 125, 4}
+	einarmigerLiegestuetzMitErhoehtenFuessen    = exercise{"Einarmiger Liegestütz mit erhöhten Füßen", druecken, 126, 4}
+	trizepsdip                                  = exercise{"Trizepsdip", druecken, 130, 4}
+	engerLiegestuetz                            = exercise{"Enger Liegestütz", druecken, 130, 3}
+	engerLiegestuetzMitErhoehtenHaenden         = exercise{"Enger Liegestütz mit erhöhten Händen", druecken, 130, 2}
+	engerLiegestuetzMitErhoehtenFuessen         = exercise{"Enger Liegestütz mit erhöhten Füßen", druecken, 130, 2}
+	erhoehterTrizepsstrecker                    = exercise{"Erhöhter Trizepsstrecker", druecken, 131, 4}
+	trizepsdipMitUnterstuetzung                 = exercise{"Trizepsdip mit Unterstützung", druecken, 132, 2}
+	militaryPress                               = exercise{"Military Press", druecken, 134, 3}
+	militaryPressMitErhoehtenFuessen            = exercise{"Military Press mit erhöhten Füßen", druecken, 135, 3}
+	militaryPressMitErhoehtenHaenden            = exercise{"Military Press mit erhöhten Händen", druecken, 135, 2}
+	handstandLiegestuetz                        = exercise{"Handstandliegestütz", druecken, 138, 1}
+	tuerziehenImUntergriff                      = exercise{"Türziehen im Untergriff", ziehen, 145, 3}
+	tuerziehen                                  = exercise{"Türziehen", ziehen, 145, 1}
+	einarmigesTuerziehen                        = exercise{"Einarmiges Türziehen", ziehen, 146, 2}
+	umgekehrtesBankdruecken                     = exercise{"Umgekehrtes Bankdrücken", ziehen, 147, 2}
+	umgekehrtesBankdrueckenImUntergriff         = exercise{"Umgekehrtes Bankdrücken im Untergriff", ziehen, 148, 3}
+	klimmzug                                    = exercise{"Klimmzug", ziehen, 150, 3}
+	klimmzugMitUnterstuetzung                   = exercise{"Klimmzug mit Unterstützung", ziehen, 152, 2}
+	vorgebeugtesSeitlichesSchulterheben         = exercise{"Vorgebeugtes seitliches Schulterheben", ziehen, 156, 1}
+	curlMitHandtuch                             = exercise{"Curl mit Handtuch", ziehen, 159, 2}
+	goodMorning                                 = exercise{"Good Morning", beineUndGesaess, 164, 2}
+	storch                                      = exercise{"Storch", beineUndGesaess, 165, 1}
+	seitlichesKnieoeffnenImStand                = exercise{"Seitliches Knieöffnen im Stand", beineUndGesaess, 166, 1}
+	kreuzschritt                                = exercise{"Kreuzschritt", beineUndGesaess, 167, 1}
+	kreuzheben                                  = exercise{"Kreuzheben", beineUndGesaess, 168, 1}
+	aufstehenAusDemEinbeinigenKniestand         = exercise{"Aufstehen aus dem einbeinigen Kniestand", beineUndGesaess, 169, 1}
+	schwimmer                                   = exercise{"Schwimmer", beineUndGesaess, 174, 2}
+	pointer                                     = exercise{"Pointer", beineUndGesaess, 174, 2}
+	knieenderBeinwechsel                        = exercise{"Kniender Beinwechsel", beineUndGesaess, 175, 2}
+	rumaenischesKreuzhebenAufEinemBeinImWechsel = exercise{"Rumänisches Kreuzheben auf einem Bein im Wechsel", beineUndGesaess, 176, 2}
+	ausfallSchritt                              = exercise{"Ausfallschritt", beineUndGesaess, 177, 2}
+	ausfallschrittNachVorneImWechsel            = exercise{"Ausfallschritt nach vorn im Wechsel", beineUndGesaess, 177, 1}
+	ausfallschrittNachHintenImWechsel           = exercise{"Ausfallschritt nach hinten im Wechsel", beineUndGesaess, 178, 1}
+	kniebeugeImAusfallschritt                   = exercise{"Kniebeuge im Ausfallschritt", beineUndGesaess, 178, 2}
+	seitlicherAusfallschritt                    = exercise{"Seitlicher Ausfallschritt", beineUndGesaess, 179, 2}
+	hueftStrecker                               = exercise{"Hüftstrecker", beineUndGesaess, 181, 2}
+	engeKniebeuge                               = exercise{"Enge Kniebeuge", beineUndGesaess, 183, 1}
+	einbeinigeKniebeugeMitUnterstuetzung        = exercise{"Einbeinige Kniebeuge mit Unterstützung im Wechsel", beineUndGesaess, 187, 4}
+	pistole                                     = exercise{"Pistole", beineUndGesaess, 188, 4}
+	einbeinigeKniebeuge                         = exercise{"Einbeinige Kniebeuge im Wechsel", beineUndGesaess, 188, 4}
+	gesprungeneKniebeuge                        = exercise{"Gesprungene Kniebeuge", beineUndGesaess, 191, 1}
+	kistenSprung                                = exercise{"Kistensprung", beineUndGesaess, 192, 1}
+	einbeinigerHueftstrecker                    = exercise{"Einbeiniger Hüftstrecker", beineUndGesaess, 194, 2}
+	seitensprung                                = exercise{"Seitsprung", beineUndGesaess, 194, 2}
+	ironMike                                    = exercise{"Iron Mike", beineUndGesaess, 195, 3}
+	pogoSprung                                  = exercise{"Pogo Sprung", beineUndGesaess, 199, 2}
+	bergsteiger                                 = exercise{"Bergsteiger", core, 202, 2}
+	gekreuzterBergsteiger                       = exercise{"gekreuzter Bergsteiger", core, 203, 2}
+	kaeferIpsilateral                           = exercise{"Käfer ipsilateral", core, 204, 2}
+	kaefer                                      = exercise{"Käfer", core, 204, 2}
+	seitlichesHueftheben                        = exercise{"Seitliches Hüftheben", core, 204, 3}
+	kaeferKontralateral                         = exercise{"Käfer kontralateral", core, 204, 2}
+	kaeferUnilateral                            = exercise{"Käfer unilateral", core, 204, 2}
+	hueftTwist                                  = exercise{"Hüfttwist", core, 206, 1}
+	seestern                                    = exercise{"Seestern", core, 207, 1}
+	bodyRock                                    = exercise{"Bodyrock", core, 208, 1}
+	russischerTwist                             = exercise{"Russischer Twist", core, 213, 1}
+	crunchItUp                                  = exercise{"Crunch It Up", core, 214, 1}
+	schraegerCrunch                             = exercise{"Schräger Crunch", core, 215, 1}
+	crunch                                      = exercise{"Crunch", core, 215, 1}
+	beinheber                                   = exercise{"Beinheber", core, 217, 1}
+	fahrradfahren                               = exercise{"Fahrradfahren", core, 218, 2}
+	vUp                                         = exercise{"V-Up", core, 219, 2}
+	schraegerVUp                                = exercise{"Schräger V-Up", core, 220, 3}
+	tiefeKniebeuge                              = exercise{"Tiefe Kniebeuge", core, 221, 3}
+	gestreckterBeinTwist                        = exercise{"Gestreckter Beintwist", core, 221, 3}
+	beinTwist                                   = exercise{"Beintwist", core, 221, 2}
+	klappmesser                                 = exercise{"Klappmesser", core, 222, 3}
+	gestrecktesHaengendesBeinheben              = exercise{"Gestrecktes hängendes Beinheben", core, 223, 1}
+	haengendesBeinheben                         = exercise{"Hängendes Beinheben", core, 223, 3}
+	nackentrainerInBauchlage                    = exercise{"Nackentrainer in Bauchlage", core, 227, 2}
+	knieheberImStehen                           = exercise{"Knieheber im Stehen", ganzKoerper, 228, 1}
+	vierPhasenLiegestuetz                       = exercise{"4 Phasen Liegestütz", ganzKoerper, 229, 2}
+)
 
 var trainings = []trainingWeek{
 	{
@@ -708,30 +246,22 @@ var trainings = []trainingWeek{
 			{
 				Method: stufenIntervall,
 				Exercises: [][]tExercise{
-					{
-						{Exercise: liegestuetzMitErhoehtenHaenden},
-						{Exercise: tuerziehen},
-						{Exercise: Seestern},
-						{Exercise: umgekehrtesBankdruecken},
-					},
-					{
-						{Exercise: klassischerLiegestuetz},
-						{Exercise: umgekehrtesBankdruecken},
-						{Exercise: militaryPress},
-						{Exercise: tuerziehen},
-					},
-					{
-						{Exercise: einarmigerLiegestuetzMitErhoehtenHaenden},
-						{Exercise: klimmzugMitUnterstuetzung},
-						{Exercise: militaryPressMitErhoehtenFuessen},
-						{Exercise: umgekehrtesBankdruecken},
-					},
-					{
-						{Exercise: einarmigerLiegestuetzMitErhoehtenHaenden},
-						{Exercise: klimmzugMitUnterstuetzung},
-						{Exercise: sturzflug},
-						{Exercise: umgekehrtesBankdruecken, Note: "Die Füße sind erhöht. "},
-					},
+					{{liegestuetzMitErhoehtenHaenden, ""},
+						{tuerziehen, ""},
+						{seestern, ""},
+						{umgekehrtesBankdruecken, ""}},
+					{{klassischerLiegestuetz, ""},
+						{umgekehrtesBankdruecken, ""},
+						{militaryPress, ""},
+						{tuerziehen, ""}},
+					{{einarmigerLiegestuetzMitErhoehtenHaenden, ""},
+						{klimmzugMitUnterstuetzung, ""},
+						{militaryPressMitErhoehtenFuessen, ""},
+						{umgekehrtesBankdruecken, ""}},
+					{{einarmigerLiegestuetzMitErhoehtenHaenden, ""},
+						{klimmzugMitUnterstuetzung, ""},
+						{sturzflug, ""},
+						{umgekehrtesBankdruecken, "Die Füße sind erhöht. "}},
 				},
 			},
 			{
@@ -744,7 +274,7 @@ var trainings = []trainingWeek{
 						{Exercise: schwimmer},
 					},
 					{
-						{Exercise: ausfallschrittNachHintenImWechsel, Note:"mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
+						{Exercise: ausfallschrittNachHintenImWechsel, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
 						{Exercise: rumaenischesKreuzhebenAufEinemBeinImWechsel},
 						{Exercise: gesprungeneKniebeuge, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
 						{Exercise: kaeferUnilateral, Note: "Beine gestreckt"},
@@ -769,7 +299,7 @@ var trainings = []trainingWeek{
 					{
 						{Exercise: liegestuetzMitErhoehtenHaenden},
 						{Exercise: tuerziehen},
-						{Exercise: Seestern},
+						{Exercise: seestern},
 						{Exercise: umgekehrtesBankdruecken},
 					},
 					{
@@ -833,7 +363,7 @@ var trainings = []trainingWeek{
 					{
 						{Exercise: liegestuetzMitErhoehtenHaenden},
 						{Exercise: tuerziehen},
-						{Exercise: Seestern},
+						{Exercise: seestern},
 						{Exercise: umgekehrtesBankdruecken},
 					},
 					{
@@ -866,7 +396,7 @@ var trainings = []trainingWeek{
 						{Exercise: schwimmer},
 					},
 					{
-						{Exercise: ausfallschrittNachHintenImWechsel,Note:"mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
+						{Exercise: ausfallschrittNachHintenImWechsel, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
 						{Exercise: rumaenischesKreuzhebenAufEinemBeinImWechsel},
 						{Exercise: gesprungeneKniebeuge, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
 						{Exercise: kaeferUnilateral, Note: "Beine gestreckt"},
@@ -891,7 +421,7 @@ var trainings = []trainingWeek{
 					{
 						{Exercise: liegestuetzMitErhoehtenHaenden},
 						{Exercise: tuerziehen},
-						{Exercise: Seestern},
+						{Exercise: seestern},
 						{Exercise: umgekehrtesBankdruecken},
 					},
 					{
@@ -956,7 +486,7 @@ var trainings = []trainingWeek{
 						{Exercise: klassischerLiegestuetz},
 						{Exercise: militaryPressMitErhoehtenHaenden},
 						{Exercise: engerLiegestuetzMitErhoehtenHaenden},
-						{Exercise: Seestern},
+						{Exercise: seestern},
 					},
 					{
 						{Exercise: liegestuetzMitErhoehtenFuessen},
@@ -1093,7 +623,7 @@ var trainings = []trainingWeek{
 						{Exercise: klassischerLiegestuetz},
 						{Exercise: militaryPressMitErhoehtenHaenden},
 						{Exercise: engerLiegestuetzMitErhoehtenHaenden},
-						{Exercise: Seestern},
+						{Exercise: seestern},
 					},
 					{
 						{Exercise: liegestuetzMitErhoehtenFuessen},
@@ -1232,7 +762,7 @@ var trainings = []trainingWeek{
 						{Exercise: militaryPress},
 						{Exercise: baerenGang},
 						{Exercise: engerLiegestuetz},
-						{Exercise: Seestern},
+						{Exercise: seestern},
 					},
 					{
 						{Exercise: liegestuetzMitErhoehtenFuessen, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
@@ -1400,7 +930,7 @@ var trainings = []trainingWeek{
 						{Exercise: militaryPress},
 						{Exercise: baerenGang},
 						{Exercise: engerLiegestuetz},
-						{Exercise: Seestern},
+						{Exercise: seestern},
 					},
 					{
 						{Exercise: liegestuetzMitErhoehtenFuessen, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
@@ -1566,19 +1096,19 @@ var trainings = []trainingWeek{
 						{Exercise: militaryPressMitErhoehtenHaenden},
 						{Exercise: liegestuetzMitErhoehtenHaenden},
 						{Exercise: engerLiegestuetzMitErhoehtenHaenden},
-						{Exercise: Seestern},
+						{Exercise: seestern},
 					},
 					{
 						{Exercise: militaryPress},
 						{Exercise: klassischerLiegestuetz},
 						{Exercise: engerLiegestuetz},
-						{Exercise: Seestern},
+						{Exercise: seestern},
 					},
 					{
 						{Exercise: einarmigerLiegestuetzMitErhoehtenHaenden},
 						{Exercise: sturzflug},
 						{Exercise: trizepsdip},
-						{Exercise: Seestern},
+						{Exercise: seestern},
 					},
 					{
 						{Exercise: einarmigerLiegestuetz},
@@ -1740,7 +1270,7 @@ var trainings = []trainingWeek{
 					},
 					{
 						{Exercise: liegestuetzMitErhoehtenHaenden},
-						{Exercise: Seestern},
+						{Exercise: seestern},
 						{Exercise: tiefeKniebeuge},
 					},
 					{
@@ -1892,7 +1422,7 @@ var trainings = []trainingWeek{
 						{Exercise: liegestuetzMitErhoehtenFuessen},
 						{Exercise: militaryPressMitErhoehtenHaenden},
 						{Exercise: engerLiegestuetzMitErhoehtenHaenden},
-						{Exercise: Seestern},
+						{Exercise: seestern},
 					},
 					{
 						{Exercise: einarmigerLiegestuetzMitErhoehtenHaenden},
@@ -2039,7 +1569,7 @@ var trainings = []trainingWeek{
 						{Exercise: militaryPress},
 						{Exercise: baerenGang},
 						{Exercise: engerLiegestuetz},
-						{Exercise: Seestern},
+						{Exercise: seestern},
 					},
 					{
 						{Exercise: liegestuetzMitErhoehtenFuessen, Note: "mit 1-3 Sek. Haltezeit am tiefsten Punkt"},
@@ -2047,7 +1577,7 @@ var trainings = []trainingWeek{
 						{Exercise: militaryPressMitErhoehtenFuessen},
 						{Exercise: breiterSturzflug},
 						{Exercise: engerLiegestuetzMitErhoehtenFuessen},
-						{Exercise: Seestern},
+						{Exercise: seestern},
 					},
 					{
 						{Exercise: einarmigerLiegestuetz},

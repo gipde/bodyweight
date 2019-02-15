@@ -1,7 +1,6 @@
 package app
 
 import (
-	// "os/user"
 	"bodyweight/tools"
 	"context"
 	"fmt"
@@ -20,8 +19,6 @@ import (
 Alexa-Return warum immer nil
 */
 
-const debug = true
-
 const (
 	// Launch Intent
 	speechWelcome    = `Willkommen beim <lang xml:lang="en-US">Bodyweight Training</lang>. `
@@ -37,43 +34,53 @@ const (
 	speechStartNextExercise   = speechStart + `wenn du mit der nächsten Übung beginnen möchtests. `
 	speechDone                = `Geschafft. `
 	speechReadyForToday       = `Jetzt kannst Du Dich erholen. Bis zum nächsten mal. `
-	speechStufenintervall     = `Jede Übung in diesem Block wird 4,5 bis 7,5 Minuten ausgeführt.
-	Du beginnst mit einer Wiederholung, machst eine Pause, machst zwei Wiederholungen und so weiter. 
-	Ab der Hälft der Zeit reduzierst Du die Sätze jeweils um eine Wiederholung. Wenn Du bereits 
-	vorher nicht mehr kannst, kannst Du auch früher schon reduzieren. Ist noch Zeit übrig, 
-	beginnst du mit einer neuen Stufe wieder mit zunächst 1 Wiederholung`
-	speechIntervallsatz = `Beim Intervallsatz wird sind von jeder Übung 3 Sätze mit 6-12 Wiederholungen
-	durchzuführen. Bei einem Satz solltest Du eigentlich bis zum Muskelversagen kommen. Für einen Satz hast Du
-	genau 3 Minuten zeit. Falls Du früher ferwig wirst, kannst Du die Zeit als Pause nutzen. Die Sätze beginnen damit
-	immer genau im Abstand von 3 Minuten. Wechsle bei einseitigen Übungen nach jedem Satz die Seite,es sei denn die 
-	Wiederholungen sind im Wechsel durchzuführen. Beginnst zunächst mit der schwächeren Seite`
-	speechSupersatz = `Ein Übungspaar bildet einen Supersatz, der jeweils 4 Minuten dauert. Bei der ersten Übung
-	sind jeweils 1 - 5 Wiederholungen, bei der zweiten Übung sind 6-12 Wiederholungen zu absolvieren. Pro Paar sind 2 
-	Supersätze direkt nacheinander durchzuführen. Bei einseitigen Übungen wechseln Sie nach jeder Wiederholung die Seite.`
-	speechHochintensitaetssatz = `Acht Sätze mit jeweils 20 Sekunden Training gefolgt von je 10 Sekunden Pause insgesamt 4 Minuten lang.`
-	speechZirkelintervall      = `Das Zirkelintervall besteht aus insgesamt 3 verschiedenen Übungen, von denen jeweils 
-	eine angegebene Anzahl von Wiederholungen durchzuführen ist. Ohne Pause führen sie die Übungen im Wechsel durch.
-	Versuchen Sie das Zirkelintervall insgesamt 20 Minuten durchzuführen.`
 
 	speechUnknown    = "Ich kann dich leider nicht verstehen. "
 	speechExitIfMute = "Wenn Du nichts mehr sagts, wird das Programm beendet. "
 	speechEnde       = "Auf Wiedersehen und bis bald. "
 	speechPersonal   = `%s, es ist schön, dass du wieder da bist. `
+
+	speechStufenintervall     = `Jede Übung in diesem Block wird 4,5 bis 7,5 Minuten ausgeführt.
+	Du beginnst mit einer Wiederholung, machst eine Pause, machst zwei Wiederholungen und so weiter. 
+	Ab der Hälft der Zeit reduzierst Du die Sätze jeweils um eine Wiederholung. Wenn Du bereits 
+	vorher nicht mehr kannst, kannst Du auch früher schon reduzieren. Ist noch Zeit übrig, 
+	beginnst du mit einer neuen Stufe wieder mit zunächst 1 Wiederholung`
+
+	speechIntervallsatz = `Beim Intervallsatz wird sind von jeder Übung 3 Sätze mit 6-12 Wiederholungen
+	durchzuführen. Bei einem Satz solltest Du eigentlich bis zum Muskelversagen kommen. Für einen Satz hast Du
+	genau 3 Minuten zeit. Falls Du früher ferwig wirst, kannst Du die Zeit als Pause nutzen. Die Sätze beginnen damit
+	immer genau im Abstand von 3 Minuten. Wechsle bei einseitigen Übungen nach jedem Satz die Seite,es sei denn die 
+	Wiederholungen sind im Wechsel durchzuführen. Beginnst zunächst mit der schwächeren Seite`
+
+	speechSupersatz = `Ein Übungspaar bildet einen Supersatz, der jeweils 4 Minuten dauert. Bei der ersten Übung
+	sind jeweils 1 - 5 Wiederholungen, bei der zweiten Übung sind 6-12 Wiederholungen zu absolvieren. Pro Paar sind 2 
+	Supersätze direkt nacheinander durchzuführen. Bei einseitigen Übungen wechseln Sie nach jeder Wiederholung die Seite.`
+	
+	speechHochintensitaetssatz = `Beim Hochintensitätssatz sind insgesamt 8 Sätze mit jeweils 20 Sekunden Training 
+	gefolgt von je 10 Sekunden Pause durchzuführen. Insgesamt dauert jede Übung 4 Minuten lang.`
+
+	speechZirkelintervall      = `Das Zirkelintervall besteht aus insgesamt 3 verschiedenen Übungen, von denen jeweils 
+	eine angegebene Anzahl von Wiederholungen durchzuführen ist. Ohne Pause führen sie die Übungen im Wechsel durch.
+	Versuchen Sie das Zirkelintervall insgesamt 20 Minuten durchzuführen.`
+
+
 	speechHelp       = `Du brauchst Hilfe?
 	
 	In diesem Skill kannst Du mit:
-	- erkläre das Training Dir das Training erklären lassen
-	- erkläre die nächste Übung - dir die nächste Übung erklären lassen`
+	- erkläre das Training - Dir das Training erklären lassen.
+	- erkläre die nächste Übung - dir die nächste Übung erklären lassen.
+	- ändere den Trainingsfortschritt - den Trainingsfortschritt ändern.
+	- bereit - die nächste Übung starten oder mit
+	- erkläre Trainingsmehtoden - die jeweiligen Trainingsmethoden erklären.`
+
 )
 
 var db database.DB
 
 func init() {
-	if !debug {
+	if !tools.IsDebug() {
 		log.SetOutput(ioutil.Discard)
-	} else {
-		tools.SetDebug()
-	}
+	} 
 }
 
 // Start starts the Lambda Handler

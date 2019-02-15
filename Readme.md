@@ -19,6 +19,8 @@ Der Skill unterstützt dich bei der Ausführung des Bodyweight Training. Alle Ü
 - notes kategorisieren und vereinheitlichen
 - Trainingsmethoden erklären
 - TODO fixen
+- zum schluss immer zur 7. Trainingswoche zurückspringen
+- Trainingswoche,TrainingsTag, Level einstellen
 
 ## Commands
 proxy local from 0.0.0.0:1234 to localhost 1234

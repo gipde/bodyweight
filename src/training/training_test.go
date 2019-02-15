@@ -157,3 +157,10 @@ func Test_exercise_getShortDayDesc(t *testing.T) {
 		s.InstructTraining()
 	}
 }
+
+func TestMiri(t *testing.T)  {
+	for i := 0; i < 10; i++ {
+		t.Logf("miriam %d",i+1)		
+		t.Logf("%d + %d = %d",i,i,i+i)	
+	}
+}
