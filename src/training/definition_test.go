@@ -1,36 +1,58 @@
 package training
 
 import (
-	"sort"
 	"testing"
 )
 
-func TestAlleNotes(t *testing.T) {
-	set := make(map[string]struct{})
-	for _, week := range trainings {
-		for _, day := range week.TrainingDays {
-			for _, level := range day.Exercises {
-				for _, unit := range level {
-					if unit.Note != "" {
-						if _, ok := set[unit.Note]; !ok {
-							set[unit.Note] = struct{}{}
-						}
+func TestAllTrainings(t *testing.T) {
+	count := 0
+	for level := 3; level < 4; level++ {
+		t.Logf("+++ Level %d", level+1)
+		for iWeek, week := range trainings {
+			t.Logf("=== %d Woche: ", iWeek+1)
+			for iDay, day := range week.TrainingDays {
+				t.Logf("--- %d Tag: ", iDay+1)
+				for i, unit := range day.Exercises[level] {
+					t.Logf("%d |%d. %s, Seite: %d", count, i+1, unit.Exercise.Name, unit.Exercise.Page)
+					if unit.Note != nil {
+						t.Logf("       %s", unit.Note.text())
 					}
+					count++
 				}
+				t.Log()
 			}
-
+			t.Log()
 		}
-	}
-
-    keys := make([]string, 0, len(set))
-    for k := range set {
-        keys = append(keys, k)
-    }
-	sort.Strings(keys)
-	for _, n := range keys {
-		t.Logf("= \"%s\"",n)
+		t.Log()
 	}
 }
+
+// func TestAlleNotes(t *testing.T) {
+// 	set := make(map[string]struct{})
+// 	for _, week := range trainings {
+// 		for _, day := range week.TrainingDays {
+// 			for _, level := range day.Exercises {
+// 				for _, unit := range level {
+// 					if unit.Note != "" {
+// 						if _, ok := set[unit.Note]; !ok {
+// 							set[unit.Note] = struct{}{}
+// 						}
+// 					}
+// 				}
+// 			}
+
+// 		}
+// 	}
+
+//     keys := make([]string, 0, len(set))
+//     for k := range set {
+//         keys = append(keys, k)
+//     }
+// 	sort.Strings(keys)
+// 	for _, n := range keys {
+// 		t.Logf("= \"%s\"",n)
+// 	}
+// }
 
 // import (
 // 	"fmt"

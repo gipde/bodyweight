@@ -62,7 +62,7 @@ func (s State) DayShortDescription() string {
 func (e tExercise) getShortInfo() string {
 	ex := e.Exercise
 	text := fmt.Sprintf("%s\n", ex.Name)
-	if e.Note != "" {
+	if e.Note.text() != "" {
 		text += fmt.Sprintf("%s\n", e.Note)
 	}
 	text += fmt.Sprintf("Seite %d", ex.Page)
@@ -194,7 +194,8 @@ func (s *State) hochIntensitaetsSatzText() string {
 	_, exes, _ := s.getDayExesAndUnit()
 	ex := exes[s.Unit]
 
-	text := "Es sind 8 Hochintenistätssätze mit je 20 Sekunden Training gefolgt von 10 Sekunden Pause durchzuführen. Die Anzahl der Wiederholungen sollte dabei in etwa gleich sein. "
+	text := `Es sind 8 Hochintensitätssätze mit je 20 Sekunden Training gefolgt von 10 Sekunden Pause durchzuführen. 
+	Die Anzahl der Wiederholungen sollte dabei in etwa gleich sein. `
 	text += "\nWir starten mit: " + ex.Exercise.Name + "."
 	text += addNote(ex)
 	text += "\n"
@@ -373,7 +374,7 @@ func getLevelTimeStufenIntervall(level trainingLevel) int {
 }
 
 func addNote(ex tExercise) string {
-	if ex.Note != "" {
+	if ex.Note.text() != "" {
 		return fmt.Sprintf("Anmerkung: %s. ", ex.Note)
 	}
 	return ""
