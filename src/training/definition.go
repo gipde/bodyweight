@@ -1,9 +1,16 @@
 package training
 
 import (
-	"fmt"
 	"strings"
 )
+
+//State contains every State of the training
+type State struct {
+	Level trainingLevel `json:"level"`
+	Week  int           `json:"week"`
+	Day   int           `json:"day"`
+	Unit  int           `json:"unit"`
+}
 
 type exercise struct {
 	Name       string       `json:"name"`
@@ -13,13 +20,6 @@ type exercise struct {
 }
 
 type noteList []string
-
-func (n noteList) text() string {
-	if n == nil {
-		return ""
-	}
-	return strings.Join(n, " ")
-}
 
 type tExercise struct {
 	Exercise exercise `json:"exercise"`
@@ -37,19 +37,6 @@ type trainingWeek struct {
 	Description  string        `json:"description"`
 }
 
-//State contains every State of the training
-type State struct {
-	Level trainingLevel `json:"level"`
-	Week  int           `json:"week"`
-	Day   int           `json:"day"`
-	Unit  int           `json:"unit"`
-}
-
-func (t trainingMethod) name() string {
-	return trainingMethods[t]
-}
-
-// gehört zur Übung
 type trainingType int
 
 const (
@@ -68,10 +55,6 @@ var trainingTypes = []string{
 	"ganzkörperliche Übung",
 }
 
-func (t trainingType) name() string {
-	return trainingTypes[t]
-}
-
 type trainingLevel int
 
 const (
@@ -86,10 +69,6 @@ var trainingLevels = []string{
 	"First Class",
 	"Master Class",
 	"Chief Class",
-}
-
-func (t trainingLevel) name() string {
-	return trainingLevels[t]
 }
 
 type trainingMethod int
@@ -109,6 +88,13 @@ var trainingMethods = []string{
 	"Zirkelintervalle",
 	"Hochintensitätssätze",
 }
+
+const (
+	muscle      = "Muskuläre Ausdauer"
+	power       = "Kraft"
+	powerblock  = "Powerblock"
+	changeblock = "Wechselblock"
+)
 
 const (
 	wdh6    = "6 Wiederholungen"
@@ -135,14 +121,14 @@ const (
 	oTiefsterPunkt  = "am tiefsten Punkt"
 	oHoechsterPunkt = "am höchsten Punkt"
 
-	kissen             = "auf einem Kissen"
+	bErhoeht           = "mit erhöhten Füßen"
 	bGebeugt           = "mit gebeugten Beinen"
 	bGestreckt         = "mit gestreckten Beinen"
 	bBisZuHaenden      = "Füße bis zu den Händen"
-	bErhoeht           = "mit erhöhten Füßen"
 	bNachHinten        = "Beine nach hinten anwinklen und Fußspitzen auf einen Stuhl absetzen um das Hochdrücken zu erleichtern"
 	fuesseHinterHaende = "Füße sind hinter den Händen platziert, gehen Sie dafür einem Schritt zurürck"
 
+	kissen         = "auf einem Kissen"
 	bBisGanzOben   = "bis ganz nach oben"
 	bParallelBoden = "und parallel zum Boden"
 
@@ -159,34 +145,36 @@ const (
 	brusthochAbgest = "brusthoch abgestützt"
 	rucksack        = "dabei am tiefsten Punkt einen Rucksack über den Kopf stemen"
 
-	knieend         = "knieend"
 	knieHeranziehen = "langsam, 2 Sek. für das Heranziehen jedes Knies"
 
 	brustHalte          = "mit Haltezeit wenn die Brust am tiefsten Punkt der Kontraktion zwischen den Händen ist"
 	knieGebeugt         = "mit gebeugten Knien"
 	vorwaertsGreifen    = "mit vorwärtsgreifen"
 	klimmzugOhneUnterst = "mit Unterstützung in der Positivphase"
-	mitte               = "in der Mitte"
-	wechsel             = "im Wechsel"
-	seitenwechsel       = "nach jedem Satz seitenwechsel, insgesamt 4 Sätze"
-	unterstuetzung      = "mit Unterstützung"
-	einarmig            = "einarmig"
-	einbeinig           = "einbeining"
-	vorne               = "nach vorne"
-	hinten              = "nach hinten"
-	kniebeuge           = "Kniebeuge im Ausfallschritt"
-	gekreuzt            = "gekreuzt"
-	ipsi                = "ipsilateral"
-	kontra              = "kontralateral"
-	uni                 = "unilateral"
-	schraeg             = "schräg"
-	tief                = "tiefe Kniebeuge"
-	gestreckt           = "gestreckt"
-	bauchlage           = "in Bauchlage"
-)
 
-var (
-	n1 = fmt.Sprintf("%s %s", knieGebeugt, vorwaertsGreifen)
+	mitte          = "in der Mitte"
+	wechsel        = "im Wechsel"
+	bauchlage      = "in Bauchlage"
+	unterstuetzung = "mit Unterstützung"
+	seitenwechsel  = "nach jedem Satz seitenwechsel, insgesamt 4 Sätze"
+
+	einarmig  = "einarmig"
+	einbeinig = "einbeining"
+
+	vorne  = "nach vorne"
+	hinten = "nach hinten"
+
+	knieend   = "knieend"
+	gekreuzt  = "gekreuzt"
+	schraeg   = "schräg"
+	tief      = "tiefe Kniebeuge"
+	gestreckt = "gestreckt"
+
+	ipsi   = "ipsilateral"
+	kontra = "kontralateral"
+	uni    = "unilateral"
+
+	kniebeuge = "Kniebeuge im Ausfallschritt"
 )
 
 // TODO: Schwierigkeitsgrad anpassen
@@ -249,15 +237,8 @@ var (
 	vierPhasenLiegestuetz               = exercise{"4 Phasen Liegestütz", ganzKoerper, 229, 2}
 )
 
-const (
-	muscle      = "Muskuläre Ausdauer"
-	power       = "Kraft"
-	powerblock  = "Powerblock"
-	changeblock = "Wechselblock"
-)
-
-//TODO: Duplicate Trainingsweeks 1,3,5 programatically via init
-var trainings = []trainingWeek{
+var trainings [10]trainingWeek
+var trainingDef = [...]trainingWeek{
 	{
 		Description: muscle,
 		TrainingDays: []trainingDay{
@@ -1556,4 +1537,34 @@ var trainings = []trainingWeek{
 			},
 		},
 	},
+}
+
+func init() {
+	for i := 0; i < 3; i++ {
+		for j := 0; j < 2; j++ {
+			trainings[i*2+j] = trainingDef[i]
+		}
+	}
+	for i := 3; i < 7; i++ {
+		trainings[i+3] = trainingDef[i]
+	}
+}
+
+func (t trainingMethod) name() string {
+	return trainingMethods[t]
+}
+
+func (t trainingType) name() string {
+	return trainingTypes[t]
+}
+
+func (t trainingLevel) name() string {
+	return trainingLevels[t]
+}
+
+func (n noteList) text() string {
+	if n == nil {
+		return ""
+	}
+	return strings.Join(n, " ")
 }

@@ -6,7 +6,7 @@ import (
 
 func TestAllTrainings(t *testing.T) {
 	count := 0
-	for level := 3; level < 4; level++ {
+	for level := 0; level < 4; level++ {
 		t.Logf("+++ Level %d", level+1)
 		for iWeek, week := range trainings {
 			t.Logf("=== %d Woche: ", iWeek+1)
