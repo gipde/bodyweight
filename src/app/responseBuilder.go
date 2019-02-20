@@ -50,22 +50,23 @@ func (r *Response) speak(payload string) *Response {
 	return r
 }
 
-func (r *Request) getUser() string {
-	return r.Session.User.UserID
-}
+// func (r *Request) getUser() string {
+// 	return r.Session.User.UserID
+// }
 
-func (r *Request) getSessionAttribute(key string) string {
-	value := r.Session.Attributes[key]
-	if value != nil {
-		return value.(string)
-	}
-	return ""
-}
 
-func (r *Response) setSessionAttribute(key string, value string) *Response {
-	r.SessionAttributes[key] = value
-	return r
-}
+// func (r *Request) getSessionAttribute(key string) string {
+// 	value := r.Session.Attributes[key]
+// 	if value != nil {
+// 		return value.(string)
+// 	}
+// 	return ""
+// }
+
+// func (r *Response) setSessionAttribute(key string, value string) *Response {
+// 	r.SessionAttributes[key] = value
+// 	return r
+// }
 
 // provide prompt speech to the user if no response for 8 seconds
 func (r *Response) reprompt(text string) *Response {
@@ -79,15 +80,15 @@ func (r *Response) reprompt(text string) *Response {
 	return r
 }
 
-func (r *Response) addDelegateDirective(intent *Intent, confirmed bool) *Response {
-	r.ResponseBody.Directives = []Directive{
-		{
-			Type:          "Dialog.Delegate",
-			UpdatedIntent: intent,
-		}}
+// func (r *Response) addDelegateDirective(intent *Intent, confirmed bool) *Response {
+// 	r.ResponseBody.Directives = []Directive{
+// 		{
+// 			Type:          "Dialog.Delegate",
+// 			UpdatedIntent: intent,
+// 		}}
 
-	if confirmed {
-		intent.ConfirmationStatus = "CONFIRMED"
-	}
-	return r
-}
+// 	if confirmed {
+// 		intent.ConfirmationStatus = "CONFIRMED"
+// 	}
+// 	return r
+// }

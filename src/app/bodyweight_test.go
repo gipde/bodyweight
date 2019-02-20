@@ -39,9 +39,12 @@ func TestMain(m *testing.M) {
 	tools.SetupTestDB()
 	db = database.Accessor()
 
-	r:= m.Run()
-	db.DeleteDB()
-	
+	r := m.Run()
+	err := db.DeleteDB()
+	if err != nil {
+		os.Exit(1)
+	}
+
 	os.Exit(r)
 }
 
@@ -85,12 +88,22 @@ func TestChangeToNewUser(t *testing.T) {
 	name1 := "Bob"
 	name2 := "Alice"
 
-	m, _ := triggerDefineUserIntent(name2)
-	m, _ = triggerLaunchRequest()
+	m, err := triggerDefineUserIntent(name2)
+	if err != nil {
+		assert.Fail(t, "Error:", err)
+	}
+	t.Logf("m: %+v", m.OutputSpeech.SSML)
+	m, err = triggerLaunchRequest()
+	if err != nil {
+		assert.Fail(t, "Error:", err)
+	}
+
 	assert.Equal(t, speakyfy(speechWelcome+fmt.Sprintf(speechPersonal, name2)+speechExplainTraining),
 		m.OutputSpeech.SSML)
 
 	m, _ = triggerDefineUserIntent(name1)
+	assert.Equal(t, speakyfy(fmt.Sprintf(speechWelcomNewUser+speechExplainTraining,name1)), m.OutputSpeech.SSML)
+
 	m, _ = triggerLaunchRequest()
 	assert.Equal(t, speakyfy(speechWelcome+fmt.Sprintf(speechPersonal, name1)+speechExplainTraining),
 		m.OutputSpeech.SSML)

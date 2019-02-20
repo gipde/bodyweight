@@ -17,10 +17,8 @@ Der Skill unterstützt dich bei der Ausführung des Bodyweight Training. Alle Ü
 - alle Strings als speechText* auslagern
 - Trainingsmethoden erklären
 - TODO fixen
-- zum schluss immer zur 7. Trainingswoche zurückspringen
 - Trainingswoche,TrainingsTag, Level per sprachbefehl (alexa) einstellen
 - das mit den Karten stimmt noch nicht ganz
-- Schwierigkeitsgrad fixen
 
 ## Commands
 proxy local from 0.0.0.0:1234 to localhost 1234

@@ -1,8 +1,6 @@
 package app
 
 const (
-	sessionUser = "username"
-
 	alexaLaunchRequest                    = "LaunchRequest"
 	alexaIntentRequest                    = "IntentRequest"
 	alexaSessionEndRequest                = "SessionEndedRequest"
@@ -10,9 +8,9 @@ const (
 	alexaAudioplayerNearlyFinishedRequest = "AudioPlayer.PlaybackNearlyFinished"
 	alexaAudioplayerFinishedRequest       = "AudioPlayer.PlaybackFinished"
 
-	alexaStopIntent                  = "AMAZON.StopIntent"
-	alexaHelpIntent                  = "AMAZON.HelpIntent"
-	alexaFallbackIntent              = "AMAZON.FallbackIntent"
+	alexaStopIntent     = "AMAZON.StopIntent"
+	alexaHelpIntent     = "AMAZON.HelpIntent"
+	alexaFallbackIntent = "AMAZON.FallbackIntent"
 
 	alexaDefineUserIntent            = "DefineUser"
 	alexaExplainTrainingIntent       = "ExplainTraining"
@@ -20,7 +18,7 @@ const (
 	alexaStartTrainingIntent         = "StartTraining"
 	alexaExplainTrainingMethodIntent = "ExplainTrainingMethod"
 
-	alexaAudioTestIntent             = "AudioTest"
+	alexaAudioTestIntent = "AudioTest"
 )
 
 // Request API Call Request

@@ -8,6 +8,57 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestExplainTraining(t *testing.T) {
+	s := GetBeginningState()
+	r := s.ExplainTraining()
+	assert.Contains(t, r, "Basisprogramm")
+	assert.Contains(t, r, "1. Trainingswoche")
+	assert.Contains(t, r, "1. Übungstag")
+	s.Level = firstClass
+	r = s.ExplainTraining()
+	assert.Contains(t, r, "First Class")
+}
+
+func TestShortProgress(t *testing.T) {
+	s := GetBeginningState()
+	r := s.ShortProgress()
+	assert.Exactly(t, "1. Woche, 1. Tag", r)
+}
+
+func TestShortDayDesc(t *testing.T) {
+	s := GetBeginningState()
+	r := s.DayShortDescription()
+	assert.Contains(t, r, "Stufenintervalle")
+}
+
+func TestGetShortInfo(t *testing.T) {
+	s := GetBeginningState()
+	_, _, unit := s.getDayExesAndUnit()
+	r := unit.getShortInfo()
+	assert.Contains(t, r, "Liegestütz")
+}
+
+func TestUnitShortDesc(t *testing.T) {
+	s := GetBeginningState()
+	r := s.UnitShortDescription()
+	assert.Contains(t, r, "Stufenintervalle")
+	s.Week = 2
+	r = s.UnitShortDescription()
+	assert.Contains(t, r, "Intervallsätze")
+	s.Week = 4
+	r = s.UnitShortDescription()
+	assert.Contains(t, r, "Supersatz")
+}
+
+func TestExplainExercise(t *testing.T) {
+	s := GetBeginningState()
+	t.Log(s.ExplainExercise())
+	s.Week = 2
+	t.Log(s.ExplainExercise())
+	s.Week = 4
+	t.Log(s.ExplainExercise())
+}
+
 func TestTimeAsString(t *testing.T) {
 	assert.Equal(t, timeAsStr(0), "Ende")
 	assert.Equal(t, timeAsStr(30), "30 Sekunden")
@@ -63,15 +114,12 @@ func TestSwitchNextUnit(t *testing.T) {
 			for d := 0; d < len(trainings[w].TrainingDays); d++ {
 				for u := 0; u < len(trainings[w].TrainingDays[d].Exercises[p]); u++ {
 					assert.Equal(t, state, State{Level: trainingLevel(p), Week: w, Day: d, Unit: u})
-					if !(p == 3 && w == 9 && d == 4 && u == 2) {
-						assert.Equal(t, false, state.switchToNextTraining())
-					} else {
-						assert.Equal(t, true, state.switchToNextTraining()) // end of alle trainings
-					}
+					state.switchToNextTraining()
 				}
 			}
 		}
 	}
+	assert.Equal(t, State{3, 6, 0, 0}, state)
 }
 
 func BenchmarkSwitchNextUnit(b *testing.B) {
@@ -106,29 +154,18 @@ func TestZirkelintervall(t *testing.T) {
 	t.Log(s.InstructTraining())
 }
 
-func TestEqual(t *testing.T) {
-	s := GetBeginningState()
-	last := State{Level: 4, Week: 0, Day: 0, Unit: 0}
-	for s != last {
-		s.InstructTraining()
-		t.Log("s after:", s)
-	}
-
-	assert.Equal(t, s, last)
-}
-
 func TestCompleteTraining(t *testing.T) {
+
 	s := GetBeginningState()
-	last := State{Level: 4, Week: 0, Day: 0, Unit: 0}
 	t.Log("-------------------------------------------------")
-	for s != last {
-		t.Log("State: ", s)
+	for count := 0; count < 613; count++ {
+		t.Logf("%d State: %+v ", count, s)
 		if s.Day == 0 && s.Unit == 0 {
-			t.Log(fmt.Sprintf("Week: %d", s.Week))
+			t.Log(fmt.Sprintf("Week: %d", s.Week+1))
 			t.Log("-------------------------------------------------")
 		}
 		if s.Unit == 0 {
-			t.Log(fmt.Sprintf("Day: %d", s.Day))
+			t.Log(fmt.Sprintf("Day: %d", s.Day+1))
 			t.Log(s.ExplainTraining())
 			t.Log("-------------------------------------------------")
 		}
@@ -155,12 +192,5 @@ func Test_exercise_getShortDayDesc(t *testing.T) {
 	for i := 0; i < 100; i++ {
 		t.Log(s.DayShortDescription())
 		s.InstructTraining()
-	}
-}
-
-func TestMiri(t *testing.T)  {
-	for i := 0; i < 10; i++ {
-		t.Logf("miriam %d",i+1)		
-		t.Logf("%d + %d = %d",i,i,i+i)	
 	}
 }

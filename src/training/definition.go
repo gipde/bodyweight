@@ -16,7 +16,6 @@ type exercise struct {
 	Name       string       `json:"name"`
 	Type       trainingType `json:"type"`
 	Page       int          `json:"page"`
-	Difficulty int          `json:"difficulty"`
 }
 
 type noteList []string
@@ -132,7 +131,7 @@ const (
 	bBisGanzOben   = "bis ganz nach oben"
 	bParallelBoden = "und parallel zum Boden"
 
-	hErhoeht   = "Hande erhöht"
+	hErhoeht   = "Hände erhöht"
 	hHuefthoch = "Hände etwa hüfthoch"
 	hHueften   = "Hände an den Hüften"
 	hKopf      = "Hände hinter dem Kopf"
@@ -177,64 +176,63 @@ const (
 	kniebeuge = "Kniebeuge im Ausfallschritt"
 )
 
-// TODO: Schwierigkeitsgrad anpassen
 var (
-	baerenGang                          = exercise{"Bärengang", druecken, 110, 1}
-	liegestuetz                         = exercise{"Liegestütz", druecken, 112, 2}
-	liegestuetzMitAbstossen             = exercise{"Liegestütz mit Abstoßen", druecken, 117, 3}
-	federnderLiegestuetz                = exercise{"Federnder Liegestütz", druecken, 117, 3}
-	sturzflug                           = exercise{"Sturzflug", druecken, 120, 3}
-	einarmigerLiegestuetz               = exercise{"Einarmiger Liegestütz", druecken, 124, 4}
-	engerLiegestuetz                    = exercise{"Enger Liegestütz", druecken, 130, 3}
-	erhoehterTrizepsstrecker            = exercise{"Erhöhter Trizepsstrecker", druecken, 131, 4}
-	trizepsdip                          = exercise{"Trizepsdip", druecken, 132, 4}
-	militaryPress                       = exercise{"Military Press", druecken, 134, 3}
-	handstandLiegestuetz                = exercise{"Handstandliegestütz", druecken, 138, 1}
-	tuerziehen                          = exercise{"Türziehen", ziehen, 145, 1}
-	umgekehrtesBankdruecken             = exercise{"Umgekehrtes Bankdrücken", ziehen, 147, 2}
-	klimmzug                            = exercise{"Klimmzug", ziehen, 150, 3}
-	vorgebeugtesSeitlichesSchulterheben = exercise{"Vorgebeugtes seitliches Schulterheben", ziehen, 156, 1}
-	curlMitHandtuch                     = exercise{"Curl mit Handtuch", ziehen, 159, 2}
-	goodMorning                         = exercise{"Good Morning", beineUndGesaess, 164, 2}
-	storch                              = exercise{"Storchhaltung", beineUndGesaess, 165, 1}
-	seitlichesKnieoeffnenImStand        = exercise{"Seitliches Knieöffnen im Stand", beineUndGesaess, 166, 1}
-	kreuzschritt                        = exercise{"Kreuzschritt", beineUndGesaess, 167, 1}
-	kreuzheben                          = exercise{"Kreuzheben", beineUndGesaess, 168, 1}
-	aufstehenAusDemEinbeinigenKniestand = exercise{"Aufstehen aus dem einbeinigen Kniestand", beineUndGesaess, 169, 1}
-	schwimmer                           = exercise{"Schwimmer", beineUndGesaess, 174, 2}
-	pointer                             = exercise{"Pointer", beineUndGesaess, 174, 2}
-	knieenderBeinwechsel                = exercise{"Kniender Beinwechsel", beineUndGesaess, 175, 2}
-	rumaenischesKreuzheben              = exercise{"Rumänisches Kreuzheben auf einem Bein", beineUndGesaess, 176, 2}
-	ausfallschritt                      = exercise{"Ausfallschritt", beineUndGesaess, 177, 1}
-	seitlicherAusfallschritt            = exercise{"Seitlicher Ausfallschritt", beineUndGesaess, 179, 2}
-	hueftStrecker                       = exercise{"Hüftstrecker", beineUndGesaess, 181, 2}
-	engeKniebeuge                       = exercise{"Enge Kniebeuge", beineUndGesaess, 183, 1}
-	einbeinigeKniebeuge                 = exercise{"Einbeinige Kniebeuge", beineUndGesaess, 186, 4}
-	pistole                             = exercise{"Pistole", beineUndGesaess, 188, 4}
-	gesprungeneKniebeuge                = exercise{"Gesprungene Kniebeuge", beineUndGesaess, 191, 1}
-	kistenSprung                        = exercise{"Kistensprung", beineUndGesaess, 192, 1}
-	seitsprung                          = exercise{"Seitsprung", beineUndGesaess, 194, 2}
-	ironMike                            = exercise{"Iron Mike", beineUndGesaess, 195, 3}
-	pogoSprung                          = exercise{"Pogo Sprung", beineUndGesaess, 199, 2}
-	bergsteiger                         = exercise{"Bergsteiger", core, 202, 2}
-	kaefer                              = exercise{"Käfer", core, 204, 2}
-	hueftTwist                          = exercise{"Hüfttwist", core, 206, 1}
-	seestern                            = exercise{"Seestern", core, 207, 1}
-	bodyRock                            = exercise{"Bodyrock", core, 208, 1}
-	seitlichesHueftheben                = exercise{"Seitliches Hüftheben", core, 212, 3}
-	russischerTwist                     = exercise{"Russischer Twist", core, 213, 1}
-	crunchItUp                          = exercise{"Crunch It Up", core, 214, 1}
-	crunch                              = exercise{"Crunch", core, 215, 1}
-	beinheber                           = exercise{"Beinheber", core, 217, 1}
-	fahrradfahren                       = exercise{"Fahrradfahren", core, 218, 2}
-	vUp                                 = exercise{"V-Up", core, 219, 2}
-	schraegerVUp                        = exercise{"Schräger V-Up", core, 220, 3}
-	beinTwist                           = exercise{"Beintwist", core, 221, 2}
-	klappmesser                         = exercise{"Klappmesser", core, 222, 3}
-	haengendesBeinheben                 = exercise{"Hängendes Beinheben", core, 223, 3}
-	nackentrainer                       = exercise{"Nackentrainer", core, 227, 2}
-	knieheberImStehen                   = exercise{"Knieheber im Stehen", ganzKoerper, 228, 1}
-	vierPhasenLiegestuetz               = exercise{"4 Phasen Liegestütz", ganzKoerper, 229, 2}
+	baerenGang                          = exercise{"Bärengang", druecken, 110}
+	liegestuetz                         = exercise{"Liegestütz", druecken, 112}
+	liegestuetzMitAbstossen             = exercise{"Liegestütz mit Abstoßen", druecken, 117}
+	federnderLiegestuetz                = exercise{"Federnder Liegestütz", druecken, 117}
+	sturzflug                           = exercise{"Sturzflug", druecken, 120}
+	einarmigerLiegestuetz               = exercise{"Einarmiger Liegestütz", druecken, 124}
+	engerLiegestuetz                    = exercise{"Enger Liegestütz", druecken, 130}
+	erhoehterTrizepsstrecker            = exercise{"Erhöhter Trizepsstrecker", druecken, 131}
+	trizepsdip                          = exercise{"Trizepsdip", druecken, 132}
+	militaryPress                       = exercise{"Military Press", druecken, 134}
+	handstandLiegestuetz                = exercise{"Handstandliegestütz", druecken, 138}
+	tuerziehen                          = exercise{"Türziehen", ziehen, 145}
+	umgekehrtesBankdruecken             = exercise{"Umgekehrtes Bankdrücken", ziehen, 147}
+	klimmzug                            = exercise{"Klimmzug", ziehen, 150}
+	vorgebeugtesSeitlichesSchulterheben = exercise{"Vorgebeugtes seitliches Schulterheben", ziehen, 156}
+	curlMitHandtuch                     = exercise{"Curl mit Handtuch", ziehen, 159}
+	goodMorning                         = exercise{"Good Morning", beineUndGesaess, 164}
+	storch                              = exercise{"Storchhaltung", beineUndGesaess, 165}
+	seitlichesKnieoeffnenImStand        = exercise{"Seitliches Knieöffnen im Stand", beineUndGesaess, 166}
+	kreuzschritt                        = exercise{"Kreuzschritt", beineUndGesaess, 167}
+	kreuzheben                          = exercise{"Kreuzheben", beineUndGesaess, 168}
+	aufstehenAusDemEinbeinigenKniestand = exercise{"Aufstehen aus dem einbeinigen Kniestand", beineUndGesaess, 169}
+	schwimmer                           = exercise{"Schwimmer", beineUndGesaess, 174}
+	pointer                             = exercise{"Pointer", beineUndGesaess, 174}
+	knieenderBeinwechsel                = exercise{"Kniender Beinwechsel", beineUndGesaess, 175}
+	rumaenischesKreuzheben              = exercise{"Rumänisches Kreuzheben auf einem Bein", beineUndGesaess, 176}
+	ausfallschritt                      = exercise{"Ausfallschritt", beineUndGesaess, 177}
+	seitlicherAusfallschritt            = exercise{"Seitlicher Ausfallschritt", beineUndGesaess, 179}
+	hueftStrecker                       = exercise{"Hüftstrecker", beineUndGesaess, 181}
+	engeKniebeuge                       = exercise{"Enge Kniebeuge", beineUndGesaess, 183}
+	einbeinigeKniebeuge                 = exercise{"Einbeinige Kniebeuge", beineUndGesaess, 186}
+	pistole                             = exercise{"Pistole", beineUndGesaess, 188}
+	gesprungeneKniebeuge                = exercise{"Gesprungene Kniebeuge", beineUndGesaess, 191}
+	kistenSprung                        = exercise{"Kistensprung", beineUndGesaess, 192}
+	seitsprung                          = exercise{"Seitsprung", beineUndGesaess, 194}
+	ironMike                            = exercise{"Iron Mike", beineUndGesaess, 195}
+	pogoSprung                          = exercise{"Pogo Sprung", beineUndGesaess, 199}
+	bergsteiger                         = exercise{"Bergsteiger", core, 202}
+	kaefer                              = exercise{"Käfer", core, 204}
+	hueftTwist                          = exercise{"Hüfttwist", core, 206}
+	seestern                            = exercise{"Seestern", core, 207}
+	bodyRock                            = exercise{"Bodyrock", core, 208}
+	seitlichesHueftheben                = exercise{"Seitliches Hüftheben", core, 212}
+	russischerTwist                     = exercise{"Russischer Twist", core, 213}
+	crunchItUp                          = exercise{"Crunch It Up", core, 214}
+	crunch                              = exercise{"Crunch", core, 215}
+	beinheber                           = exercise{"Beinheber", core, 217}
+	fahrradfahren                       = exercise{"Fahrradfahren", core, 218}
+	vUp                                 = exercise{"V-Up", core, 219}
+	schraegerVUp                        = exercise{"Schräger V-Up", core, 220}
+	beinTwist                           = exercise{"Beintwist", core, 221}
+	klappmesser                         = exercise{"Klappmesser", core, 222}
+	haengendesBeinheben                 = exercise{"Hängendes Beinheben", core, 223}
+	nackentrainer                       = exercise{"Nackentrainer", core, 227}
+	knieheberImStehen                   = exercise{"Knieheber im Stehen", ganzKoerper, 228}
+	vierPhasenLiegestuetz               = exercise{"4 Phasen Liegestütz", ganzKoerper, 229}
 )
 
 var trainings [10]trainingWeek

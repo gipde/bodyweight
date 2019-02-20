@@ -39,7 +39,7 @@ func (s State) ExplainTraining() string {
 
 	text += "Folgende Übungen sind noch durchzuführen: "
 	for i := s.Unit; i < len(exes); i++ {
-		text += fmt.Sprintf("\n%d. Übung: %s. %s", i+1, exes[i].Exercise.Name, addNote(exes[i]))
+		text += fmt.Sprintf("\n%s Übung: %s. %s", getOrdinal(i+1), exes[i].Exercise.Name, addNote(exes[i]))
 	}
 	return text
 }
@@ -62,9 +62,7 @@ func (s State) DayShortDescription() string {
 func (e tExercise) getShortInfo() string {
 	ex := e.Exercise
 	text := fmt.Sprintf("%s\n", ex.Name)
-	if e.Note.text() != "" {
-		text += fmt.Sprintf("%s\n", e.Note)
-	}
+	text += addNoteS(e, "\n")
 	text += fmt.Sprintf("Seite %d", ex.Page)
 	return text
 }
@@ -78,13 +76,18 @@ func (s State) UnitShortDescription() string {
 		text += unit.getShortInfo()
 	case intervallSatz, zirkelIntervall:
 		for i, e := range exes {
-			text += fmt.Sprintf("%d. %s\n", i+1, e.getShortInfo())
+			text += fmt.Sprintf("%d. %s", i+1, e.getShortInfo())
+			if i+1 < len(exes) {
+				text += "\n\n"
+			}
 		}
 	case superSatz:
 		for i := 0; i < len(exes)/2; i++ {
-			text += fmt.Sprintf("%d. Supersatz\n", i+1)
-			text += fmt.Sprintf("%s\n", exes[i*2].getShortInfo())
-			text += fmt.Sprintf("%s\n\n", exes[i*2+1].getShortInfo())
+			text += fmt.Sprintf("%d.1 %s\n", i+1, exes[i*2].getShortInfo())
+			text += fmt.Sprintf("%d.2 %s", i+1, exes[i*2+1].getShortInfo())
+			if i+1 < len(exes)/2 {
+				text += "\n\n"
+			}
 		}
 	}
 	return text
@@ -92,12 +95,29 @@ func (s State) UnitShortDescription() string {
 
 // ExplainExercise explains the next Exercise
 func (s State) ExplainExercise() string {
-	// TODO: wenn Supersatz, Intervallsatz und Zirkelintervall müssen alle Übungen angesagt werden
-	_, exes, _ := s.getDayExesAndUnit()
-	ex := exes[s.Unit].Exercise
-	note := addNote(exes[s.Unit])
-	return fmt.Sprintf(`Als nächste %s steht mit Schwierigkeitsgrad %d an: %s. %sGenauere Infos findest Du auf Seite %d im Buch. `,
-		ex.Type.name(), ex.Difficulty, ex.Name, note, ex.Page)
+
+	day, exes, unit := s.getDayExesAndUnit()
+	var text string
+	switch day.Method {
+	case stufenIntervall, hochIntensitaetsSatz:
+		text = fmt.Sprintf("Als nächste %s steht mit %s an: ", unit.Exercise.Type.name(), day.Method.name())
+		text += fmt.Sprintf("%s. ", unit.Exercise.Name)
+		text += addNote(unit)
+		text += fmt.Sprintf("Nähere Infos findest Du auf Seite %d im Buch.", unit.Exercise.Page)
+	case intervallSatz, zirkelIntervall:
+		text = fmt.Sprintf("Die nächsten Übungen sind mit %s zu absolvieren:\n", day.Method.name())
+		for i, e := range exes {
+			text += fmt.Sprintf("%s Übung: %s. %s\n", getOrdinal(i+1), e.Exercise.Name, addNote(e))
+		}
+	case superSatz:
+		text = "Die nächsten Übungen sind mit Supersätzen zu absolvieren:\n"
+		for i := 0; i < len(exes)/2; i++ {
+			text += fmt.Sprintf("%ss Übungspaar:\n", getOrdinal(i+1))
+			text += fmt.Sprintf("%s. %s\n", exes[i*2].Exercise.Name, addNote(exes[i*2]))
+			text += fmt.Sprintf("%s. %s\n", exes[i*2+1].Exercise.Name, addNote(exes[i*2+1]))
+		}
+	}
+	return text
 }
 
 // WasLastUnit returns true, if
@@ -239,32 +259,30 @@ func lt(val *int, aLen int) bool {
 	return false
 }
 
-func (s *State) switchToNextTraining() bool {
+func (s *State) switchToNextTraining() {
 	// if s Unit < Units per day {s Unit +=1 }
 	if lt(&s.Unit, len(trainings[s.Week].TrainingDays[s.Day].Exercises[s.Level])) {
-		return false
+		return
 	}
 	// if s Day < Trainingsday per week { s Day += 1}
 	if lt(&s.Day, len(trainings[s.Week].TrainingDays)) {
-		return false
+		return
 	}
 	// if s Week < Trainingsweeks { s Week += 1}
 	if lt(&s.Week, len(trainings)) {
-		return false
+		return
 	}
 	tLevel := int(s.Level)
-	// if s Level < Levels (Trainings) { s Level}
 	if lt(&tLevel, len(trainings[s.Week].TrainingDays[s.Day].Exercises)) {
 		s.Level = trainingLevel(tLevel)
-		return false
+		return
 	}
 
-	// TODO: How to handle Good-Level
-	s.Level = 4
-	s.Week = 0
+	// Switch back to Week 7
+	s.Level = 3
+	s.Week = 6
 	s.Day = 0
 	s.Unit = 0
-	return true
 }
 
 func timeAsStr(sec int) string {
@@ -374,8 +392,39 @@ func getLevelTimeStufenIntervall(level trainingLevel) int {
 }
 
 func addNote(ex tExercise) string {
+	return addNoteS(ex, "")
+}
+
+func addNoteS(ex tExercise, suffix string) string {
 	if ex.Note.text() != "" {
-		return fmt.Sprintf("Anmerkung: %s. ", ex.Note)
+		return fmt.Sprintf("Anmerkung: %s. %s", ex.Note.text(), suffix)
 	}
 	return ""
+}
+
+func getOrdinal(i int) string {
+	switch i {
+	case 1:
+		return "erste"
+	case 2:
+		return "zweite"
+	case 3:
+		return "dritte"
+	case 4:
+		return "vierte"
+	case 5:
+		return "fünfte"
+	case 6:
+		return "sechste"
+	case 7:
+		return "siebte"
+	case 8:
+		return "achte"
+	case 9:
+		return "neunte"
+	case 10:
+		return "zehnte"
+	default:
+		return "Fehler"
+	}
 }
