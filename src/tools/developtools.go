@@ -1,14 +1,13 @@
 package tools
 
 import (
+	"crypto/rand"
 	"github.com/aws/aws-lambda-go/lambda/messages"
 	"log"
-	"math/rand"
+	"math/big"
 	"net/rpc"
 
 	"os"
-	"strconv"
-	"time"
 )
 
 var launchRequest = `{
@@ -54,14 +53,14 @@ var launchRequest = `{
 Connect as Client
 */
 
-var debug=false
+var debug = false
 
 func IsDebug() bool {
 	return debug || os.Getenv("DEBUG") == "true"
 }
 
 func SetDebug() {
-	debug=true
+	debug = true
 }
 
 func ConnectToServer() {
@@ -88,9 +87,8 @@ func IsTestClient() bool {
 }
 
 func SetupTestDB() {
-	rand.Seed(time.Now().UTC().UnixNano())
-	r := strconv.Itoa(rand.Int())
-	tablename := "TESTTABLE_" + r
+	r, _ := rand.Int(rand.Reader, big.NewInt(1024*1024))
+	tablename := "TESTTABLE_" + r.String()
 
 	os.Setenv("TEST_DB", tablename)
 	log.Printf("Setup TEST DB Environment")

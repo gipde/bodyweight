@@ -23,7 +23,8 @@ const (
 	// Launch Intent
 	speechWelcome    = `Willkommen beim <lang xml:lang="en-US">Bodyweight Training</lang>. `
 	speechDefineUser = `Du benutzt das <lang xml:lang="en-US">Bodyweight Training</lang> zum ersten Mal. 
-	Du solltest zunächst deinen Namen festlegen. Sage hierzu bitte <break time="500ms"/>mein Name ist<break time="500ms"/> und deinen Vornamen. `
+	Du solltest zunächst deinen Namen festlegen. Sage hierzu bitte <break time="500ms"/>mein Name ist
+	<break time="500ms"/> und deinen Vornamen. `
 	speechWelcomNewUser = `Hallo %s. Schön dass Du mit mir trainierst. `
 
 	speechExplainTraining     = `Lass Dir zunächst das Training erklären. `
@@ -32,8 +33,8 @@ const (
 	speechStart               = `Sage: <break strength="x-strong"/>bereit,<break strength="x-strong"/>`
 	speechStartThisExercise   = speechStart + `wenn du mit dieser Übung beginnen möchtest. `
 	// speechStartNextExercise   = speechStart + `wenn du mit der nächsten Übung beginnen möchtests. `
-	speechDone                = `Geschafft. `
-	speechReadyForToday       = `Jetzt kannst Du Dich erholen. Bis zum nächsten mal. `
+	speechDone          = `Geschafft. `
+	speechReadyForToday = `Jetzt kannst Du Dich erholen. Bis zum nächsten mal. `
 
 	speechUnknown    = "Ich kann dich leider nicht verstehen. "
 	speechExitIfMute = "Wenn Du nichts mehr sagts, wird das Programm beendet. "
@@ -41,25 +42,25 @@ const (
 	speechPersonal   = `%s, es ist schön, dass du wieder da bist. `
 
 	// speechStufenintervall = `Jede Übung in diesem Block wird 4,5 bis 7,5 Minuten ausgeführt.
-	// Du beginnst mit einer Wiederholung, machst eine Pause, machst zwei Wiederholungen und so weiter. 
-	// Ab der Hälft der Zeit reduzierst Du die Sätze jeweils um eine Wiederholung. Wenn Du bereits 
-	// vorher nicht mehr kannst, kannst Du auch früher schon reduzieren. Ist noch Zeit übrig, 
+	// Du beginnst mit einer Wiederholung, machst eine Pause, machst zwei Wiederholungen und so weiter.
+	// Ab der Hälft der Zeit reduzierst Du die Sätze jeweils um eine Wiederholung. Wenn Du bereits
+	// vorher nicht mehr kannst, kannst Du auch früher schon reduzieren. Ist noch Zeit übrig,
 	// beginnst du mit einer neuen Stufe wieder mit zunächst 1 Wiederholung`
 
 	// speechIntervallsatz = `Beim Intervallsatz wird sind von jeder Übung 3 Sätze mit 6-12 Wiederholungen
 	// durchzuführen. Bei einem Satz solltest Du eigentlich bis zum Muskelversagen kommen. Für einen Satz hast Du
 	// genau 3 Minuten zeit. Falls Du früher ferwig wirst, kannst Du die Zeit als Pause nutzen. Die Sätze beginnen damit
-	// immer genau im Abstand von 3 Minuten. Wechsle bei einseitigen Übungen nach jedem Satz die Seite,es sei denn die 
+	// immer genau im Abstand von 3 Minuten. Wechsle bei einseitigen Übungen nach jedem Satz die Seite,es sei denn die
 	// Wiederholungen sind im Wechsel durchzuführen. Beginnst zunächst mit der schwächeren Seite`
 
 	// speechSupersatz = `Ein Übungspaar bildet einen Supersatz, der jeweils 4 Minuten dauert. Bei der ersten Übung
-	// sind jeweils 1 - 5 Wiederholungen, bei der zweiten Übung sind 6-12 Wiederholungen zu absolvieren. Pro Paar sind 2 
+	// sind jeweils 1 - 5 Wiederholungen, bei der zweiten Übung sind 6-12 Wiederholungen zu absolvieren. Pro Paar sind 2
 	// Supersätze direkt nacheinander durchzuführen. Bei einseitigen Übungen wechseln Sie nach jeder Wiederholung die Seite.`
 
-	// speechHochintensitaetssatz = `Beim Hochintensitätssatz sind insgesamt 8 Sätze mit jeweils 20 Sekunden Training 
+	// speechHochintensitaetssatz = `Beim Hochintensitätssatz sind insgesamt 8 Sätze mit jeweils 20 Sekunden Training
 	// gefolgt von je 10 Sekunden Pause durchzuführen. Insgesamt dauert jede Übung 4 Minuten lang.`
 
-	// speechZirkelintervall = `Das Zirkelintervall besteht aus insgesamt 3 verschiedenen Übungen, von denen jeweils 
+	// speechZirkelintervall = `Das Zirkelintervall besteht aus insgesamt 3 verschiedenen Übungen, von denen jeweils
 	// eine angegebene Anzahl von Wiederholungen durchzuführen ist. Ohne Pause führen sie die Übungen im Wechsel durch.
 	// Versuchen Sie das Zirkelintervall insgesamt 20 Minuten durchzuführen.`
 
@@ -153,7 +154,7 @@ func HandleRequest(ctx context.Context, event Request) (interface{}, error) {
 		case alexaDefineUserIntent:
 			return defineUser(event)
 		case alexaExplainTrainingMethodIntent:
-			return handleExplainTrainingMethod(event)
+			return handleExplainTrainingMethod(), nil
 
 		case alexaStopIntent:
 			return responseBuilder().speak(speechEnde).withShouldEndSession(), nil
@@ -167,7 +168,7 @@ func HandleRequest(ctx context.Context, event Request) (interface{}, error) {
 					"https://github.com/gipde/bodyweight/raw/master/contrib/alien-spaceship_daniel_simion.mp3"), nil
 
 		case alexaFallbackIntent:
-			return handleUnknown(ctx, event)
+			return handleUnknown()
 		}
 
 		// intents which require user
@@ -184,17 +185,17 @@ func HandleRequest(ctx context.Context, event Request) (interface{}, error) {
 				withSimpleCard(user.TrainingState.ShortProgress(), user.TrainingState.CardUnitDescription()).
 				reprompt(speechStartThisExercise + speechExitIfMute), nil
 		case alexaStartTrainingIntent:
-			return handleStartTraining(user, event)
+			return handleStartTraining(user), nil
 		}
 	}
-	return handleUnknown(ctx, event)
+	return handleUnknown()
 }
 
-func handleExplainTrainingMethod(event Request) (*Response, error) {
-	return responseBuilder().speak("nicht implementiert").reprompt(speechExitIfMute), nil
+func handleExplainTrainingMethod() *Response {
+	return responseBuilder().speak("nicht implementiert").reprompt(speechExitIfMute)
 }
 
-func handleStartTraining(user *database.Entry, event Request) (*Response, error) {
+func handleStartTraining(user *database.Entry) *Response {
 	//TODO: check if is directyl called
 	text := user.TrainingState.InstructTraining()
 
@@ -204,9 +205,9 @@ func handleStartTraining(user *database.Entry, event Request) (*Response, error)
 	}()
 
 	if user.TrainingState.WasLastUnit() {
-		return responseBuilder().speak(text + speechDone + speechReadyForToday).withShouldEndSession(), nil
+		return responseBuilder().speak(text + speechDone + speechReadyForToday).withShouldEndSession()
 	}
-	return responseBuilder().speak(text + speechDone + speechExplainNextExercise), nil
+	return responseBuilder().speak(text + speechDone + speechExplainNextExercise)
 
 }
 
@@ -279,7 +280,7 @@ func defineUser(event Request) (interface{}, error) {
 
 }
 
-func handleUnknown(ctx context.Context, event Request) (interface{}, error) {
+func handleUnknown() (interface{}, error) {
 	return responseBuilder().speak(speechUnknown + " " + speechExplainTraining).
 		reprompt(speechExitIfMute), nil
 }

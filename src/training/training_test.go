@@ -16,18 +16,19 @@ func TestShortProgress(t *testing.T) {
 
 func TestGetShortInfo(t *testing.T) {
 	s := GetBeginningState()
-	_, _, unit := s.getDayExesAndUnit()
-	r := unit.getShortInfo()
+	unit := s.getExesD()[s.Unit]
+	r := unit.getCardInfo()
 	assert.Contains(t, r, "Liegestütz")
 }
 
-func TestShortDayDesc(t *testing.T) {
+func TestCardDayDesc(t *testing.T) {
 	s := GetBeginningState()
-	r := s.CardDayDescription()
-	assert.Contains(t, r, "Stufenintervalle")
 	for count := 0; count < 176; count++ {
-		t.Log(s.ShortProgress())
-		t.Log(s.CardDayDescription())
+		r := s.CardDayDescription()
+		assert.Contains(t, r, "Trainingsmethode:")
+		t.Log(r)
+
+		// switch n-times if more units per day
 		currentDay := s.Day
 		for s.Day == currentDay {
 			s.switchToNextTraining()
@@ -165,20 +166,24 @@ func TestZirkelintervall(t *testing.T) {
 func TestCompleteTraining(t *testing.T) {
 
 	s := GetBeginningState()
-	t.Log("-------------------------------------------------")
 	for count := 0; count < 613; count++ {
-		t.Logf("%d State: %+v ", count, s)
+
 		if s.Day == 0 && s.Unit == 0 {
+			t.Log("-------------------------------------------------")
 			t.Log(fmt.Sprintf("Week: %d", s.Week+1))
 			t.Log("-------------------------------------------------")
 		}
 		if s.Unit == 0 {
+			t.Log("-------------------------------------------------")
 			t.Log(fmt.Sprintf("Day: %d", s.Day+1))
-			t.Log(s.ExplainTraining())
+			t.Log("SPEAK::" + s.ExplainTraining())
 			t.Log("-------------------------------------------------")
 		}
-		t.Log(s.ExplainExercise())
-		t.Log(s.InstructTraining())
+		t.Log("+++++++++++++++++++++++++++++++++++++++++++++++++")
+		t.Logf("%d State: %+v ", count, s)
+		t.Log("+++++++++++++++++++++++++++++++++++++++++++++++++")
+		t.Log("SPEAK::" + s.ExplainExercise())
+		t.Log("SPEAK::" + s.InstructTraining())
 		if s.WasLastUnit() {
 			t.Log("end of day")
 			t.Log("=================================================")

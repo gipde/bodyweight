@@ -5,6 +5,10 @@ import (
 	"fmt"
 )
 
+const (
+	DNL = "\n\n"
+)
+
 // GetBeginningState initial Trainig State
 func GetBeginningState() State {
 	return State{
@@ -18,7 +22,9 @@ func GetBeginningState() State {
 // ExplainTraining explains the Training
 func (s State) ExplainTraining() string {
 	week := trainings[s.Week]
-	day, exes, _ := s.getDayExesAndUnit()
+
+	day := s.getDay()
+	exes := s.getExes(day)
 
 	text := "Du absolvierst zur Zeit das "
 	switch s.Level {
@@ -30,24 +36,24 @@ func (s State) ExplainTraining() string {
 
 	text += fmt.Sprintf(" und bist in der %d. Trainingswoche beim %d. Übungstag angelangt. ", s.Week+1, s.Day+1)
 	text += fmt.Sprintf(`Das Training steht in dieser Woche unter dem Motto "%s". `, week.Description)
-	text += fmt.Sprintf("Das derzeitige Trainingsprogramm enthält insgesamt %d verschiedene Übungen und ist mit %s durchzuführen. ", len(exes), day.Method.name())
+	text += fmt.Sprintf("Das derzeitige Trainingsprogramm enthält insgesamt "+
+		"%d verschiedene Übungen und ist mit %s durchzuführen. ", len(exes), day.Method.name())
 
 	if day.Method == stufenIntervall {
 		text += "Die Intervalle dauern "
 		text += timeAsStr(getLevelTimeStufenIntervall(s.Level)) + ". "
 	}
 
-	text += "Folgende Übungen sind noch durchzuführen: "
-	for i := s.Unit; i < len(exes); i++ {
-		text += fmt.Sprintf("\n%s Übung: %s. %s", getOrdinal(i+1), exes[i].Exercise.Name, addNote(exes[i]))
-	}
 	return text
 }
 
 // ExplainExercise explains the next Exercise
 func (s State) ExplainExercise() string {
 
-	day, exes, unit := s.getDayExesAndUnit()
+	day := s.getDay()
+	exes := s.getExes(day)
+	unit := exes[s.Unit]
+
 	var text string
 	switch day.Method {
 	case stufenIntervall, hochIntensitaetsSatz:
@@ -57,15 +63,22 @@ func (s State) ExplainExercise() string {
 		text += fmt.Sprintf("Nähere Infos findest Du auf Seite %d im Buch.", unit.Exercise.Page)
 	case intervallSatz, zirkelIntervall:
 		text = fmt.Sprintf("Die nächsten Übungen sind mit %s zu absolvieren:\n", day.Method.name())
+		if day.Method == intervallSatz {
+			text += "Es sind 6 bis 12 Wiederholungen durchzuführen. "
+		}
 		for i, e := range exes {
-			text += fmt.Sprintf("%s Übung: %s. %s\n", getOrdinal(i+1), e.Exercise.Name, addNote(e))
+			text += fmt.Sprintf("%s Übung: %s. %sSeite %d im Buch.\n",
+				getOrdinal(i+1), e.Exercise.Name, addNote(e), e.Exercise.Page)
 		}
 	case superSatz:
-		text = "Die nächsten Übungen sind mit Supersätzen zu absolvieren:\n"
+		text = "Die nächsten Übungen sind mit Supersätzen zu absolvieren. " +
+			"Bei der ersten Übung sind 1 bis 5 Wiederholungen, bei der zweiten Übung 6 bis 12 Wiederholungen durchzuführen:\n"
 		for i := 0; i < len(exes)/2; i++ {
+			e1 := exes[i*2]
+			e2 := exes[i*2+1]
 			text += fmt.Sprintf("%ss Übungspaar:\n", getOrdinal(i+1))
-			text += fmt.Sprintf("%s. %s\n", exes[i*2].Exercise.Name, addNote(exes[i*2]))
-			text += fmt.Sprintf("%s. %s\n", exes[i*2+1].Exercise.Name, addNote(exes[i*2+1]))
+			text += fmt.Sprintf("%s. %sSeite %d im Buch.\n", e1.Exercise.Name, addNote(e1), e1.Exercise.Page)
+			text += fmt.Sprintf("%s. %sSeite %d im Buch.\n", e2.Exercise.Name, addNote(e2), e2.Exercise.Page)
 		}
 	}
 	return text
@@ -78,19 +91,22 @@ func (s State) ShortProgress() string {
 
 // CardDayDescription of Trainings a day for Card
 func (s State) CardDayDescription() string {
+	day := s.getDay()
+	exes := s.getExes(day)
 
-	day, exes, _ := s.getDayExesAndUnit()
 	switch day.Method {
 	case superSatz, intervallSatz, zirkelIntervall:
 		return s.CardUnitDescription()
 	}
 
-	text := fmt.Sprintf("Trainingsmethode: %s\n", day.Method.name())
+	text := s.cardHeader(false)
 	for i := range exes {
 		n := s
 		n.Unit = i
-		text += fmt.Sprintf("%d. %s", i+1, n.CardUnitDescription())
-		// text += fmt.Sprintf("%d. %s. %s\n", i+1, ex.Exercise.Name, addNote(ex))
+		text += fmt.Sprintf("%d. %s", i+1, n.cardUnitDescription(false))
+		if i+1 != len(exes) {
+			text += DNL
+		}
 	}
 	return text
 
@@ -98,28 +114,7 @@ func (s State) CardDayDescription() string {
 
 // CardUnitDescription describes the training in short for Card
 func (s State) CardUnitDescription() string {
-	day, exes, unit := s.getDayExesAndUnit()
-	text := fmt.Sprintf("Trainingsmethode: %s\n", day.Method.name())
-	switch day.Method {
-	case stufenIntervall, hochIntensitaetsSatz:
-		text += unit.getShortInfo()
-	case intervallSatz, zirkelIntervall:
-		for i, e := range exes {
-			text += fmt.Sprintf("%d. %s", i+1, e.getShortInfo())
-			if i+1 < len(exes) {
-				text += "\n\n"
-			}
-		}
-	case superSatz:
-		for i := 0; i < len(exes)/2; i++ {
-			text += fmt.Sprintf("%d.1 %s\n", i+1, exes[i*2].getShortInfo())
-			text += fmt.Sprintf("%d.2 %s", i+1, exes[i*2+1].getShortInfo())
-			if i+1 < len(exes)/2 {
-				text += "\n\n"
-			}
-		}
-	}
-	return text
+	return s.cardUnitDescription(true)
 }
 
 // WasLastUnit returns true, if
@@ -129,9 +124,7 @@ func (s State) WasLastUnit() bool {
 
 // InstructTraining return's the training instructions per unit
 func (s *State) InstructTraining() string {
-	day, _, _ := s.getDayExesAndUnit()
-
-	switch day.Method {
+	switch s.getDay().Method {
 	case stufenIntervall:
 		return s.stufenIntervallText()
 	case intervallSatz:
@@ -146,41 +139,48 @@ func (s *State) InstructTraining() string {
 	return "Fehler: ungültige Trainingsmethode"
 }
 
-func (s *State) getDayExesAndUnit() (trainingDay, []tExercise, tExercise) {
-	day := trainings[s.Week].TrainingDays[s.Day]
-	exes := day.Exercises[s.Level]
-	unit := exes[s.Unit]
-	return day, exes, unit
+func (s *State) getDay() trainingDay {
+	return trainings[s.Week].TrainingDays[s.Day]
+}
+
+func (s *State) getExesD() []tExercise {
+	return s.getDay().Exercises[s.Level]
+}
+
+func (s *State) getExes(d trainingDay) []tExercise {
+	return d.Exercises[s.Level]
 }
 
 func (s *State) stufenIntervallText() string {
 	text := "Stufenintervalle mit einer Dauer von "
 	sec := getLevelTimeStufenIntervall(s.Level)
 	text += timeAsStr(sec) + ". "
-	_, _, unit := s.getDayExesAndUnit()
+	unit := s.getExesD()[s.Unit]
 	text += "Wir starten mit: "
 	text += unit.Exercise.Name + ". "
 	text += addNote(unit)
 
 	s.switchToNextTraining()
 
-	return text + timeText(sec, 30, false, true, true, true, true)
+	return text + timeText(sec, 30, false, true, true, true)
 }
 
 func (s *State) intervallSatzText() string {
 
-	_, exes, _ := s.getDayExesAndUnit()
+	exes := s.getExesD()
 
-	text := fmt.Sprintf("Bei den Intervallsätzen sind heute insgesamt %d Übungen mit je 3 Sätzen zu je 3 Minuten auszuführen. ", len(exes))
-	text += "Pro Satz machst Du bis zu 12 Wiederholungen. "
+	text := fmt.Sprintf("Bei Intervallsätzen sind %d Übungen mit je 3 Sätzen zu je 3 Minuten auszuführen. ",
+		len(exes))
+	text += "Pro Satz machst Du 6 bis 12 Wiederholungen. Wechsle die Seite nach einem Satz, " +
+		"sofern nichts anderes angegen ist."
 
 	for i := 0; i < len(exes); i++ {
 		sUnit := exes[s.Unit].Exercise
 		for j := 0; j < 3; j++ {
-			text += fmt.Sprintf("\n%d. Satz: %s. ", (i*3)+j+1, sUnit.Name)
+			text += fmt.Sprintf("\n%d. Satz: %s. ", j+1, sUnit.Name)
 			text += addNote(exes[s.Unit])
 			text += countDown("Start. ")
-			text += timeText(3*60, 60, false, false, true, false, false)
+			text += timeText(3*60, 60, false, false, false, false)
 		}
 
 		s.switchToNextTraining()
@@ -189,22 +189,23 @@ func (s *State) intervallSatzText() string {
 }
 
 func (s *State) superSatzText() string {
-	text := "Heute sind insgesamt 6 Supersätze je 4 Minuten hintereinander auszuführen. Jeder Supersatz besteht aus 2 Übungen. \n"
+	text := "Heute sind insgesamt 6 Supersätze je 4 Minuten hintereinander auszuführen. "
+	text += "Jeder Supersatz besteht aus 2 Übungen. Wechsle die Seite nach jeder Wiederholung, " +
+		"sofern nichts anderes angegeben ist.\n"
 
-	_, exes, _ := s.getDayExesAndUnit()
+	exes := s.getExesD()
 	for i := 0; i < len(exes); i++ {
 
-		text += fmt.Sprintf("%d. Satz, ", i+1)
+		text += fmt.Sprintf("%d. Supersatz, %d. Satz, ", i/2+1, i%2+1)
 		for j := 0; j < 2; j++ {
 
 			exercise := exes[(i/2)*2+j]
-			text += "\n"
-			text += fmt.Sprintf(`<say-as interpret-as="ordinal">%d</say-as> Übung mit bis zu %d Wiederholungen: `, j+1, j*6+6)
+			text += fmt.Sprintf(`%s Übung mit %d bis %d Wiederholungen: `, getOrdinal(j+1), j*5+1, j*6+5+j)
 			text += fmt.Sprintf(`%s. `, exercise.Exercise.Name)
 			text += addNote(exercise)
 		}
 		s.switchToNextTraining()
-		text += timeText(3*60+40, 60, false, false, true, true, false)
+		text += timeText(3*60+40, 60, false, false, true, false)
 		text += "\n"
 	}
 	text += ""
@@ -213,7 +214,7 @@ func (s *State) superSatzText() string {
 
 func (s *State) hochIntensitaetsSatzText() string {
 
-	_, exes, _ := s.getDayExesAndUnit()
+	exes := s.getExesD()
 	ex := exes[s.Unit]
 
 	text := `Es sind 8 Hochintensitätssätze mit je 20 Sekunden Training gefolgt von 10 Sekunden Pause durchzuführen. 
@@ -235,19 +236,20 @@ func (s *State) hochIntensitaetsSatzText() string {
 }
 
 func (s *State) zirkelIntervallText() string {
-	text := "Heute steht ein Zirkeltraining an. Wechsel zwischen folgenden drei Übungen und versuche soviele Sätze wie möglich. "
+	text := "Heute steht ein Zirkeltraining an. Wechsel zwischen folgenden drei " +
+		"Übungen und versuche soviele Sätze wie möglich. "
 
-	_, exes, _ := s.getDayExesAndUnit()
+	exes := s.getExesD()
 	for i := 0; i < len(exes); i++ {
 		ex := exes[s.Unit]
 		exText := ex.Exercise.Name + ". "
 		exText += addNote(ex)
 
-		text += fmt.Sprintf("\n"+`<say-as interpret-as="ordinal">%d</say-as> Übung: %s`, i+1, exText)
+		text += fmt.Sprintf("\n"+`%s Übung: %s`, getOrdinal(i+1), exText)
 		s.switchToNextTraining()
 	}
 
-	text += "\n" + timeText(20*60, 5*60, true, true, true, true, true)
+	text += "\n" + timeText(20*60, 5*60, true, true, true, true)
 	return text
 }
 
@@ -335,7 +337,7 @@ func breakFor(ms int) string {
 	return res
 }
 
-func timeText(sec, interval int, begin, half, end, countin, countout bool) string {
+func timeText(sec, interval int, begin, half, countin, countout bool) string {
 	halfSec := sec / 2
 	secondsGone := 0
 
@@ -370,10 +372,7 @@ func timeText(sec, interval int, begin, half, end, countin, countout bool) strin
 	if countout {
 		ret += countDown("")
 	}
-	// Ende
-	if end {
-		ret += "Ende. "
-	}
+	ret += "Ende. "
 
 	return ret
 }
@@ -394,12 +393,9 @@ func getLevelTimeStufenIntervall(level trainingLevel) int {
 }
 
 func addNote(ex tExercise) string {
-	return addNoteS(ex, "")
-}
-
-func addNoteS(ex tExercise, suffix string) string {
-	if ex.Note.text() != "" {
-		return fmt.Sprintf("Anmerkung: %s. %s", ex.Note.text(), suffix)
+	n := ex.Note.text()
+	if n != "" {
+		return fmt.Sprintf("Anmerkung: %s. ", n)
 	}
 	return ""
 }
@@ -431,10 +427,69 @@ func getOrdinal(i int) string {
 	}
 }
 
-func (e tExercise) getShortInfo() string {
+func (e tExercise) getCardInfo() string {
 	ex := e.Exercise
 	text := fmt.Sprintf("%s\n", ex.Name)
-	text += addNoteS(e, "\n")
+
+	if n := e.Note.text(); n != "" {
+		text += n + "\n"
+	}
 	text += fmt.Sprintf("Seite %d", ex.Page)
 	return text
+}
+
+func (s State) cardUnitDescription(displayHeader bool) string {
+	day := s.getDay()
+	exes := s.getExes(day)
+	var text string
+
+	switch day.Method {
+	case stufenIntervall, hochIntensitaetsSatz:
+		if displayHeader {
+			text = s.cardHeader(true)
+		}
+		text += exes[s.Unit].getCardInfo()
+	case intervallSatz, zirkelIntervall:
+		if displayHeader {
+			text = s.cardHeader(false)
+		}
+		for i, e := range exes {
+			text += fmt.Sprintf("%d. %s", i+1, e.getCardInfo())
+			if i+1 < len(exes) {
+				text += DNL
+			}
+		}
+	case superSatz:
+		if displayHeader {
+			text = s.cardHeader(false)
+		}
+		for i := 0; i < len(exes)/2; i++ {
+			text += fmt.Sprintf("%d.1. %s\n", i+1, exes[i*2].getCardInfo())
+			text += fmt.Sprintf("%d.2. %s", i+1, exes[i*2+1].getCardInfo())
+			if i+1 < len(exes)/2 {
+				text += DNL
+			}
+		}
+	}
+	return text
+}
+
+func (s State) cardHeader(withUnit bool) string {
+	day := s.getDay()
+	var uTxt string
+	if withUnit {
+		uTxt = fmt.Sprintf(", %d. Übung", s.Unit+1)
+	}
+	var repeats string
+	switch day.Method {
+	case superSatz:
+		repeats = ". 1. Übung 1-5 Wdh., 2. Übung 6-12 Wdh."
+	case intervallSatz:
+		repeats = ". 6 bis 12 Wdh."
+	}
+	return fmt.Sprintf("%s%s\nTrainingsmethode: %s%s\n\n",
+		s.ShortProgress(),
+		uTxt,
+		day.Method.name(),
+		repeats)
 }

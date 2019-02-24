@@ -13,9 +13,9 @@ type State struct {
 }
 
 type exercise struct {
-	Name       string       `json:"name"`
-	Type       trainingType `json:"type"`
-	Page       int          `json:"page"`
+	Name string       `json:"name"`
+	Type trainingType `json:"type"`
+	Page int          `json:"page"`
 }
 
 type noteList []string
@@ -120,11 +120,12 @@ const (
 	oTiefsterPunkt  = "am tiefsten Punkt"
 	oHoechsterPunkt = "am höchsten Punkt"
 
-	bErhoeht           = "mit erhöhten Füßen"
-	bGebeugt           = "mit gebeugten Beinen"
-	bGestreckt         = "mit gestreckten Beinen"
-	bBisZuHaenden      = "Füße bis zu den Händen"
-	bNachHinten        = "Beine nach hinten anwinklen und Fußspitzen auf einen Stuhl absetzen um das Hochdrücken zu erleichtern"
+	bErhoeht      = "mit erhöhten Füßen"
+	bGebeugt      = "mit gebeugten Beinen"
+	bGestreckt    = "mit gestreckten Beinen"
+	bBisZuHaenden = "Füße bis zu den Händen"
+	bNachHinten   = "Beine nach hinten anwinklen und Fußspitzen auf einen Stuhl " +
+		"absetzen um das Hochdrücken zu erleichtern"
 	fuesseHinterHaende = "Füße sind hinter den Händen platziert, gehen Sie dafür einem Schritt zurürck"
 
 	kissen         = "auf einem Kissen"
@@ -1561,8 +1562,5 @@ func (t trainingLevel) name() string {
 }
 
 func (n noteList) text() string {
-	if n == nil {
-		return ""
-	}
 	return strings.Join(n, " ")
 }

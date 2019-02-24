@@ -33,7 +33,7 @@ func delegateRemote(req interface{}) (Response, error) {
 	}
 	iResp := new(messages.InvokeResponse)
 	iReq := messages.InvokeRequest{
-		Payload: []byte(payload),
+		Payload: payload,
 	}
 	err = client.Call("Function.Invoke", iReq, iResp)
 	if err != nil {

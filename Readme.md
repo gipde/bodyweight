@@ -28,7 +28,7 @@ proxy local from 0.0.0.0:1234 to localhost 1234
 running the function:
 - as server
 
-        _LAMBDA_SERVER_PORT=1234 go run .
+        DEBUG=true _LAMBDA_SERVER_PORT=1234 go run .
 
 
 - as client
@@ -36,6 +36,15 @@ running the function:
     this will connect to 0.0.0.0:1234 (where socat ist listen). the request will be forwarded to 127.0.0.1:1234
 
         TESTCLIENT=true go run .
+
+testing everything:
+
+    go clean -x -testcache
+    go test bodyweight/...
+
+linting
+
+    golangci-lint run
 
 ## Sprach Modell
 
