@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"strconv"
 	"time"
 
 	"bodyweight/database"
@@ -37,33 +38,34 @@ const (
 	speechReadyForToday = `Jetzt kannst Du Dich erholen. Bis zum nächsten mal. `
 
 	speechUnknown    = "Ich kann dich leider nicht verstehen. "
-	speechExitIfMute = "Wenn Du nichts mehr sagts, wird das Programm beendet. "
+	speechExitIfMute = "Wenn Du nichts mehr sagst, wird das Programm beendet. "
 	speechEnde       = "Auf Wiedersehen und bis bald. "
 	speechPersonal   = `%s, es ist schön, dass du wieder da bist. `
 
-	// speechStufenintervall = `Jede Übung in diesem Block wird 4,5 bis 7,5 Minuten ausgeführt.
-	// Du beginnst mit einer Wiederholung, machst eine Pause, machst zwei Wiederholungen und so weiter.
-	// Ab der Hälft der Zeit reduzierst Du die Sätze jeweils um eine Wiederholung. Wenn Du bereits
-	// vorher nicht mehr kannst, kannst Du auch früher schon reduzieren. Ist noch Zeit übrig,
-	// beginnst du mit einer neuen Stufe wieder mit zunächst 1 Wiederholung`
+	speechStufenintervall = `Jede Übung in diesem Block wird 4 einhalb bis 7 einhalb Minuten ausgeführt.
+	Du beginnst mit einer Wiederholung, machst eine Pause, machst zwei Wiederholungen und so weiter.
+	Ab der Hälft der Zeit reduzierst Du die Sätze jeweils um eine Wiederholung. Wenn Du bereits
+	vorher nicht mehr kannst, kannst Du auch früher schon reduzieren. Ist noch Zeit übrig,
+	beginnst du mit einer neuen Stufe wieder mit zunächst einer Wiederholung`
 
-	// speechIntervallsatz = `Beim Intervallsatz wird sind von jeder Übung 3 Sätze mit 6-12 Wiederholungen
-	// durchzuführen. Bei einem Satz solltest Du eigentlich bis zum Muskelversagen kommen. Für einen Satz hast Du
-	// genau 3 Minuten zeit. Falls Du früher ferwig wirst, kannst Du die Zeit als Pause nutzen. Die Sätze beginnen damit
-	// immer genau im Abstand von 3 Minuten. Wechsle bei einseitigen Übungen nach jedem Satz die Seite,es sei denn die
-	// Wiederholungen sind im Wechsel durchzuführen. Beginnst zunächst mit der schwächeren Seite`
+	speechIntervallsatz = `Beim Intervallsatz sind von jeder Übung 3 Sätze mit 6-12 Wiederholungen
+	durchzuführen. Bei einem Satz solltest Du eigentlich bis zum Muskelversagen kommen. Für einen Satz hast Du
+	genau 3 Minuten zeit. Falls Du früher fertig wirst, kannst Du die Zeit als Pause nutzen. Die Sätze beginnen damit
+	immer genau im Abstand von 3 Minuten. Wechsle bei einseitigen Übungen nach jedem Satz die Seite,es sei denn die
+	Wiederholungen sind im Wechsel durchzuführen. Du beginnst zunächst mit der schwächeren Seite`
 
-	// speechSupersatz = `Ein Übungspaar bildet einen Supersatz, der jeweils 4 Minuten dauert. Bei der ersten Übung
-	// sind jeweils 1 - 5 Wiederholungen, bei der zweiten Übung sind 6-12 Wiederholungen zu absolvieren. Pro Paar sind 2
-	// Supersätze direkt nacheinander durchzuführen. Bei einseitigen Übungen wechseln Sie nach jeder Wiederholung die Seite.`
+	speechSupersatz = `Ein Supersatz besteht aus einem Übungspaar und dauert 4 Minuten. Bei der ersten Übung
+	sind jeweils 1 - 5 Wiederholungen, bei der zweiten Übung sind 6-12 Wiederholungen zu absolvieren. Pro Paar sind 2
+	Supersätze direkt nacheinander durchzuführen. Bei einseitigen Übungen wechselst Du nach jeder Wiederholung die Seite.`
 
-	// speechHochintensitaetssatz = `Beim Hochintensitätssatz sind insgesamt 8 Sätze mit jeweils 20 Sekunden Training
-	// gefolgt von je 10 Sekunden Pause durchzuführen. Insgesamt dauert jede Übung 4 Minuten lang.`
+	speechHochintensitaetssatz = `Beim Hochintensitätssatz sind insgesamt 8 Sätze mit jeweils 20 Sekunden Training
+	gefolgt von je 10 Sekunden Pause durchzuführen. Insgesamt dauert jede Übung 4 Minuten lang.`
 
-	// speechZirkelintervall = `Das Zirkelintervall besteht aus insgesamt 3 verschiedenen Übungen, von denen jeweils
-	// eine angegebene Anzahl von Wiederholungen durchzuführen ist. Ohne Pause führen sie die Übungen im Wechsel durch.
-	// Versuchen Sie das Zirkelintervall insgesamt 20 Minuten durchzuführen.`
+	speechZirkelintervall = `Das Zirkelintervall besteht aus insgesamt 3 verschiedenen Übungen, von denen jeweils
+	eine angegebene Anzahl von Wiederholungen durchzuführen ist. Ohne Pause führen sie die Übungen im Wechsel durch.
+	Versuchen Sie das Zirkelintervall insgesamt 20 Minuten durchzuführen.`
 
+	// TODO: hört sich noch nicht gut an
 	speechHelp = `Du brauchst Hilfe?
 	
 	In diesem Skill kannst Du mit:
@@ -71,7 +73,7 @@ const (
 	- erkläre die nächste Übung - dir die nächste Übung erklären lassen.
 	- ändere den Trainingsfortschritt - den Trainingsfortschritt ändern.
 	- bereit - die nächste Übung starten oder mit
-	- erkläre Trainingsmehtoden - die jeweiligen Trainingsmethoden erklären.`
+	- erkläre Trainingsmethode  - die jeweiligen Trainingsmethoden erklären.`
 )
 
 var db database.DB
@@ -154,7 +156,7 @@ func HandleRequest(ctx context.Context, event Request) (interface{}, error) {
 		case alexaDefineUserIntent:
 			return defineUser(event)
 		case alexaExplainTrainingMethodIntent:
-			return handleExplainTrainingMethod(), nil
+			return handleExplainTrainingMethod(event), nil
 
 		case alexaStopIntent:
 			return responseBuilder().speak(speechEnde).withShouldEndSession(), nil
@@ -191,8 +193,36 @@ func HandleRequest(ctx context.Context, event Request) (interface{}, error) {
 	return handleUnknown()
 }
 
-func handleExplainTrainingMethod() *Response {
-	return responseBuilder().speak("nicht implementiert").reprompt(speechExitIfMute)
+func handleExplainTrainingMethod(event Request) *Response {
+	method := event.RequestBody.Intent.Slots["Method"]
+	resolutions := method.Resolutions.ResolutionsPerAuthority
+
+	id := -1
+	if resolutions != nil {
+		r1 := resolutions[0]
+		if r1.Status.Code == "ER_SUCCESS_MATCH" {
+			id, _ = strconv.Atoi(r1.Values[0]["value"].ID)
+		}
+	}
+
+	var text string
+	if id == -1 {
+		text = "diese Trainingsmethode kenne ich nicht."
+	}
+
+	switch training.TrainingMethod(id) {
+	case training.StufenIntervall:
+		text = speechStufenintervall
+	case training.IntervallSatz:
+		text = speechIntervallsatz
+	case training.SuperSatz:
+		text = speechSupersatz
+	case training.HochIntensitaetsSatz:
+		text = speechHochintensitaetssatz
+	case training.ZirkelIntervall:
+		text = speechZirkelintervall
+	}
+	return responseBuilder().speak(text).reprompt(speechExitIfMute)
 }
 
 func handleStartTraining(user *database.Entry) *Response {

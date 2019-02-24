@@ -26,7 +26,7 @@ type tExercise struct {
 }
 
 type trainingDay struct {
-	Method        trainingMethod `json:"method"`
+	Method        TrainingMethod `json:"method"`
 	Exercises     [][]tExercise  `json:"exercies"`
 	MinutesNeeded int            `json:"minutesNeeded"`
 }
@@ -70,17 +70,17 @@ var trainingLevels = []string{
 	"Chief Class",
 }
 
-type trainingMethod int
+type TrainingMethod int
 
 const (
-	stufenIntervall trainingMethod = iota
-	intervallSatz
-	superSatz
-	zirkelIntervall
-	hochIntensitaetsSatz
+	StufenIntervall TrainingMethod = iota
+	IntervallSatz
+	SuperSatz
+	ZirkelIntervall
+	HochIntensitaetsSatz
 )
 
-var trainingMethods = []string{
+var TrainingMethods = []string{
 	"Stufenintervalle",
 	"Intervallsätze",
 	"Supersatz",
@@ -242,7 +242,7 @@ var trainingDef = [...]trainingWeek{
 		Description: muscle,
 		TrainingDays: []trainingDay{
 			{
-				Method: stufenIntervall,
+				Method: StufenIntervall,
 				Exercises: [][]tExercise{
 					{
 						{Exercise: liegestuetz,
@@ -277,7 +277,7 @@ var trainingDef = [...]trainingWeek{
 				},
 			},
 			{
-				Method: stufenIntervall,
+				Method: StufenIntervall,
 				Exercises: [][]tExercise{
 					{
 						{Exercise: ausfallschritt,
@@ -318,7 +318,7 @@ var trainingDef = [...]trainingWeek{
 				},
 			},
 			{
-				Method: stufenIntervall,
+				Method: StufenIntervall,
 				Exercises: [][]tExercise{
 					{
 						{Exercise: liegestuetz,
@@ -353,7 +353,7 @@ var trainingDef = [...]trainingWeek{
 				},
 			},
 			{
-				Method: stufenIntervall,
+				Method: StufenIntervall,
 				Exercises: [][]tExercise{
 					{
 						{Exercise: seitlicherAusfallschritt},
@@ -396,7 +396,7 @@ var trainingDef = [...]trainingWeek{
 		Description: power,
 		TrainingDays: []trainingDay{
 			{
-				Method: intervallSatz,
+				Method: IntervallSatz,
 				Exercises: [][]tExercise{
 					{
 						{Exercise: liegestuetz},
@@ -433,7 +433,7 @@ var trainingDef = [...]trainingWeek{
 				},
 			},
 			{
-				Method: intervallSatz,
+				Method: IntervallSatz,
 				Exercises: [][]tExercise{
 					{
 						{Exercise: ausfallschritt,
@@ -475,7 +475,7 @@ var trainingDef = [...]trainingWeek{
 				},
 			},
 			{
-				Method: intervallSatz,
+				Method: IntervallSatz,
 				Exercises: [][]tExercise{
 					{
 						{Exercise: tuerziehen},
@@ -513,7 +513,7 @@ var trainingDef = [...]trainingWeek{
 				},
 			},
 			{
-				Method: intervallSatz,
+				Method: IntervallSatz,
 				Exercises: [][]tExercise{
 					{
 						{Exercise: beinheber},
@@ -557,7 +557,7 @@ var trainingDef = [...]trainingWeek{
 		Description: powerblock,
 		TrainingDays: []trainingDay{
 			{
-				Method: superSatz,
+				Method: SuperSatz,
 				Exercises: [][]tExercise{
 					{
 						{Exercise: liegestuetz,
@@ -602,7 +602,7 @@ var trainingDef = [...]trainingWeek{
 				},
 			},
 			{
-				Method: superSatz,
+				Method: SuperSatz,
 				Exercises: [][]tExercise{
 					{
 						{Exercise: ausfallschritt,
@@ -651,7 +651,7 @@ var trainingDef = [...]trainingWeek{
 				},
 			},
 			{
-				Method: superSatz,
+				Method: SuperSatz,
 				Exercises: [][]tExercise{
 					{
 						{Exercise: klimmzug,
@@ -704,7 +704,7 @@ var trainingDef = [...]trainingWeek{
 				},
 			},
 			{
-				Method: superSatz,
+				Method: SuperSatz,
 				Exercises: [][]tExercise{
 					{
 						{Exercise: vUp},
@@ -755,7 +755,7 @@ var trainingDef = [...]trainingWeek{
 		Description: changeblock,
 		TrainingDays: []trainingDay{
 			{
-				Method: stufenIntervall,
+				Method: StufenIntervall,
 				Exercises: [][]tExercise{
 					{
 						{Exercise: militaryPress,
@@ -789,7 +789,7 @@ var trainingDef = [...]trainingWeek{
 				},
 			},
 			{
-				Method: superSatz,
+				Method: SuperSatz,
 				Exercises: [][]tExercise{
 					{
 						{Exercise: ausfallschritt,
@@ -836,7 +836,7 @@ var trainingDef = [...]trainingWeek{
 				},
 			},
 			{
-				Method: intervallSatz,
+				Method: IntervallSatz,
 				Exercises: [][]tExercise{
 					{
 						{Exercise: tuerziehen},
@@ -873,7 +873,7 @@ var trainingDef = [...]trainingWeek{
 				},
 			},
 			{
-				Method: hochIntensitaetsSatz,
+				Method: HochIntensitaetsSatz,
 				Exercises: [][]tExercise{
 					{
 						{Exercise: russischerTwist},
@@ -903,7 +903,7 @@ var trainingDef = [...]trainingWeek{
 				},
 			},
 			{
-				Method: zirkelIntervall,
+				Method: ZirkelIntervall,
 				Exercises: [][]tExercise{
 					{
 						{Exercise: ausfallschritt,
@@ -945,7 +945,7 @@ var trainingDef = [...]trainingWeek{
 		Description: changeblock,
 		TrainingDays: []trainingDay{
 			{
-				Method: hochIntensitaetsSatz,
+				Method: HochIntensitaetsSatz,
 				Exercises: [][]tExercise{
 					{
 						{Exercise: liegestuetz,
@@ -975,7 +975,7 @@ var trainingDef = [...]trainingWeek{
 				},
 			},
 			{
-				Method: stufenIntervall,
+				Method: StufenIntervall,
 				Exercises: [][]tExercise{
 					{
 						{Exercise: ausfallschritt,
@@ -1012,7 +1012,7 @@ var trainingDef = [...]trainingWeek{
 				},
 			},
 			{
-				Method: superSatz,
+				Method: SuperSatz,
 				Exercises: [][]tExercise{
 					{
 						{Exercise: klimmzug,
@@ -1066,7 +1066,7 @@ var trainingDef = [...]trainingWeek{
 				},
 			},
 			{
-				Method: intervallSatz,
+				Method: IntervallSatz,
 				Exercises: [][]tExercise{
 					{
 						{Exercise: beinheber},
@@ -1106,7 +1106,7 @@ var trainingDef = [...]trainingWeek{
 				},
 			},
 			{
-				Method: zirkelIntervall,
+				Method: ZirkelIntervall,
 				Exercises: [][]tExercise{
 					{
 						{Exercise: ausfallschritt,
@@ -1148,7 +1148,7 @@ var trainingDef = [...]trainingWeek{
 		Description: changeblock,
 		TrainingDays: []trainingDay{
 			{
-				Method: intervallSatz,
+				Method: IntervallSatz,
 				Exercises: [][]tExercise{
 					{
 						{Exercise: liegestuetz},
@@ -1184,7 +1184,7 @@ var trainingDef = [...]trainingWeek{
 				},
 			},
 			{
-				Method: hochIntensitaetsSatz,
+				Method: HochIntensitaetsSatz,
 				Exercises: [][]tExercise{
 					{
 						{Exercise: aufstehenAusDemEinbeinigenKniestand,
@@ -1215,7 +1215,7 @@ var trainingDef = [...]trainingWeek{
 				},
 			},
 			{
-				Method: stufenIntervall,
+				Method: StufenIntervall,
 				Exercises: [][]tExercise{
 					{
 						{Exercise: umgekehrtesBankdruecken},
@@ -1252,7 +1252,7 @@ var trainingDef = [...]trainingWeek{
 				},
 			},
 			{
-				Method: superSatz,
+				Method: SuperSatz,
 				Exercises: [][]tExercise{
 					{
 						{Exercise: vUp},
@@ -1299,7 +1299,7 @@ var trainingDef = [...]trainingWeek{
 				},
 			},
 			{
-				Method: zirkelIntervall,
+				Method: ZirkelIntervall,
 				Exercises: [][]tExercise{
 					{
 						{Exercise: ausfallschritt,
@@ -1341,7 +1341,7 @@ var trainingDef = [...]trainingWeek{
 		Description: changeblock,
 		TrainingDays: []trainingDay{
 			{
-				Method: superSatz,
+				Method: SuperSatz,
 				Exercises: [][]tExercise{
 					{
 						{Exercise: liegestuetz,
@@ -1386,7 +1386,7 @@ var trainingDef = [...]trainingWeek{
 				},
 			},
 			{
-				Method: intervallSatz,
+				Method: IntervallSatz,
 				Exercises: [][]tExercise{
 					{
 						{Exercise: ausfallschritt,
@@ -1428,7 +1428,7 @@ var trainingDef = [...]trainingWeek{
 				},
 			},
 			{
-				Method: hochIntensitaetsSatz,
+				Method: HochIntensitaetsSatz,
 				Exercises: [][]tExercise{
 					{
 						{Exercise: tuerziehen,
@@ -1458,7 +1458,7 @@ var trainingDef = [...]trainingWeek{
 				},
 			},
 			{
-				Method: stufenIntervall,
+				Method: StufenIntervall,
 				Exercises: [][]tExercise{
 					{
 						{Exercise: crunchItUp},
@@ -1498,7 +1498,7 @@ var trainingDef = [...]trainingWeek{
 				},
 			},
 			{
-				Method: zirkelIntervall,
+				Method: ZirkelIntervall,
 				Exercises: [][]tExercise{
 					{
 						{Exercise: ausfallschritt,
@@ -1549,8 +1549,8 @@ func init() {
 	}
 }
 
-func (t trainingMethod) name() string {
-	return trainingMethods[t]
+func (t TrainingMethod) name() string {
+	return TrainingMethods[t]
 }
 
 func (t trainingType) name() string {

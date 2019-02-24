@@ -39,7 +39,7 @@ func (s State) ExplainTraining() string {
 	text += fmt.Sprintf("Das derzeitige Trainingsprogramm enthält insgesamt "+
 		"%d verschiedene Übungen und ist mit %s durchzuführen. ", len(exes), day.Method.name())
 
-	if day.Method == stufenIntervall {
+	if day.Method == StufenIntervall {
 		text += "Die Intervalle dauern "
 		text += timeAsStr(getLevelTimeStufenIntervall(s.Level)) + ". "
 	}
@@ -56,21 +56,21 @@ func (s State) ExplainExercise() string {
 
 	var text string
 	switch day.Method {
-	case stufenIntervall, hochIntensitaetsSatz:
+	case StufenIntervall, HochIntensitaetsSatz:
 		text = fmt.Sprintf("Als nächste %s steht mit %s an: ", unit.Exercise.Type.name(), day.Method.name())
 		text += fmt.Sprintf("%s. ", unit.Exercise.Name)
 		text += addNote(unit)
 		text += fmt.Sprintf("Nähere Infos findest Du auf Seite %d im Buch.", unit.Exercise.Page)
-	case intervallSatz, zirkelIntervall:
+	case IntervallSatz, ZirkelIntervall:
 		text = fmt.Sprintf("Die nächsten Übungen sind mit %s zu absolvieren:\n", day.Method.name())
-		if day.Method == intervallSatz {
+		if day.Method == IntervallSatz {
 			text += "Es sind 6 bis 12 Wiederholungen durchzuführen. "
 		}
 		for i, e := range exes {
 			text += fmt.Sprintf("%s Übung: %s. %sSeite %d im Buch.\n",
 				getOrdinal(i+1), e.Exercise.Name, addNote(e), e.Exercise.Page)
 		}
-	case superSatz:
+	case SuperSatz:
 		text = "Die nächsten Übungen sind mit Supersätzen zu absolvieren. " +
 			"Bei der ersten Übung sind 1 bis 5 Wiederholungen, bei der zweiten Übung 6 bis 12 Wiederholungen durchzuführen:\n"
 		for i := 0; i < len(exes)/2; i++ {
@@ -95,7 +95,7 @@ func (s State) CardDayDescription() string {
 	exes := s.getExes(day)
 
 	switch day.Method {
-	case superSatz, intervallSatz, zirkelIntervall:
+	case SuperSatz, IntervallSatz, ZirkelIntervall:
 		return s.CardUnitDescription()
 	}
 
@@ -125,16 +125,16 @@ func (s State) WasLastUnit() bool {
 // InstructTraining return's the training instructions per unit
 func (s *State) InstructTraining() string {
 	switch s.getDay().Method {
-	case stufenIntervall:
-		return s.stufenIntervallText()
-	case intervallSatz:
-		return s.intervallSatzText()
-	case superSatz:
+	case StufenIntervall:
+		return s.StufenIntervallText()
+	case IntervallSatz:
+		return s.IntervallSatzText()
+	case SuperSatz:
 		return s.superSatzText()
-	case hochIntensitaetsSatz:
-		return s.hochIntensitaetsSatzText()
-	case zirkelIntervall:
-		return s.zirkelIntervallText()
+	case HochIntensitaetsSatz:
+		return s.HochIntensitaetsSatzText()
+	case ZirkelIntervall:
+		return s.ZirkelIntervallText()
 	}
 	return "Fehler: ungültige Trainingsmethode"
 }
@@ -151,7 +151,7 @@ func (s *State) getExes(d trainingDay) []tExercise {
 	return d.Exercises[s.Level]
 }
 
-func (s *State) stufenIntervallText() string {
+func (s *State) StufenIntervallText() string {
 	text := "Stufenintervalle mit einer Dauer von "
 	sec := getLevelTimeStufenIntervall(s.Level)
 	text += timeAsStr(sec) + ". "
@@ -165,7 +165,7 @@ func (s *State) stufenIntervallText() string {
 	return text + timeText(sec, 30, false, true, true, true)
 }
 
-func (s *State) intervallSatzText() string {
+func (s *State) IntervallSatzText() string {
 
 	exes := s.getExesD()
 
@@ -212,7 +212,7 @@ func (s *State) superSatzText() string {
 	return text
 }
 
-func (s *State) hochIntensitaetsSatzText() string {
+func (s *State) HochIntensitaetsSatzText() string {
 
 	exes := s.getExesD()
 	ex := exes[s.Unit]
@@ -235,7 +235,7 @@ func (s *State) hochIntensitaetsSatzText() string {
 	return text
 }
 
-func (s *State) zirkelIntervallText() string {
+func (s *State) ZirkelIntervallText() string {
 	text := "Heute steht ein Zirkeltraining an. Wechsel zwischen folgenden drei " +
 		"Übungen und versuche soviele Sätze wie möglich. "
 
@@ -410,18 +410,6 @@ func getOrdinal(i int) string {
 		return "dritte"
 	case 4:
 		return "vierte"
-	case 5:
-		return "fünfte"
-	case 6:
-		return "sechste"
-	case 7:
-		return "siebte"
-	case 8:
-		return "achte"
-	case 9:
-		return "neunte"
-	case 10:
-		return "zehnte"
 	default:
 		return "Fehler"
 	}
@@ -444,12 +432,12 @@ func (s State) cardUnitDescription(displayHeader bool) string {
 	var text string
 
 	switch day.Method {
-	case stufenIntervall, hochIntensitaetsSatz:
+	case StufenIntervall, HochIntensitaetsSatz:
 		if displayHeader {
 			text = s.cardHeader(true)
 		}
 		text += exes[s.Unit].getCardInfo()
-	case intervallSatz, zirkelIntervall:
+	case IntervallSatz, ZirkelIntervall:
 		if displayHeader {
 			text = s.cardHeader(false)
 		}
@@ -459,7 +447,7 @@ func (s State) cardUnitDescription(displayHeader bool) string {
 				text += DNL
 			}
 		}
-	case superSatz:
+	case SuperSatz:
 		if displayHeader {
 			text = s.cardHeader(false)
 		}
@@ -482,9 +470,9 @@ func (s State) cardHeader(withUnit bool) string {
 	}
 	var repeats string
 	switch day.Method {
-	case superSatz:
+	case SuperSatz:
 		repeats = ". 1. Übung 1-5 Wdh., 2. Übung 6-12 Wdh."
-	case intervallSatz:
+	case IntervallSatz:
 		repeats = ". 6 bis 12 Wdh."
 	}
 	return fmt.Sprintf("%s%s\nTrainingsmethode: %s%s\n\n",
