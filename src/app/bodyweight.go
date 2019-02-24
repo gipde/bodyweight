@@ -177,11 +177,11 @@ func HandleRequest(ctx context.Context, event Request) (interface{}, error) {
 		switch event.RequestBody.Intent.Name {
 		case alexaExplainTrainingIntent:
 			return responseBuilder().speak(user.TrainingState.ExplainTraining()+speechExplainThisExercise).
-				withSimpleCard(user.TrainingState.ShortProgress(), user.TrainingState.DayShortDescription()).
+				withSimpleCard(user.TrainingState.ShortProgress(), user.TrainingState.CardDayDescription()).
 				reprompt(speechExplainThisExercise + speechExitIfMute), nil
 		case alexaExplainExerciseIntent:
 			return responseBuilder().speak(user.TrainingState.ExplainExercise()+speechStartThisExercise).
-				withSimpleCard(user.TrainingState.ShortProgress(), user.TrainingState.UnitShortDescription()).
+				withSimpleCard(user.TrainingState.ShortProgress(), user.TrainingState.CardUnitDescription()).
 				reprompt(speechStartThisExercise + speechExitIfMute), nil
 		case alexaStartTrainingIntent:
 			return handleStartTraining(user, event)

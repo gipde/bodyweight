@@ -8,27 +8,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestExplainTraining(t *testing.T) {
-	s := GetBeginningState()
-	r := s.ExplainTraining()
-	assert.Contains(t, r, "Basisprogramm")
-	assert.Contains(t, r, "1. Trainingswoche")
-	assert.Contains(t, r, "1. Übungstag")
-	s.Level = firstClass
-	r = s.ExplainTraining()
-	assert.Contains(t, r, "First Class")
-}
-
 func TestShortProgress(t *testing.T) {
 	s := GetBeginningState()
 	r := s.ShortProgress()
 	assert.Exactly(t, "1. Woche, 1. Tag", r)
-}
-
-func TestShortDayDesc(t *testing.T) {
-	s := GetBeginningState()
-	r := s.DayShortDescription()
-	assert.Contains(t, r, "Stufenintervalle")
 }
 
 func TestGetShortInfo(t *testing.T) {
@@ -38,16 +21,41 @@ func TestGetShortInfo(t *testing.T) {
 	assert.Contains(t, r, "Liegestütz")
 }
 
+func TestShortDayDesc(t *testing.T) {
+	s := GetBeginningState()
+	r := s.CardDayDescription()
+	assert.Contains(t, r, "Stufenintervalle")
+	for count := 0; count < 176; count++ {
+		t.Log(s.ShortProgress())
+		t.Log(s.CardDayDescription())
+		currentDay := s.Day
+		for s.Day == currentDay {
+			s.switchToNextTraining()
+		}
+	}
+}
+
 func TestUnitShortDesc(t *testing.T) {
 	s := GetBeginningState()
-	r := s.UnitShortDescription()
+	r := s.CardUnitDescription()
 	assert.Contains(t, r, "Stufenintervalle")
 	s.Week = 2
-	r = s.UnitShortDescription()
+	r = s.CardUnitDescription()
 	assert.Contains(t, r, "Intervallsätze")
 	s.Week = 4
-	r = s.UnitShortDescription()
+	r = s.CardUnitDescription()
 	assert.Contains(t, r, "Supersatz")
+}
+
+func TestExplainTraining(t *testing.T) {
+	s := GetBeginningState()
+	r := s.ExplainTraining()
+	assert.Contains(t, r, "Basisprogramm")
+	assert.Contains(t, r, "1. Trainingswoche")
+	assert.Contains(t, r, "1. Übungstag")
+	s.Level = firstClass
+	r = s.ExplainTraining()
+	assert.Contains(t, r, "First Class")
 }
 
 func TestExplainExercise(t *testing.T) {
@@ -182,7 +190,7 @@ func Test_exercise_getUnitInfo(t *testing.T) {
 	s := GetBeginningState()
 	for i := 0; i < 100; i++ {
 		t.Log(s)
-		t.Log(s.UnitShortDescription())
+		t.Log(s.CardUnitDescription())
 		s.InstructTraining()
 	}
 }
@@ -190,7 +198,7 @@ func Test_exercise_getUnitInfo(t *testing.T) {
 func Test_exercise_getShortDayDesc(t *testing.T) {
 	s := GetBeginningState()
 	for i := 0; i < 100; i++ {
-		t.Log(s.DayShortDescription())
+		t.Log(s.CardDayDescription())
 		s.InstructTraining()
 	}
 }
