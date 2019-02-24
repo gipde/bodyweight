@@ -135,7 +135,7 @@ func HandleRequest(ctx context.Context, event Request) (interface{}, error) {
 		// Welcome Back
 		return responseBuilder().
 			speak(speechWelcome+fmt.Sprintf(speechPersonal, user.UserName)+speechExplainTraining).
-			withSimpleCard(user.TrainingState.ShortProgress(), user.TrainingState.DayShortDescription()).
+			withSimpleCard(user.TrainingState.ShortProgress(), user.TrainingState.CardDayDescription()).
 			reprompt(speechExplainTraining + speechExitIfMute), nil
 
 	case alexaSessionEndRequest:
