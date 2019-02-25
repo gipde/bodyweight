@@ -39,3 +39,5 @@ deploy:
 #    --event-source-token amzn1.ask.skill.xxxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 
 # Deployment of Skill possible !!
+
+# TODO: Setup DynamoDB

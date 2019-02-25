@@ -1,0 +1,324 @@
+{
+    "interactionModel": {
+        "languageModel": {
+            "invocationName": "bodyweight training",
+            "intents": [
+                {
+                    "name": "AMAZON.FallbackIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.CancelIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.HelpIntent",
+                    "samples": [
+                        "was kann ich alles machen",
+                        "ich brauche hilfe",
+                        "kannst Du mir helfen"
+                    ]
+                },
+                {
+                    "name": "AMAZON.StopIntent",
+                    "samples": [
+                        "ich mag nicht mehr",
+                        "Ende",
+                        "stoppe das Training",
+                        "beende das Training"
+                    ]
+                },
+                {
+                    "name": "AMAZON.NavigateHomeIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.PauseIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.ResumeIntent",
+                    "samples": []
+                },
+                {
+                    "name": "DefineUser",
+                    "slots": [
+                        {
+                            "name": "user",
+                            "type": "AMAZON.Actor"
+                        }
+                    ],
+                    "samples": [
+                        "mein name ist {user}",
+                        "ich bin {user}"
+                    ]
+                },
+                {
+                    "name": "ExplainTraining",
+                    "slots": [],
+                    "samples": [
+                        "erkläre das training",
+                        "erkläre das heutige training"
+                    ]
+                },
+                {
+                    "name": "ExplainExercise",
+                    "slots": [],
+                    "samples": [
+                        "erkläre die nächste übung"
+                    ]
+                },
+                {
+                    "name": "StartTraining",
+                    "slots": [],
+                    "samples": [
+                        "bereit",
+                        "du kannst loslegen"
+                    ]
+                },
+                {
+                    "name": "ExplainTrainingMethod",
+                    "slots": [
+                        {
+                            "name": "Method",
+                            "type": "TrainingMethod"
+                        }
+                    ],
+                    "samples": [
+                        "erkläre {Method}"
+                    ]
+                }
+            ],
+            "types": [
+                {
+                    "name": "TrainingMethod",
+                    "values": [
+                        {
+                            "id": "2",
+                            "name": {
+                                "value": "Supersatz",
+                                "synonyms": [
+                                    "Supersätze",
+                                    "die Supersätze",
+                                    "den Supersatz"
+                                ]
+                            }
+                        },
+                        {
+                            "id": "3",
+                            "name": {
+                                "value": "Zirkelintervall",
+                                "synonyms": [
+                                    "Zirkelintervalle",
+                                    "das Zirkelintervall"
+                                ]
+                            }
+                        },
+                        {
+                            "id": "1",
+                            "name": {
+                                "value": "Intervallsatz",
+                                "synonyms": [
+                                    "die Intervallsätze",
+                                    "Intervallsätze"
+                                ]
+                            }
+                        },
+                        {
+                            "id": "4",
+                            "name": {
+                                "value": "Hochintenistätssatz",
+                                "synonyms": [
+                                    "Hochintensitätssätze",
+                                    "die Hochintensitätssätze"
+                                ]
+                            }
+                        },
+                        {
+                            "id": "0",
+                            "name": {
+                                "value": "Stufenintervall",
+                                "synonyms": [
+                                    "die Stufenintervalle",
+                                    "Stufenintervalle"
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        "dialog": {
+            "intents": [
+                {
+                    "name": "ExplainTraining",
+                    "confirmationRequired": false,
+                    "prompts": {},
+                    "slots": []
+                },
+                {
+                    "name": "ExplainTrainingMethod",
+                    "confirmationRequired": false,
+                    "prompts": {},
+                    "slots": [
+                        {
+                            "name": "Method",
+                            "type": "TrainingMethod",
+                            "confirmationRequired": false,
+                            "elicitationRequired": false,
+                            "prompts": {},
+                            "validations": [
+                                {
+                                    "type": "hasEntityResolutionMatch",
+                                    "prompt": "Slot.Validation.252049144176.1223957401527.391885818812"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "delegationStrategy": "SKILL_RESPONSE"
+        },
+        "prompts": [
+            {
+                "id": "Confirm.Intent.468727599012",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "willst Du wirklich starten?"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.468727599012.546309647003",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Sag mir deinen Namen"
+                    },
+                    {
+                        "type": "PlainText",
+                        "value": "Wie ist dein Name"
+                    }
+                ]
+            },
+            {
+                "id": "Confirm.Slot.468727599012.546309647003",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "{user} , bist du dir sicher"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.468727599012.277708019188",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Wie ist dein Vorname"
+                    }
+                ]
+            },
+            {
+                "id": "Confirm.Slot.468727599012.277708019188",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "bist du dir sicher, dass du {vorname} heisst?"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.273686596652.516525689187",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "welche Übung möchtest du starten. Du musst eine Ordinalzahl wie zum Beispiel die erste übung angeben?"
+                    }
+                ]
+            },
+            {
+                "id": "Slot.Validation.474375799541.1254904145891.81506831680",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "welche Übung möchtest du starten?"
+                    }
+                ]
+            },
+            {
+                "id": "Confirm.Slot.1356927778640.1414626971193",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "du möchtest die {ex_number} Übung starten?"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.1356927778640.1414626971193",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "welche Übung möchtest du starten. Du musst eine Ordinalzahl wie zum Beispiel die erste Übung angeben?"
+                    }
+                ]
+            },
+            {
+                "id": "Slot.Validation.1356927778640.1414626971193.596969998439",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Das war leider keine gültige Antwort. Welche Übung möchtest du starten. Gib bitte eine Ordinalzahl wie z.B. die erste Übung an?"
+                    }
+                ]
+            },
+            {
+                "id": "Confirm.Slot.533246601100.220820104567",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Du möchtest als {user} starten?"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.1190590288116.876986938594",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Ich kenne dich leider noch nicht. Wie heisst Du?"
+                    }
+                ]
+            },
+            {
+                "id": "Confirm.Slot.1190590288116.876986938594",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Dein name ist {user} . Habe ich das richtig verstanden?"
+                    }
+                ]
+            },
+            {
+                "id": "Slot.Validation.252049144176.1223957401527.391885818812",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "das habe ich leider nicht verstanden. Bitte nenne eine gültige Trainingsmethode."
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.1266690346796.12301706556",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Welche Methode meinst Du?"
+                    }
+                ]
+            }
+        ]
+    }
+}

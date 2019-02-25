@@ -16,6 +16,7 @@ func (r *Response) withShouldEndSession() *Response {
 	return r
 }
 
+// audio is playing in background
 func (r *Response) addAudioPlayerPlayDirective(url string) *Response {
 	r.ResponseBody.Directives = []Directive{
 		{

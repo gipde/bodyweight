@@ -33,9 +33,8 @@ const (
 	speechExplainNextExercise = `Lass Dir die nächste Übung erklären. `
 	speechStart               = `Sage: <break strength="x-strong"/>bereit,<break strength="x-strong"/>`
 	speechStartThisExercise   = speechStart + `wenn du mit dieser Übung beginnen möchtest. `
-	// speechStartNextExercise   = speechStart + `wenn du mit der nächsten Übung beginnen möchtests. `
-	speechDone          = `Geschafft. `
-	speechReadyForToday = `Jetzt kannst Du Dich erholen. Bis zum nächsten mal. `
+	speechDone                = `Geschafft. `
+	speechReadyForToday       = `Jetzt kannst Du Dich erholen. Bis zum nächsten mal. `
 
 	speechUnknown    = "Ich kann dich leider nicht verstehen. "
 	speechExitIfMute = "Wenn Du nichts mehr sagst, wird das Programm beendet. "
@@ -161,13 +160,14 @@ func HandleRequest(ctx context.Context, event Request) (interface{}, error) {
 		case alexaStopIntent:
 			return responseBuilder().speak(speechEnde).withShouldEndSession(), nil
 		case alexaHelpIntent:
-			return responseBuilder().speak(speechHelp), nil
+			return responseBuilder().speak(speechHelp).addAudioPlayerPlayDirective(
+				"https://github.com/gipde/bodyweight/raw/master/contrib/audio1.mp3"), nil
 		case alexaAudioTestIntent:
 			/* die Audioausgabe läuft parallel zum Dialog.
 			D.h. wenn im Dialog nix mehr passiert, wird der Skill beendet */
 			return responseBuilder().
 				addAudioPlayerPlayDirective(
-					"https://github.com/gipde/bodyweight/raw/master/contrib/alien-spaceship_daniel_simion.mp3"), nil
+					"https://github.com/gipde/bodyweight/raw/master/contrib/audio1.mp3"), nil
 
 		case alexaFallbackIntent:
 			return handleUnknown()
