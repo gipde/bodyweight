@@ -31,7 +31,7 @@ const (
 	speechExplainTraining     = `Lass Dir zunächst das Training erklären. `
 	speechExplainThisExercise = `Lass Dir diese nächste Übung erklären. `
 	speechExplainNextExercise = `Lass Dir die nächste Übung erklären. `
-	speechStart               = `Sage: <break strength="x-strong"/>bereit,<break strength="x-strong"/>`
+	speechStart               = `Sage: <break strength="x-strong"/>bereit,<break strength="x-strong"/> `
 	speechStartThisExercise   = speechStart + `wenn du mit dieser Übung beginnen möchtest. `
 	speechDone                = `Geschafft. `
 	speechReadyForToday       = `Jetzt kannst Du Dich erholen. Bis zum nächsten mal. `
@@ -73,6 +73,12 @@ const (
 	- ändere den Trainingsfortschritt - den Trainingsfortschritt ändern.
 	- bereit - die nächste Übung starten oder mit
 	- erkläre Trainingsmethode  - die jeweiligen Trainingsmethoden erklären.`
+
+	textTitle           = "Bodyweight Training"
+	textWelcome         = "Herzlich willkommen"
+	textExplainTraining = "Das heutige Training:"
+	textExplainExercise = "Die nächste Übung:"
+	textDefineName      = textWelcome + ", du musst zunächst deinen Namen festlegen."
 )
 
 var db database.DB
@@ -96,12 +102,6 @@ func Start() {
 	log.Println("Starting FN")
 	db = database.Accessor()
 	lambda.Start(HandleRequest)
-}
-
-func getUser(event Request) *database.Entry {
-	uid := event.Session.User.UserID // Amazon UID
-	entry, _ := db.GetLastUsedEntry(uid)
-	return entry
 }
 
 // HandleRequest handles every Request / Base-Entry FN
@@ -129,7 +129,7 @@ func HandleRequest(ctx context.Context, event Request) (interface{}, error) {
 
 			return responseBuilder().
 				speak(speechWelcome+speechDefineUser).
-				withSimpleCard("Bodyweight Training", "Herzlich willkommen, du musst zunächst deinen Namen festlegen.").
+				withSimpleCard(textTitle, textDefineName).
 				reprompt(speechDefineUser + speechExitIfMute), nil
 
 		}
@@ -137,7 +137,8 @@ func HandleRequest(ctx context.Context, event Request) (interface{}, error) {
 		// Welcome Back
 		return responseBuilder().
 			speak(speechWelcome+fmt.Sprintf(speechPersonal, user.UserName)+speechExplainTraining).
-			withSimpleCard(user.TrainingState.ShortProgress(), user.TrainingState.CardDayDescription()).
+			withSimpleCard(textWelcome, user.UserName).
+			// withSimpleCard(user.TrainingState.ShortProgress(), user.TrainingState.CardDayDescription()).
 			reprompt(speechExplainTraining + speechExitIfMute), nil
 
 	case alexaSessionEndRequest:
@@ -180,11 +181,11 @@ func HandleRequest(ctx context.Context, event Request) (interface{}, error) {
 		switch event.RequestBody.Intent.Name {
 		case alexaExplainTrainingIntent:
 			return responseBuilder().speak(user.TrainingState.ExplainTraining()+speechExplainThisExercise).
-				withSimpleCard(user.TrainingState.ShortProgress(), user.TrainingState.CardDayDescription()).
+				withSimpleCard(textExplainTraining, user.TrainingState.CardDayDescription()).
 				reprompt(speechExplainThisExercise + speechExitIfMute), nil
 		case alexaExplainExerciseIntent:
 			return responseBuilder().speak(user.TrainingState.ExplainExercise()+speechStartThisExercise).
-				withSimpleCard(user.TrainingState.ShortProgress(), user.TrainingState.CardUnitDescription()).
+				withSimpleCard(textExplainExercise, user.TrainingState.CardUnitDescription()).
 				reprompt(speechStartThisExercise + speechExitIfMute), nil
 		case alexaStartTrainingIntent:
 			return handleStartTraining(user), nil
@@ -235,42 +236,17 @@ func handleStartTraining(user *database.Entry) *Response {
 	}()
 
 	if user.TrainingState.WasLastUnit() {
-		return responseBuilder().speak(text + speechDone + speechReadyForToday).withShouldEndSession()
+		return responseBuilder().speak(text + speechDone + speechReadyForToday).
+			withShouldEndSession()
 	}
 	return responseBuilder().speak(text + speechDone + speechExplainNextExercise)
 
 }
 
-// func getlastUserEntry(event Request) (dbEntry *database.Entry, notFoundMsg *Response) {
-// 	// TODO: Es macht einen Unterschied, ob der Intent direkt gestartet wird, oder ob zunächst über einen
-// 	// Launch Request gestartet wird.
-
-// 	// without Slot-Value means called without a username set in slot
-// 	user := event.RequestBody.Intent.Slots["user"]
-// 	if user.Value != "" {
-// 		log.Println("we got user from Alexa")
-// 		user.ConfirmationStatus = "CONFIRMED"
-// 		db.CreateEntry(getNewUserEntry(event.Session.User.UserID, user.Value))
-// 	}
-
-// 	entry, _ := db.GetLastUsedEntry(event.Session.User.UserID)
-// 	if entry != nil {
-// 		log.Println("we got user from DB")
-// 		user.Value = entry.UserName
-// 		user.ConfirmationStatus = "CONFIRMED"
-// 	}
-
-// 	log.Printf("Session User: %+v", user.Value)
-// 	log.Printf("Complete State: %s", event.RequestBody.DialogState)
-
-// 	// noch kein User festgelegt
-// 	if user.Value == "" {
-// 		return nil, responseBuilder().addDelegateDirective(&event.RequestBody.Intent, false)
-// 	}
-
-// 	return entry, nil
-
-// }
+func handleUnknown() (interface{}, error) {
+	return responseBuilder().speak(speechUnknown + " " + speechExplainTraining).
+		reprompt(speechExitIfMute), nil
+}
 
 func getNewUserEntry(userid, username string) *database.Entry {
 	return &database.Entry{
@@ -305,12 +281,14 @@ func defineUser(event Request) (interface{}, error) {
 	db.CreateEntry(&userEntry)
 
 	return responseBuilder().
-		speak(fmt.Sprintf(speechWelcomNewUser, user.Value) + speechExplainTraining).
+		speak(fmt.Sprintf(speechWelcomNewUser, user.Value)+speechExplainTraining).
+		withSimpleCard(textWelcome, user.Value).
 		reprompt(speechExplainTraining + speechExitIfMute), nil
 
 }
 
-func handleUnknown() (interface{}, error) {
-	return responseBuilder().speak(speechUnknown + " " + speechExplainTraining).
-		reprompt(speechExitIfMute), nil
+func getUser(event Request) *database.Entry {
+	uid := event.Session.User.UserID // Amazon UID
+	entry, _ := db.GetLastUsedEntry(uid)
+	return entry
 }

@@ -15,7 +15,6 @@ Der Skill unterstützt dich bei der Ausführung des Bodyweight Training. Alle Ü
 - Neues Display-Interface
 - Anzeige der Übungen auf dem Display
 - Testabdeckung erhöhen
-- alle Strings als speechText* auslagern
 - TODO fixen
 - Trainingswoche,TrainingsTag, Level per sprachbefehl (alexa) einstellen
 - Prüfen, wie weit man hinter Plan ist / Abgleich mit Kalendertag
