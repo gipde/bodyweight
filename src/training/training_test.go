@@ -82,10 +82,10 @@ func BenchmarkTimeAsString(b *testing.B) {
 }
 
 func TestBreakFor(t *testing.T) {
-	assert.Equal(t, breakFor(10), `<break time="10ms"/>`)
-	assert.Equal(t, breakFor(10000), `<break time="10000ms"/>`)
-	assert.Equal(t, breakFor(20000), `<break time="10000ms"/><break time="10000ms"/>`)
-	assert.Equal(t, breakFor(31234), `<break time="10000ms"/><break time="10000ms"/><break time="10000ms"/><break time="1234ms"/>`)
+	assert.Equal(t,`<break time="10ms"/> `, breakFor(10) )
+	assert.Equal(t, `<break time="10000ms"/> `, breakFor(10000))
+	assert.Equal(t, `<break time="10000ms"/> <break time="10000ms"/> `, breakFor(20000))
+	assert.Equal(t, `<break time="10000ms"/> <break time="10000ms"/> <break time="10000ms"/> <break time="1234ms"/> `, breakFor(31234))
 }
 
 func TestCount(t *testing.T) {
