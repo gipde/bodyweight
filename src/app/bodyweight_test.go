@@ -78,15 +78,15 @@ func TestLaunchWithDefineUser(t *testing.T) {
 	assert.False(t, m.ShouldEndSession)
 	assert.Equal(t, speakyfy(fmt.Sprintf(speechWelcomNewUser, name)+speechExplainTraining), m.OutputSpeech.SSML)
 	assert.Equal(t, textWelcome, m.Card.Title)
-	assert.Equal(t,name, m.Card.Content)
+	assert.Equal(t, name, m.Card.Content)
 
 	// trigger Launch Request
 	m, _ = triggerLaunchRequest()
 
 	assert.Equal(t, speakyfy(speechWelcome+fmt.Sprintf(speechPersonal, name)+speechExplainTraining), m.OutputSpeech.SSML)
 	assert.False(t, m.ShouldEndSession)
-	assert.Equal(t,textWelcome, m.Card.Title)
-	assert.Equal(t,name, m.Card.Content)
+	assert.Equal(t, textWelcome, m.Card.Title)
+	assert.Equal(t, name, m.Card.Content)
 }
 
 func TestChangeToNewUser(t *testing.T) {
@@ -124,6 +124,17 @@ func TestLaunchHandlerKnownUser(t *testing.T) {
 	m, _ := triggerLaunchRequest()
 	assert.Equal(t, speakyfy(speechWelcome+fmt.Sprintf(speechPersonal, name1)+speechExplainTraining),
 		m.OutputSpeech.SSML)
+}
+
+func TestStartTrainingWitUserSet(t *testing.T) {
+	m, e := triggerStartTraining("")
+	assert.Contains(t,m.OutputSpeech.SSML,"Stufenintervalle")
+
+	assert.NotNil(t, m.Card)
+	assert.Equal(t, textExplainExercise, m.Card.Title)
+
+	assert.Nil(t, m.Directives)
+	assert.Nil(t, e)
 }
 
 func triggerRequest(req Request) (*ResponseBody, error) {

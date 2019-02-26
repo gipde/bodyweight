@@ -60,7 +60,7 @@ func (s State) ExplainExercise() string {
 		text = fmt.Sprintf("Als nächste %s steht mit %s an: ", unit.Exercise.Type.name(), day.Method.name())
 		text += fmt.Sprintf("%s. ", unit.Exercise.Name)
 		text += addNote(unit)
-		text += fmt.Sprintf("Nähere Infos findest Du auf Seite %d im Buch.", unit.Exercise.Page)
+		text += fmt.Sprintf("Nähere Infos findest Du auf Seite %d im Buch. ", unit.Exercise.Page)
 	case IntervallSatz, ZirkelIntervall:
 		text = fmt.Sprintf("Die nächsten Übungen sind mit %s zu absolvieren:\n", day.Method.name())
 		if day.Method == IntervallSatz {
@@ -223,13 +223,15 @@ func (s *State) HochIntensitaetsSatzText() string {
 	text += addNote(ex)
 	text += "\n"
 
-	for i := 0; i < 8; i++ {
+	for i := 0; i < 7; i++ {
 		text += countDown("Start. ")
 		text += breakFor(20 * 1000)
 		text += "Pause. "
 		text += breakFor(6 * 1000)
 		text += "\n"
 	}
+	text += countDown("Start. ")
+	text += breakFor(18 * 1000)
 	text += countDown("Ende")
 	s.switchToNextTraining()
 	return text
@@ -321,7 +323,7 @@ func countDown(word string) string {
 func breakFor(ms int) string {
 	divider := 10000
 	var res string
-	br := `<break time="%dms"/>`
+	br := `<break time="%dms"/> `
 
 	if tools.IsDebug() {
 		return fmt.Sprintf(br, 100)

@@ -228,6 +228,8 @@ func handleExplainTrainingMethod(event Request) *Response {
 
 func handleStartTraining(user *database.Entry) *Response {
 	//TODO: check if is directyl called
+
+	desc := user.TrainingState.CardUnitDescription()
 	text := user.TrainingState.InstructTraining()
 
 	defer func() {
@@ -236,10 +238,14 @@ func handleStartTraining(user *database.Entry) *Response {
 	}()
 
 	if user.TrainingState.WasLastUnit() {
-		return responseBuilder().speak(text + speechDone + speechReadyForToday).
+		return responseBuilder().
+			withSimpleCard(textExplainExercise, desc).
+			speak(text + speechDone + speechReadyForToday).
 			withShouldEndSession()
 	}
-	return responseBuilder().speak(text + speechDone + speechExplainNextExercise)
+	return responseBuilder().
+		withSimpleCard(textExplainExercise, desc).
+		speak(text + speechDone + speechExplainNextExercise)
 
 }
 
